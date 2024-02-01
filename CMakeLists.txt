@@ -27,7 +27,11 @@ add_compile_options(-Wall)
 # link_directories(${ASSIMP_DIR}/debug/lib)
 
 aux_source_directory(src SRC)
-add_executable(Chronos ${SRC})
+aux_source_directory("src/platform/windows" PLATFORM_WIN_SRC)
+
+add_executable(Chronos ${SRC} ${PLATFORM_WIN_SRC})
+
+target_link_libraries(Chronos dxgi d3d11)
 
 # target_link_libraries(glworld glfw3 glad imgui_dx12 d3d12 dxgi assimp-vc142-mtd)
 

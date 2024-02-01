@@ -1,5 +1,12 @@
-#include <iostream>
+#include "ChronosWindow.h"
+#include "Utils.h"
 int main() {
-    std::cout<<"test"<<std::endl;
+    auto win = Chronos::CreateWin();
+    if(win == nullptr) {
+        Panic("no");
+    }
+    win->init();
+    win->show();
+    win->loop();
     return 0;
 }
