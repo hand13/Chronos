@@ -13,6 +13,7 @@
 #include <winnt.h>
 #include <winuser.h>
 #include "../../Utils.h"
+#include "../../Log.h"
 namespace  Chronos {
     static  LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -125,6 +126,10 @@ namespace  Chronos {
         , &sd, swapChain.GetAddressOf(),d3d11Device.GetAddressOf(), NULL,deviceContext.GetAddressOf());
         ThrowIfFailed(hr);
 
+    }
+
+    WinChronosWindow::~WinChronosWindow() {
+        Log("啊我死了");
     }
 
     static WinChronosWindow* GetWindowFromLParam(LPARAM lParam) {

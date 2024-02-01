@@ -29,6 +29,6 @@ namespace Chronos {
         virtual void show() override;
         virtual void loop() override;
         void draw();
-        virtual ~WinChronosWindow() override{}
+        virtual ~WinChronosWindow() override;
     };
 }
