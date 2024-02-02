@@ -2,7 +2,7 @@ project(Chronos)
 cmake_minimum_required(VERSION 3.22)
 
 find_package(fmt CONFIG REQUIRED)
-find_package(Poco CONFIG REQUIRED Data)
+find_package(Poco CONFIG REQUIRED Foundation)
 
 set(CMAKE_CXX_STANDARD 17)
 add_compile_options(-Wall)
@@ -34,7 +34,7 @@ aux_source_directory("src/platform/windows" PLATFORM_WIN_SRC)
 
 add_executable(Chronos ${SRC} ${PLATFORM_WIN_SRC})
 
-target_link_libraries(Chronos PRIVATE dxgi d3d11 Poco::Data fmt::fmt)
+target_link_libraries(Chronos PRIVATE dxgi d3d11 Poco::Foundation fmt::fmt)
 
 # target_link_libraries(glworld glfw3 glad imgui_dx12 d3d12 dxgi assimp-vc142-mtd)
 
