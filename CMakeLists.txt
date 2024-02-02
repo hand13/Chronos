@@ -30,11 +30,22 @@ add_compile_options(-Wall)
 # link_directories(${ASSIMP_DIR}/debug/lib)
 
 aux_source_directory(src SRC)
+
 aux_source_directory("src/platform/windows" PLATFORM_WIN_SRC)
+
+aux_source_directory("src/render" RENDER_SRC)
+
+message(${RENDER_SRC})
+
+add_library(render STATIC ${RENDER_SRC})
 
 add_executable(Chronos ${SRC} ${PLATFORM_WIN_SRC})
 
-target_link_libraries(Chronos PRIVATE dxgi d3d11 Poco::Foundation fmt::fmt)
+add_executable(test test/test.cpp)
+
+target_link_libraries(test PRIVATE Poco::Foundation)
+
+target_link_libraries(Chronos PRIVATE render dxgi d3d11 Poco::Foundation fmt::fmt)
 
 # target_link_libraries(glworld glfw3 glad imgui_dx12 d3d12 dxgi assimp-vc142-mtd)
 
