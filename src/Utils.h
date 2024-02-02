@@ -1,10 +1,4 @@
 #pragma once
-#include <exception>
-#include <winerror.h>
-#include <comdef.h>
-#include <winnt.h>
-inline void Panic(const char* msg){
-    throw std::exception(msg);
-};
-
-void ThrowIfFailed(HRESULT x);
+#include <string>
+void Panic(const std::wstring& msg);
+std::string WideToUTF8(const std::wstring& str);

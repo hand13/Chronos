@@ -12,7 +12,7 @@
 #include <windef.h>
 #include <winnt.h>
 #include <winuser.h>
-#include "../../Utils.h"
+#include "Utils.h"
 #include "../../Log.h"
 namespace  Chronos {
     static  LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -129,7 +129,7 @@ namespace  Chronos {
     }
 
     WinChronosWindow::~WinChronosWindow() {
-        Log("啊我死了");
+        Log(TEXT("啊我死了"));
     }
 
     static WinChronosWindow* GetWindowFromLParam(LPARAM lParam) {
