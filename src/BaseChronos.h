@@ -22,13 +22,13 @@ namespace Chronos {
         virtual void begin()override;
         virtual void shutdown() override;
 
-        virtual Renderer* getRender()override = 0;
+        virtual Renderer* getRender()override;
         virtual ChronosWindow* getWindow()override;
 
         protected:
         void createWindow();
-        void createRenderState();
-        void createD3D11RenderState();
+        void createRender();
+        void createD3D11Render();
         virtual void loop()override;
         virtual void render()override;
         virtual void update()override;

@@ -16,7 +16,7 @@ namespace Chronos {
     void Mesh::setAttributeSet(const Geometry::AttributeSet& as){
         this->as =as;
     }
-    void Mesh::updateRenderBuffer(std::unique_ptr<RenderBuffer>&& renderBuffer){
+    void Mesh::updateRenderBuffer(std::unique_ptr<RenderBuffer>& renderBuffer){
         this->renderBuffer = std::move(renderBuffer);
     }
 

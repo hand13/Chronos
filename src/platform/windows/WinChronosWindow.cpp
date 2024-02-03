@@ -1,19 +1,25 @@
 #include "WinChronosWindow.h"
 #include <cstddef>
+#include <d3d10shader.h>
 #include <d3d11.h>
 #include <d3dcommon.h>
 #include <dxgi.h>
 #include <dxgicommon.h>
 #include <dxgiformat.h>
 #include <dxgitype.h>
+#include <string.h>
 #include <minwinbase.h>
 #include <minwindef.h>
+#include <vector>
 #include <winbase.h>
 #include <windef.h>
 #include <winnt.h>
 #include <winuser.h>
 #include "Utils.h"
 #include "../../Log.h"
+#include "../../Utils.h"
+#include "../../render/d3d11/ChronosD3D11Texture2D.h"
+#include <d3d11shader.h>
 namespace  Chronos {
     static  LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -21,6 +27,7 @@ namespace  Chronos {
         hWnd = NULL;
         width = 800;
         height = 600;
+        sceneTexture = nullptr;
     }
     void WinChronosWindow::init(){
         wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, TEXT("Chronos"), NULL };
@@ -64,30 +71,94 @@ namespace  Chronos {
         // SetWindowPos(hWnd, HWND_TOP, 0, 0, width, height, SWP_NOMOVE);
     }
 
+    void WinChronosWindow::displayOffscreen(Texture2D * rt){
+        ChronosD3D11Texture2D* ct = dynamic_cast<ChronosD3D11Texture2D*>(rt);
+        if(ct == nullptr){
+            Panic(L"fatal");
+        }
+        sceneTexture = ct->getSRV();
+    }
+
     void WinChronosWindow::draw() {
+        if(sceneTexture == nullptr){
+            Panic(L"fatal");
+        }
+        
         deviceContext->OMSetRenderTargets(1, rtv.GetAddressOf(), NULL);
         float color[] = {0.8f,0.1f,0.3f,1.f};
         deviceContext->ClearRenderTargetView(rtv.Get(), color);
+        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        deviceContext->IASetVertexBuffers(0, 1, verticesBuffer.GetAddressOf(), 0, 0);
+        deviceContext->VSSetShader(vs.Get(), NULL, 0);
+        deviceContext->PSSetShader(ps.Get(), NULL, 0);
+        deviceContext->PSSetShaderResources(0, 1, &sceneTexture);
+        deviceContext->Draw(6, 0);
+
         ThrowIfFailed(swapChain->Present(1, 0));
     }
 
-    void WinChronosWindow::loop() {
-        bool done = false;
+    bool WinChronosWindow::processEvent(){
+        bool shouldRun = true;
         MSG msg;
-        while(1){
-            while (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
-                ::TranslateMessage(&msg);
-                ::DispatchMessage(&msg);
-                if (msg.message == WM_QUIT){
-                    done = true;
-                    break;
-                }
-            }
-            if (done) {
+        while (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
+            ::TranslateMessage(&msg);
+            ::DispatchMessage(&msg);
+            if (msg.message == WM_QUIT){
+                shouldRun = false;
                 break;
             }
-            draw();
         }
+        return shouldRun;
+    }
+
+    void WinChronosWindow::persent() {
+            draw();
+    }
+
+    void WinChronosWindow::createCanvasBuffer(){
+        float vertices[] = {
+            -1.f,-1.f,0,0,0,
+            1.f,-1.f,0,1.f,0,
+            1.f,1.f,0,1.f,1.f,
+
+            -1.f,-1.f,0,0,0,
+            1.f,1.f,0,1.f,1.f,
+            -1.f,1.f,0,0,1.f
+        };
+        D3D11_BUFFER_DESC desc;
+        ZeroMemory(&desc,sizeof(desc));
+        desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        desc.CPUAccessFlags = 0;//D3D11_CPU_ACCESS_READ;
+        desc.ByteWidth = sizeof(vertices);
+        desc.Usage = D3D11_USAGE_DEFAULT;
+        D3D11_SUBRESOURCE_DATA sd;
+        ZeroMemory(&sd,sizeof(sd));
+        sd.pSysMem = vertices;
+        ThrowIfFailed(d3d11Device->CreateBuffer(&desc, &sd, verticesBuffer.GetAddressOf()));
+    }
+    void WinChronosWindow::createCanvaShader(){
+        std::vector<unsigned char> vbuffer =readDataFromFile("resources/shader/d3d11/basic_vert.cso");
+        d3d11Device->CreateVertexShader(vbuffer.data()
+            , vbuffer.size(),NULL,vs.GetAddressOf());
+
+        std::vector<unsigned char> pbuffer =readDataFromFile("resources/shader/d3d11/basic_pixel.cso");
+        d3d11Device->CreatePixelShader(pbuffer.data()
+            , pbuffer.size(),NULL,ps.GetAddressOf());
+        const D3D11_INPUT_ELEMENT_DESC basicVertexLayoutDesc[] =
+            {
+                { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                {"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0,3*sizeof(float),D3D11_INPUT_PER_VERTEX_DATA,0}
+            };
+
+        ThrowIfFailed(
+            d3d11Device->CreateInputLayout(
+                basicVertexLayoutDesc,
+                ARRAYSIZE(basicVertexLayoutDesc),
+                vbuffer.data(),
+                vbuffer.size(),
+                inputLayout.GetAddressOf()
+                )
+            );
     }
 
     void WinChronosWindow::createRenderTargetView() {
