@@ -1,14 +1,26 @@
-#include "ChronosWindow.h"
-#include "Utils.h"
-#include "Log.h"
-int main() {
-    Chronos::Log(L"start");
-    auto win = Chronos::CreateWin();
-    if(win == nullptr) {
-        Panic(L"create window failed");
+#include "BaseChronos.h"
+#include "BaseScene.h"
+#include <memory>
+class TestScene:public Chronos::BaseScene{
+    public:
+        virtual void initScene()override{
+        }
+        virtual ~TestScene(){}
+};
+
+class TestChronos:public Chronos::BaseChronos{
+    protected:
+    virtual void initStartScene()override{
+        mainScene = std::make_unique<TestScene>();
+        mainScene->init();
     }
-    win->init();
-    win->show();
-    win->loop();
+};
+
+int main() {
+    TestChronos tc;
+    Chronos::Chronos::MakeChronosGlobal(&tc);
+    tc.init();
+    tc.begin();
+    tc.loop();
     return 0;
 }

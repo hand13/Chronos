@@ -24,4 +24,6 @@ namespace Chronos {
     }
     void BaseScene::update(){
     }
+    BaseScene::~BaseScene(){
+    }
 }

@@ -9,7 +9,7 @@ namespace Chronos {
         virtual void show() = 0;
         virtual bool processEvent() = 0;
         virtual void displayOffscreen(Texture2D * rt) = 0;
-        virtual void persent();
+        virtual void persent() = 0;
         virtual ~ChronosWindow(){}
     };
     std::unique_ptr<ChronosWindow> CreateWin();

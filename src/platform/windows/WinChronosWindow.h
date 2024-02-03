@@ -45,11 +45,11 @@ namespace Chronos {
         inline ComPtr<ID3D11DeviceContext> shareDeviceContext(){
             return deviceContext;
         }
+        virtual ~WinChronosWindow() override;
         private:
 
         void createCanvasBuffer();
         void createCanvaShader();
 
-        virtual ~WinChronosWindow() override;
     };
 }

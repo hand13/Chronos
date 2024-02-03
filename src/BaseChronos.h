@@ -7,7 +7,7 @@
 #include "Option.h"
 namespace Chronos {
     class BaseChronos:public Chronos{
-        private:
+        protected:
         std::unique_ptr<Scene> mainScene;
         std::unique_ptr<ChronosWindow> window;
 
@@ -18,18 +18,18 @@ namespace Chronos {
         public:
         BaseChronos();
         virtual void init()override;
-        virtual void initStartScene() = 0;
         virtual void begin()override;
+        virtual void loop()override;
         virtual void shutdown() override;
 
         virtual Renderer* getRender()override;
         virtual ChronosWindow* getWindow()override;
 
         protected:
+        virtual void initStartScene() = 0;
         void createWindow();
         void createRender();
         void createD3D11Render();
-        virtual void loop()override;
         virtual void render()override;
         virtual void update()override;
         virtual ~BaseChronos();

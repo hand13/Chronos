@@ -1,4 +1,3 @@
-#pragma once
 #include "RenderContext.h"
 namespace Chronos {
     RenderContext::RenderContext(){

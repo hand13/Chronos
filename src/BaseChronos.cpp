@@ -6,13 +6,17 @@
 #include "render/d3d11/D3D11Renderer.h"
 #endif
 namespace Chronos {
+
+    BaseChronos::BaseChronos(){
+    }
+
     void BaseChronos::init() {
         state = 1;
+        option.renderType = 1;
         createWindow();
         createRender();
         initStartScene();
         window->init();
-        option.renderType = 1;
     }
 
     void BaseChronos::createWindow(){

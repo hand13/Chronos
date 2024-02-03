@@ -3,8 +3,8 @@
 #include <memory>
 
 namespace Chronos {
-    class BaseScene:Scene{
-        private:
+    class BaseScene:public Scene{
+        protected:
         std::unique_ptr<RenderTarget> rt;
         virtual RenderTarget* getRenderTarget();
         virtual Texture2D* getRenderTargetAsTexture();
@@ -16,6 +16,7 @@ namespace Chronos {
         virtual void begin();
         virtual void render();
         virtual void update();
-        ~BaseScene();
+        public:
+        virtual ~BaseScene();
     };
 }
