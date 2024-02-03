@@ -2,7 +2,6 @@
 #include "Chronos.h"
 #include "Scene.h"
 #include <memory>
-#include "render/RenderContext.h"
 #include "render/Renderer.h"
 #include "ChronosWindow.h"
 #include "Option.h"
@@ -12,8 +11,6 @@ namespace Chronos {
         std::unique_ptr<Scene> mainScene;
         std::unique_ptr<ChronosWindow> window;
 
-        std::unique_ptr<RenderTarget> rt;
-        std::unique_ptr<RenderContext> renderContext;
         std::unique_ptr<Renderer> renderer;
         unsigned int state = 0;
         Option option;
@@ -26,8 +23,6 @@ namespace Chronos {
         virtual void shutdown() override;
 
         virtual Renderer* getRender()override = 0;
-        virtual RenderContext* getRenderContext()override = 0;
-        virtual RenderTarget* getRenderTarget()override = 0;
         virtual ChronosWindow* getWindow()override;
 
         protected:

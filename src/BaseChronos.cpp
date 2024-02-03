@@ -36,14 +36,6 @@ namespace Chronos {
         return renderer.get();
     }
 
-    RenderContext* BaseChronos::getRenderContext(){
-        return renderContext.get();
-    }
-
-    RenderTarget* BaseChronos::getRenderTarget(){
-        return rt.get();
-    }
-
     void BaseChronos::begin() {
         Log("game start");
         window->show();
@@ -59,7 +51,7 @@ namespace Chronos {
 
     void BaseChronos::render(){
         mainScene->render();
-        window->displayOffscreen(rt.get());
+        window->displayOffscreen(mainScene->getRenderTarget());
     }
 
     void BaseChronos::update() {
