@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderableObject.h"
 #include "Material.h"
+#include <cstddef>
 #include <memory>
 #include <vector>
 #include "AttributeSet.h"
@@ -24,6 +25,11 @@ namespace Chronos {
         void setIndices(const std::vector<int>& indices);
         void setMaterial(Material* material);
         void setAttributeSet(const Geometry::AttributeSet& as);
+
+        size_t getVerticesCount()const;
+        Geometry::AttributeSet* getAttributeSet(){
+            return &as;
+        }
 
         const std::vector<float>& getVertices()const;
         const std::vector<int>& getIndices()const;

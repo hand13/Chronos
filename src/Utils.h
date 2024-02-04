@@ -2,5 +2,6 @@
 #include <string>
 #include <vector>
 void Panic(const std::wstring& msg);
+void Panic(const std::string& msg);
 std::string WideToUTF8(const std::wstring& str);
 std::vector<unsigned char> readDataFromFile(const char * fileName);

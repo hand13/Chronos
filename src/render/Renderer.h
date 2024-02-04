@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderContext.h"
 #include "RenderableObject.h"
+#include "Mesh.h"
 #include <memory>
 
 namespace Chronos {
@@ -10,6 +11,7 @@ namespace Chronos {
         virtual void beginRender()=0;
         virtual void endRender() = 0;
         virtual void renderObject(RenderableObject* robj) = 0;
+        virtual void renderMesh(Mesh * mesh) = 0;
         virtual void init() = 0;
 
         virtual std::unique_ptr<RenderTarget> createRenderTarget() = 0;

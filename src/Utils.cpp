@@ -19,6 +19,11 @@ void Panic(const std::wstring& msg) {
     Chronos::Log(msg);
     throw std::exception(tmp.c_str());
 }
+void Panic(const std::string& msg) {
+    Chronos::Log(msg);
+    throw std::exception(msg.c_str());
+}
+
 std::vector<unsigned char> readDataFromFile(const char * fileName){
     Poco::File pf(fileName);
     if(!pf.exists()){

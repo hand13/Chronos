@@ -1,7 +1,6 @@
 #include "D3D11Renderer.h"
 #include "../../Chronos.h"
 #include "../../platform/windows/WinChronosWindow.h"
-#include "../../platform/windows/Utils.h"
 #include "../../Utils.h"
 #include <d3d11.h>
 #include <d3dcommon.h>
@@ -10,6 +9,8 @@
 #include <minwinbase.h>
 #include <wrl/client.h>
 #include "ChronosD3D11RenderTarget.h"
+#include "D3D11MeshRenderState.h"
+#include "common.h"
 namespace Chronos{
 
     void D3D11Renderer::init(){
@@ -17,7 +18,7 @@ namespace Chronos{
         if(wc == nullptr){
             Panic(L"fatal");
         }
-        deivice = wc->shareDeivce();
+        device = wc->shareDeivce();
         deviceContext = wc->shareDeviceContext();
         currentContext = nullptr;
         currentRTV = nullptr;
@@ -60,6 +61,23 @@ namespace Chronos{
     void D3D11Renderer::renderObject(RenderableObject * mesh){
     }
 
+    void D3D11Renderer::renderMesh(Mesh* mesh){
+
+        if(mesh->getRenderState() == nullptr){
+            mesh->initRenderState(std::make_unique<D3D11MeshRenderState>(this,mesh));
+            mesh->setDirty(true);
+        }
+        if(mesh->getRenderState()->isDirty()){
+            mesh->getRenderState()->update();
+        }
+        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        RenderState* rs = mesh->getRenderState();
+        rs->apply();
+        // mesh->getMaterial()->apply(); disable tmp
+       deviceContext->Draw(mesh->getVerticesCount(),0);
+
+    }
+
     void D3D11Renderer::endRender() {
         deviceContext->ClearState();
     }
@@ -76,8 +94,8 @@ namespace Chronos{
         tdesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
         D3D11_SUBRESOURCE_DATA sub;
         ZeroMemory(&sub,sizeof(sub));
-        ThrowIfFailed(deivice->CreateTexture2D(&tdesc,NULL,&pBackBuffer));
-        ThrowIfFailed(deivice->CreateRenderTargetView(pBackBuffer.Get(), NULL,rtv.GetAddressOf()));
+        ThrowIfFailed(device->CreateTexture2D(&tdesc,NULL,&pBackBuffer));
+        ThrowIfFailed(device->CreateRenderTargetView(pBackBuffer.Get(), NULL,rtv.GetAddressOf()));
         std::unique_ptr<ChronosD3D11RenderTarget> result = std::make_unique<ChronosD3D11RenderTarget>();
         result->setRTV(rtv);
         ComPtr<ID3D11ShaderResourceView> srv;
@@ -88,7 +106,7 @@ namespace Chronos{
         srvd.ViewDimension= D3D11_SRV_DIMENSION_TEXTURE2D;
         srvd.Texture2D.MipLevels = 1;
 
-        ThrowIfFailed(deivice->CreateShaderResourceView(pBackBuffer.Get(), &srvd,srv.GetAddressOf()));
+        ThrowIfFailed(device->CreateShaderResourceView(pBackBuffer.Get(), &srvd,srv.GetAddressOf()));
         std::unique_ptr<ChronosD3D11Texture2D> texture = std::make_unique<ChronosD3D11Texture2D>();
         texture->setSRV(srv);
         result->setTexture(std::move(texture));

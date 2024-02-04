@@ -1,5 +1,6 @@
 #include "BaseScene.h"
 #include "Chronos.h"
+#include <vector>
 namespace Chronos {
 
     RenderTarget* BaseScene::getRenderTarget(){
@@ -12,6 +13,22 @@ namespace Chronos {
     void BaseScene::init(){
         initRenderState();
         initScene();
+        std::vector<float> vertices = {
+            -1.f,-1.f,0,0,0,
+            1.f,1.f,0,1.f,1.f,
+            1.f,-1.f,0,1.f,0,
+
+            -1.f,-1.f,0,0,0,
+            -1.f,1.f,0,0,1.f,
+            1.f,1.f,0,1.f,1.f,
+        };
+        mesh.setVertices(vertices);
+        Geometry::AttributeSet as;
+        as.addAttribute("pos", Geometry::VEC);
+        as.addAttribute("uv", Geometry::VEC2);
+
+        mesh.setAttributeSet(as);
+
     }
     void BaseScene::initRenderState(){
         Renderer * render = Chronos::INSTANCE->getRender();
@@ -34,6 +51,7 @@ namespace Chronos {
         Renderer * render = Chronos::INSTANCE->getRender();
         render->setRenderContext(&rc);
         render->beginRender();
+        render->renderMesh(&mesh);
         render->endRender();
     }
 

@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include <cstddef>
 namespace Chronos {
     Mesh::Mesh(){
     }
@@ -37,6 +38,9 @@ namespace Chronos {
 
     void Mesh::setDirty(bool dirty){
         renderState->setDirty(dirty);
+    }
+    size_t Mesh::getVerticesCount()const{
+        return (vertices.size()*sizeof(float))/as.totalSize();
     }
 
 }
