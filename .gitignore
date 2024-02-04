@@ -2,3 +2,4 @@ build/
 .cache/
 third_party/
 .vscode/
+msvcbuild/

@@ -1,7 +1,6 @@
 #include "Mesh.h"
 namespace Chronos {
     Mesh::Mesh(){
-        dirty = true;
     }
 
     void Mesh::setVertices(const std::vector<float>& vertices){
@@ -16,10 +15,6 @@ namespace Chronos {
     void Mesh::setAttributeSet(const Geometry::AttributeSet& as){
         this->as =as;
     }
-    void Mesh::updateRenderBuffer(std::unique_ptr<RenderBuffer>& renderBuffer){
-        this->renderBuffer = std::move(renderBuffer);
-    }
-
     const std::vector<float>& Mesh::getVertices()const{
         return vertices;
     }
@@ -28,14 +23,20 @@ namespace Chronos {
         return indices;
     }
 
-    bool Mesh::shouldUpdateBuffer()const{
-        return dirty == true;
-    }
-
-    RenderBuffer* Mesh::getRenderBuffer(){
-        return renderBuffer.get();
-    }
     Material* Mesh::getMaterial(){
         return material;
     }
+
+    void Mesh::initRenderState(std::unique_ptr<RenderState>&& renderState){
+        this->renderState = std::move(renderState);
+    }
+
+    RenderState* Mesh::getRenderState(){
+        return renderState.get();
+    }
+
+    void Mesh::setDirty(bool dirty){
+        renderState->setDirty(dirty);
+    }
+
 }

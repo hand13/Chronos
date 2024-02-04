@@ -13,7 +13,8 @@ namespace Chronos {
     const Camera* RenderContext::getCamera()const{
         return camera;
     }
-    const RenderTarget* RenderContext::getRenderTarget()const{
+
+    RenderTarget* RenderContext::getRenderTarget(){
         return rtv;
     }
 }

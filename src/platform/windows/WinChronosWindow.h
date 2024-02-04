@@ -20,8 +20,10 @@ namespace Chronos {
         ComPtr<ID3D11PixelShader> ps;
         ComPtr<ID3D11VertexShader> vs;
         ComPtr<ID3D11InputLayout> inputLayout;
+        ComPtr<ID3D11SamplerState> sampler;
 
         ID3D11ShaderResourceView* sceneTexture;
+        D3D11_VIEWPORT viewport;
 
         WNDCLASSEX wc;
         HWND hWnd;

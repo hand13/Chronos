@@ -61,14 +61,12 @@ namespace  Chronos {
         ThrowIfFailed(hr);
         createRenderTargetView();
 
-        D3D11_VIEWPORT viewport;
         viewport.TopLeftX = 0.f;
         viewport.TopLeftY = 0.f;
         viewport.Width = w;
         viewport.Height = h;
         viewport.MinDepth = D3D11_MIN_DEPTH;
         viewport.MaxDepth = D3D11_MAX_DEPTH;
-        deviceContext->RSSetViewports(1, &viewport);
         // RECT rect = {0,0,static_cast<LONG>(w),static_cast<LONG>(h)};
         // SetWindowPos(hWnd, HWND_TOP, 0, 0, width, height, SWP_NOMOVE);
     }
@@ -88,16 +86,19 @@ namespace  Chronos {
         UINT stride = sizeof(float)*5;
         UINT offset = 0;
         
+        deviceContext->RSSetViewports(1, &viewport);
         deviceContext->OMSetRenderTargets(1, rtv.GetAddressOf(), NULL);
-        float color[] = {0.8f,0.1f,0.3f,1.f};
+        float color[] = {0.0f,0.0f,0.0f,1.f};
         deviceContext->ClearRenderTargetView(rtv.Get(), color);
+        deviceContext->IASetInputLayout(inputLayout.Get());
         deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         deviceContext->IASetVertexBuffers(0, 1, verticesBuffer.GetAddressOf(), &stride, &offset);
         deviceContext->VSSetShader(vs.Get(), NULL, 0);
         deviceContext->PSSetShader(ps.Get(), NULL, 0);
         deviceContext->PSSetShaderResources(0, 1, &sceneTexture);
+        deviceContext->PSSetSamplers(0, 1, sampler.GetAddressOf());
         deviceContext->Draw(6, 0);
-
+        deviceContext->ClearState();
         ThrowIfFailed(swapChain->Present(1, 0));
     }
 
@@ -122,12 +123,12 @@ namespace  Chronos {
     void WinChronosWindow::createCanvasBuffer(){
         float vertices[] = {
             -1.f,-1.f,0,0,0,
-            1.f,-1.f,0,1.f,0,
             1.f,1.f,0,1.f,1.f,
+            1.f,-1.f,0,1.f,0,
 
             -1.f,-1.f,0,0,0,
+            -1.f,1.f,0,0,1.f,
             1.f,1.f,0,1.f,1.f,
-            -1.f,1.f,0,0,1.f
         };
         D3D11_BUFFER_DESC desc;
         ZeroMemory(&desc,sizeof(desc));
@@ -200,6 +201,41 @@ namespace  Chronos {
         hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,flags, &featureLevel, 1, D3D11_SDK_VERSION
         , &sd, swapChain.GetAddressOf(),d3d11Device.GetAddressOf(), NULL,deviceContext.GetAddressOf());
         ThrowIfFailed(hr);
+
+        D3D11_SAMPLER_DESC samplerDesc;
+        ZeroMemory(&samplerDesc, sizeof(samplerDesc));
+
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+        // The sampler does not use anisotropic filtering, so this parameter is ignored.
+        samplerDesc.MaxAnisotropy = 0;
+
+        // Specify how texture coordinates outside of the range 0..1 are resolved.
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+        // Use no special MIP clamping or bias.
+        samplerDesc.MipLODBias = 0.0f;
+        samplerDesc.MinLOD = 0;
+        samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+        // Don't use a comparison function.
+        samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+
+        // Border address mode is not used, so this parameter is ignored.
+        samplerDesc.BorderColor[0] = 0.0f;
+        samplerDesc.BorderColor[1] = 0.0f;
+        samplerDesc.BorderColor[2] = 0.0f;
+        samplerDesc.BorderColor[3] = 0.0f;
+
+        ComPtr<ID3D11SamplerState> sampler;
+        ThrowIfFailed(
+            d3d11Device->CreateSamplerState(
+                &samplerDesc,
+                &sampler
+            )
+        );
 
     }
 
