@@ -14,9 +14,10 @@ namespace Chronos {
         state = 1;
         option.renderType = 1;
         createWindow();
-        createRender();
-        initStartScene();
         window->init();
+        createRender();
+        renderer->init();
+        initStartScene();
     }
 
     void BaseChronos::createWindow(){
@@ -57,8 +58,10 @@ namespace Chronos {
     void BaseChronos::loop() {
         while(state == 1){
             if(window->processEvent()){
+
                 update();
                 render();
+
                 window->persent();
             }else{
                 state = 0;

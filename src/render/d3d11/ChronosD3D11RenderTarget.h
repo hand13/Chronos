@@ -14,7 +14,7 @@ namespace Chronos{
         void setRTV(ComPtr<ID3D11RenderTargetView> rtv);
         void setTexture(std::unique_ptr<ChronosD3D11Texture2D>&& texture);
         ID3D11RenderTargetView* getRTV();
-        virtual Texture2D* asTexture();
+        virtual Texture2D* asTexture()override;
         virtual ~ChronosD3D11RenderTarget();
     };
 }

@@ -32,7 +32,7 @@ std::vector<unsigned char> readDataFromFile(const char * fileName){
     unsigned char buffer[1024];
     size_t s = 0;
     while((s=fread(buffer, sizeof(unsigned char),1024,file))>0) {
-        result.insert(result.end(),std::begin(result),std::begin(result) + s);
+        result.insert(result.end(),std::begin(buffer),std::begin(buffer) + s);
     }
     fclose(file);
     file = nullptr;

@@ -52,12 +52,12 @@ namespace Chronos{
         D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
         ZeroMemory(&srvd,sizeof(srvd));
 
-        srvd.Format = DXGI_FORMAT_R8G8_B8G8_UNORM;
+        srvd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         srvd.ViewDimension= D3D11_SRV_DIMENSION_TEXTURE2D;
-        srvd.Texture2D.MipLevels = 0;
+        srvd.Texture2D.MipLevels = 1;
 
-        deivice->CreateShaderResourceView(pBackBuffer.Get(), &srvd,srv.GetAddressOf());
-        std::unique_ptr<ChronosD3D11Texture2D> texture;
+        ThrowIfFailed(deivice->CreateShaderResourceView(pBackBuffer.Get(), &srvd,srv.GetAddressOf()));
+        std::unique_ptr<ChronosD3D11Texture2D> texture = std::make_unique<ChronosD3D11Texture2D>();
         texture->setSRV(srv);
         result->setTexture(std::move(texture));
         return result;

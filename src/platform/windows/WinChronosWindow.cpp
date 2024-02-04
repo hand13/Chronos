@@ -39,6 +39,8 @@ namespace  Chronos {
         // Show the window
         this->createD3D11DeviceAndSwapChain();
         this->createRenderTargetView();
+        createCanvasBuffer();
+        createCanvaShader();
     }
 
     void WinChronosWindow::show() {
@@ -83,12 +85,14 @@ namespace  Chronos {
         if(sceneTexture == nullptr){
             Panic(L"fatal");
         }
+        UINT stride = sizeof(float)*5;
+        UINT offset = 0;
         
         deviceContext->OMSetRenderTargets(1, rtv.GetAddressOf(), NULL);
         float color[] = {0.8f,0.1f,0.3f,1.f};
         deviceContext->ClearRenderTargetView(rtv.Get(), color);
         deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        deviceContext->IASetVertexBuffers(0, 1, verticesBuffer.GetAddressOf(), 0, 0);
+        deviceContext->IASetVertexBuffers(0, 1, verticesBuffer.GetAddressOf(), &stride, &offset);
         deviceContext->VSSetShader(vs.Get(), NULL, 0);
         deviceContext->PSSetShader(ps.Get(), NULL, 0);
         deviceContext->PSSetShaderResources(0, 1, &sceneTexture);
@@ -138,12 +142,12 @@ namespace  Chronos {
     }
     void WinChronosWindow::createCanvaShader(){
         std::vector<unsigned char> vbuffer =readDataFromFile("resources/shader/d3d11/basic_vert.cso");
-        d3d11Device->CreateVertexShader(vbuffer.data()
-            , vbuffer.size(),NULL,vs.GetAddressOf());
+        ThrowIfFailed(d3d11Device->CreateVertexShader(vbuffer.data()
+            , vbuffer.size(),NULL,vs.GetAddressOf()));
 
         std::vector<unsigned char> pbuffer =readDataFromFile("resources/shader/d3d11/basic_pixel.cso");
-        d3d11Device->CreatePixelShader(pbuffer.data()
-            , pbuffer.size(),NULL,ps.GetAddressOf());
+        ThrowIfFailed(d3d11Device->CreatePixelShader(pbuffer.data()
+            , pbuffer.size(),NULL,ps.GetAddressOf()));
         const D3D11_INPUT_ELEMENT_DESC basicVertexLayoutDesc[] =
             {
                 { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },

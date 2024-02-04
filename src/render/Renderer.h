@@ -8,6 +8,7 @@ namespace Chronos {
         public:
         virtual void setRenderContext(RenderContext * rct) = 0;
         virtual void renderMesh(Mesh * mesh) = 0;
+        virtual void init() = 0;
 
         virtual std::unique_ptr<RenderTarget> createRenderTarget() = 0;
         virtual ~Renderer(){};

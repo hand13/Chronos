@@ -12,12 +12,12 @@ namespace Chronos {
         ComPtr<ID3D11DeviceContext> deviceContext;
 
         public:
-        void init();
+        virtual void init()override;
         void createDefaultDevice(ID3D11Device** device,ID3D11DeviceContext** deviceContext);
         void createDefaultRenderTarget(ID3D11RenderTargetView** rtv);
-        virtual void setRenderContext(RenderContext * rct);
-        virtual void renderMesh(Mesh * mesh);
-        virtual std::unique_ptr<RenderTarget> createRenderTarget();
+        virtual void setRenderContext(RenderContext * rct)override;
+        virtual void renderMesh(Mesh * mesh)override;
+        virtual std::unique_ptr<RenderTarget> createRenderTarget()override;
         virtual ~D3D11Renderer();
     };
 };
