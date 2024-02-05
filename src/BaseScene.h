@@ -2,13 +2,13 @@
 #include "Scene.h"
 #include <memory>
 #include "render/RenderContext.h"
-#include "render/Mesh.h"
+#include "render/BaseRenderableObject.h"
 
 namespace Chronos {
     class BaseScene:public Scene{
         protected:
         std::unique_ptr<RenderTarget> rt;
-        Mesh mesh;
+        BaseRenderableObject robj;
         RenderContext rc;
         Camera camera;
         virtual RenderTarget* getRenderTarget();

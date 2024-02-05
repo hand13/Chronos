@@ -7,7 +7,7 @@
 #include "AttributeSet.h"
 #include "RenderState.h"
 namespace Chronos {
-    class Mesh :public RenderableObject{
+    class BaseRenderableObject:public RenderableObject{
         private:
         std::vector<float> vertices;
         std::vector<int> indices;
@@ -15,7 +15,7 @@ namespace Chronos {
         Geometry::AttributeSet as;
         std::unique_ptr<RenderState> renderState;//render 所需状态
         public:
-        Mesh();
+        BaseRenderableObject();
 
         virtual void setDirty(bool dirty)override;
         virtual void initRenderState(std::unique_ptr<RenderState>&& renderState)override;
@@ -34,5 +34,6 @@ namespace Chronos {
         const std::vector<float>& getVertices()const;
         const std::vector<int>& getIndices()const;
         Material* getMaterial();
+        virtual ~BaseRenderableObject(){}
     };
 }

@@ -236,6 +236,7 @@ namespace  Chronos {
                 &sampler
             )
         );
+        this->sampler = sampler;
 
     }
 

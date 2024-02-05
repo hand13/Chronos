@@ -1,4 +1,4 @@
-#include "D3D11MeshRenderState.h"
+#include "D3D11BaseRenderState.h"
 #include <cstddef>
 #include <d3d11.h>
 #include <minwindef.h>
@@ -6,22 +6,22 @@
 #include "common.h"
 #include "../../Utils.h"
 namespace Chronos{
-    D3D11MeshRenderState::D3D11MeshRenderState(D3D11Renderer * render,Mesh * mesh){
+    D3D11BaseRenderState::D3D11BaseRenderState(D3D11Renderer * render,BaseRenderableObject * robj){
         dirty = true;
         this->render = render;
-        this->mesh = mesh;
+        this->robj = robj;
     }
 
-    void D3D11MeshRenderState::setDirty(bool dirty){
+    void D3D11BaseRenderState::setDirty(bool dirty){
         this->dirty= dirty;
     }
-    bool D3D11MeshRenderState::isDirty(){
+    bool D3D11BaseRenderState::isDirty(){
         return dirty;
     }
-    void D3D11MeshRenderState::update(){
+    void D3D11BaseRenderState::update(){
         ID3D11Device * device = render->getDevice();
 
-        std::vector<float> vertices = mesh->getVertices();
+        std::vector<float> vertices = robj->getVertices();
         D3D11_BUFFER_DESC desc;
         ZeroMemory(&desc,sizeof(desc));
         desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -41,7 +41,7 @@ namespace Chronos{
         ThrowIfFailed(device->CreatePixelShader(pbuffer.data()
             , pbuffer.size(),NULL,pixelShader.GetAddressOf()));
 
-        const D3D11_INPUT_ELEMENT_DESC basicVertexLayoutDesc[] =
+        const D3D11_INPUT_ELEMENT_DESC BaseVertexLayoutDesc[] =
 
             {
                 { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -50,8 +50,8 @@ namespace Chronos{
 
         ThrowIfFailed(
             device->CreateInputLayout(
-                basicVertexLayoutDesc,
-                ARRAYSIZE(basicVertexLayoutDesc),
+                BaseVertexLayoutDesc,
+                ARRAYSIZE(BaseVertexLayoutDesc),
                 vbuffer.data(),
                 vbuffer.size(),
                 inputLayout.GetAddressOf())
@@ -60,9 +60,9 @@ namespace Chronos{
             dirty = false;
     }
 
-    void D3D11MeshRenderState::apply(){
+    void D3D11BaseRenderState::apply(){
 
-        UINT stride = this->mesh->getAttributeSet()->totalSize();
+        UINT stride = this->robj->getAttributeSet()->totalSize();
         UINT offset = 0;
         ID3D11DeviceContext* dc = render->getDeviceContext();
         dc->IASetInputLayout(inputLayout.Get());

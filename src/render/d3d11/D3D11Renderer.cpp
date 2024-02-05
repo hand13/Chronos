@@ -9,7 +9,7 @@
 #include <minwinbase.h>
 #include <wrl/client.h>
 #include "ChronosD3D11RenderTarget.h"
-#include "D3D11MeshRenderState.h"
+#include "D3D11BaseRenderState.h"
 #include "common.h"
 namespace Chronos{
 
@@ -61,20 +61,19 @@ namespace Chronos{
     void D3D11Renderer::renderObject(RenderableObject * mesh){
     }
 
-    void D3D11Renderer::renderMesh(Mesh* mesh){
+    void D3D11Renderer::renderBaseRenderableObject(BaseRenderableObject* robj){
 
-        if(mesh->getRenderState() == nullptr){
-            mesh->initRenderState(std::make_unique<D3D11MeshRenderState>(this,mesh));
-            mesh->setDirty(true);
+        if(robj->getRenderState() == nullptr){
+            robj->initRenderState(std::make_unique<D3D11BaseRenderState>(this,robj));
+            robj->setDirty(true);
         }
-        if(mesh->getRenderState()->isDirty()){
-            mesh->getRenderState()->update();
+        if(robj->getRenderState()->isDirty()){
+            robj->getRenderState()->update();
         }
         deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        RenderState* rs = mesh->getRenderState();
+        RenderState* rs = robj->getRenderState();
         rs->apply();
-        // mesh->getMaterial()->apply(); disable tmp
-       deviceContext->Draw(mesh->getVerticesCount(),0);
+       deviceContext->Draw(robj->getVerticesCount(),0);
 
     }
 

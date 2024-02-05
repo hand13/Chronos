@@ -3,7 +3,7 @@
 #include <wrl/client.h>
 #include "../Renderer.h"
 #include "../RenderContext.h"
-#include "../Mesh.h"
+#include "../BaseRenderableObject.h"
 using Microsoft::WRL::ComPtr;
 namespace Chronos {
     class D3D11Renderer:public Renderer{
@@ -32,7 +32,7 @@ namespace Chronos {
         virtual void setRenderContext(RenderContext * rct)override;
 
         virtual void renderObject(RenderableObject * robj)override;
-        virtual void renderMesh(Mesh* mesh)override;
+        virtual void renderBaseRenderableObject(BaseRenderableObject * robj)override;
 
         D3D11_VIEWPORT genViewport(const Camera& cmamea);
         virtual std::unique_ptr<RenderTarget> createRenderTarget()override;
