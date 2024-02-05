@@ -14,6 +14,7 @@ namespace Chronos {
         std::unique_ptr<Renderer> renderer;
         unsigned int state = 0;
         Option option;
+        ResourceLoader resourceLoader;
 
         public:
         BaseChronos();
@@ -21,6 +22,7 @@ namespace Chronos {
         virtual void begin()override;
         virtual void loop()override;
         virtual void shutdown() override;
+        virtual ResourceLoader* getResourceLoader() override;
 
         virtual Renderer* getRender()override;
         virtual ChronosWindow* getWindow()override;

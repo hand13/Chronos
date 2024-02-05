@@ -39,6 +39,9 @@ namespace Chronos {
         #endif
     }
 
+    ResourceLoader* BaseChronos::getResourceLoader(){
+        return &resourceLoader;
+    }
     void BaseChronos::shutdown() {
         state = 0;
     }

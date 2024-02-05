@@ -1,5 +1,11 @@
 #pragma once
 typedef size_t TypeSize;
+
+namespace Chronos {
+    enum ShaderType {
+        VERTEX_SHADER
+    };
+}
 namespace Geometry {
     enum Type {
         INT,

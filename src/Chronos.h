@@ -1,6 +1,7 @@
 #pragma once
 #include "render/Renderer.h"
 #include "ChronosWindow.h"
+#include "ResourceLoader.h"
 
 namespace Chronos {
     class Chronos {
@@ -10,6 +11,7 @@ namespace Chronos {
         virtual void shutdown() = 0;
         virtual Renderer* getRender() = 0;
         virtual ChronosWindow* getWindow() = 0;
+        virtual ResourceLoader * getResourceLoader() = 0;
         virtual void loop() = 0;
         protected:
         virtual void render() = 0;

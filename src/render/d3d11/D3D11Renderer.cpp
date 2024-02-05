@@ -5,6 +5,7 @@
 #include <d3d11.h>
 #include <d3dcommon.h>
 #include <dxgiformat.h>
+#include <exception>
 #include <memory>
 #include <minwinbase.h>
 #include <wrl/client.h>
@@ -112,6 +113,12 @@ namespace Chronos{
         return result;
     }
 
+    std::shared_ptr<Shader> D3D11Renderer::loadShader(const std::string& path,ShaderType shaderType){
+        throw std::exception("todo");
+    }
+    std::shared_ptr<Texture> D3D11Renderer::loaderTexture(const std::string& path,TextureParameter tparam){
+        throw std::exception("todo");
+    }
     D3D11Renderer::~D3D11Renderer(){
     }
 }
