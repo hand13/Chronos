@@ -37,7 +37,7 @@ namespace Chronos {
         virtual void renderBaseRenderableObject(BaseRenderableObject * robj)override;
 
         D3D11_VIEWPORT genViewport(const Camera& cmamea);
-        virtual std::unique_ptr<RenderTarget> createRenderTarget()override;
+        virtual std::unique_ptr<RenderTarget> createRenderTarget(const SizeU& size)override;
         virtual ~D3D11Renderer();
     };
 };

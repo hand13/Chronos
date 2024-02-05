@@ -3,7 +3,8 @@ typedef size_t TypeSize;
 
 namespace Chronos {
     enum ShaderType {
-        VERTEX_SHADER
+        VERTEX_SHADER,
+        PIXEL_SHADER
     };
 }
 namespace Geometry {

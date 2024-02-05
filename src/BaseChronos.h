@@ -5,6 +5,7 @@
 #include "render/Renderer.h"
 #include "ChronosWindow.h"
 #include "Option.h"
+#include "Utils.h"
 namespace Chronos {
     class BaseChronos:public Chronos{
         protected:
@@ -15,7 +16,7 @@ namespace Chronos {
         unsigned int state = 0;
         Option option;
         ResourceLoader resourceLoader;
-
+        SizeU windowSize;
         public:
         BaseChronos();
         virtual void init()override;
@@ -26,7 +27,8 @@ namespace Chronos {
 
         virtual Renderer* getRender()override;
         virtual ChronosWindow* getWindow()override;
-
+        virtual void changeSize();
+        virtual SizeU getWindowSize()const override;
         protected:
         virtual void initStartScene() = 0;
         void createWindow();

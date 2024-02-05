@@ -15,9 +15,14 @@ namespace Chronos {
         option.renderType = 1;
         createWindow();
         window->init();
+        window->getSize(windowSize.width,windowSize.height);
         createRender();
         renderer->init();
         initStartScene();
+    }
+
+    void BaseChronos::changeSize(){
+        mainScene->changeSize(windowSize);
     }
 
     void BaseChronos::createWindow(){
@@ -58,9 +63,20 @@ namespace Chronos {
         window->show();
     }
     
+    SizeU BaseChronos::getWindowSize()const {
+        return windowSize;
+    }
+
     void BaseChronos::loop() {
         while(state == 1){
             if(window->processEvent()){
+
+                SizeU tmpSize;
+                window->getSize(tmpSize.width, tmpSize.height);
+                if(tmpSize.width != windowSize.width || tmpSize.height != windowSize.height){
+                    windowSize = tmpSize;
+                    changeSize();
+                }
 
                 update();
                 render();

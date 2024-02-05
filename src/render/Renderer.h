@@ -6,6 +6,7 @@
 #include <string>
 #include "Shader.h"
 #include "Types.h"
+#include "../Utils.h"
 
 namespace Chronos {
     class Renderer{
@@ -20,7 +21,7 @@ namespace Chronos {
         virtual std::shared_ptr<Shader> loadShader(const std::string& path,ShaderType shaderType) = 0;
         virtual std::shared_ptr<Texture> loaderTexture(const std::string& path,TextureParameter tparam) =0;
 
-        virtual std::unique_ptr<RenderTarget> createRenderTarget() = 0;
+        virtual std::unique_ptr<RenderTarget> createRenderTarget(const SizeU& size) = 0;
 
         virtual ~Renderer(){};
     };

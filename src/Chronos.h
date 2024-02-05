@@ -6,6 +6,7 @@
 namespace Chronos {
     class Chronos {
         public:
+
         virtual void init() = 0;
         virtual void begin() = 0;
         virtual void shutdown() = 0;
@@ -13,6 +14,8 @@ namespace Chronos {
         virtual ChronosWindow* getWindow() = 0;
         virtual ResourceLoader * getResourceLoader() = 0;
         virtual void loop() = 0;
+        virtual SizeU getWindowSize()const = 0;
+
         protected:
         virtual void render() = 0;
         virtual void update() = 0;

@@ -82,14 +82,11 @@ namespace Chronos{
         deviceContext->ClearState();
     }
 
-    std::unique_ptr<RenderTarget> D3D11Renderer::createRenderTarget(){
+    std::unique_ptr<RenderTarget> D3D11Renderer::createRenderTarget(const SizeU& size){
 
-        WinChronosWindow * wc = dynamic_cast<WinChronosWindow*>(Chronos::INSTANCE->getWindow());
         ComPtr<ID3D11RenderTargetView> rtv;
-        unsigned int w,h;
-        wc->getSize(w, h);//todo
         ComPtr<ID3D11Texture2D> pBackBuffer;
-        CD3D11_TEXTURE2D_DESC tdesc(DXGI_FORMAT_R8G8B8A8_UNORM,w,h);
+        CD3D11_TEXTURE2D_DESC tdesc(DXGI_FORMAT_R8G8B8A8_UNORM,size.width,size.height);
         tdesc.BindFlags =D3D11_BIND_RENDER_TARGET |D3D11_BIND_SHADER_RESOURCE;
         tdesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
         D3D11_SUBRESOURCE_DATA sub;

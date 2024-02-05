@@ -32,16 +32,21 @@ namespace Chronos {
     }
     void BaseScene::initRenderState(){
         Renderer * render = Chronos::INSTANCE->getRender();
-        rt = render->createRenderTarget();
+        rt = render->createRenderTarget(Chronos::INSTANCE->getWindowSize());
         rc.setRenderTarget(rt.get());
 
-        ChronosWindow * wc = Chronos::INSTANCE->getWindow();
-        unsigned int w,h;
-        wc->getSize(w, h);
+        SizeU size = Chronos::INSTANCE->getWindowSize();
+        camera.setWidth(size.width);
+        camera.setHeight(size.height);
 
-        camera.setWidth(w);
-        camera.setHeight(h);
+        rc.setCamera(&camera);
+    }
 
+    void BaseScene::changeSize(const SizeU& windowSize){
+        rt = Chronos::INSTANCE->getRender()->createRenderTarget(windowSize);
+        rc.setRenderTarget(rt.get());
+        camera.setWidth(windowSize.width);
+        camera.setHeight(windowSize.height);
         rc.setCamera(&camera);
     }
 
