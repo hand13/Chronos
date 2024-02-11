@@ -21,6 +21,7 @@ namespace Chronos{
         }
         device = wc->shareDeivce();
         deviceContext = wc->shareDeviceContext();
+        createCBuffer();
         currentContext = nullptr;
         currentRTV = nullptr;
         ZeroMemory(&viewport,sizeof(viewport));
@@ -52,11 +53,25 @@ namespace Chronos{
         return dv;
     }
 
+    void D3D11Renderer::createCBuffer() {
+        D3D11_BUFFER_DESC bdesc;
+        ZeroMemory(&bdesc,sizeof(bdesc));
+        bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bdesc.Usage = D3D11_USAGE_DEFAULT;
+        bdesc.ByteWidth = sizeof(CameraBuffer);
+        ThrowIfFailed(device->CreateBuffer(&bdesc, nullptr,cbuffer.GetAddressOf()));
+    }
+
     void D3D11Renderer::beginRender() {
         deviceContext->RSSetViewports(1, &viewport);
         deviceContext->OMSetRenderTargets(1, &currentRTV, NULL);
-        float color[] = {1.0f,0.1f,0.3f,1.f};
+        float color[] = {1.0f,0.f,0.0f,1.f};
         deviceContext->ClearRenderTargetView(currentRTV, color);
+
+        Camera* camera = currentContext->getCamera();
+        CameraBuffer cameraBuffer = camera->getCameraBuffer();
+        deviceContext->UpdateSubresource(cbuffer.Get(), 0, 0, &cameraBuffer,sizeof(cameraBuffer),0);
+        deviceContext->VSSetConstantBuffers(0, 1, cbuffer.GetAddressOf());
     }
 
     void D3D11Renderer::renderObject(RenderableObject * mesh){

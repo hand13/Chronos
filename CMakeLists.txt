@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22)
 
 find_package(fmt CONFIG REQUIRED)
 find_package(Poco CONFIG REQUIRED Foundation)
- find_package(Eigen3 CONFIG REQUIRED)
+find_package(Eigen3 CONFIG REQUIRED NO_MODULE)
 
 set(CMAKE_CXX_STANDARD 17)
 add_compile_options(-Wall)
@@ -39,17 +39,17 @@ aux_source_directory("src/render" RENDER_SRC)
 aux_source_directory("src/render/d3d11" D3D11_RENDER_SRC)
 
 
-add_library(render STATIC ${RENDER_SRC})
+# add_library(render STATIC ${RENDER_SRC})
 
-add_library(d3d11render STATIC ${D3D11_RENDER_SRC})
+# add_library(d3d11render STATIC ${D3D11_RENDER_SRC})
 
-add_executable(Chronos ${SRC} ${PLATFORM_WIN_SRC})
+add_executable(Chronos ${SRC} ${PLATFORM_WIN_SRC} ${D3D11_RENDER_SRC} ${RENDER_SRC})
 
 add_executable(test test/test.cpp)
 
 target_link_libraries(test PRIVATE Poco::Foundation)
 
-target_link_libraries(Chronos PRIVATE render d3d11render dxgi d3d11 Eigen3::Eigen Poco::Foundation fmt::fmt)
+target_link_libraries(Chronos PRIVATE render d3d11render dxgi d3d11  Eigen3::Eigen  Poco::Foundation fmt::fmt)
 
 # target_link_libraries(glworld glfw3 glad imgui_dx12 d3d12 dxgi assimp-vc142-mtd)
 

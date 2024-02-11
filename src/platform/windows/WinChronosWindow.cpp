@@ -88,7 +88,7 @@ namespace  Chronos {
         
         deviceContext->RSSetViewports(1, &viewport);
         deviceContext->OMSetRenderTargets(1, rtv.GetAddressOf(), NULL);
-        float color[] = {0.0f,0.0f,0.0f,1.f};
+        float color[] = {0.0f,0.0f,1.0f,1.f};
         deviceContext->ClearRenderTargetView(rtv.Get(), color);
         deviceContext->IASetInputLayout(inputLayout.Get());
         deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

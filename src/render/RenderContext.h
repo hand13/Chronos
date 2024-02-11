@@ -10,7 +10,7 @@ namespace Chronos{
         RenderContext();
         void setCamera(Camera* camera);
         void setRenderTarget(RenderTarget* rtv);
-        const Camera* getCamera()const;
+        Camera* getCamera();
         RenderTarget* getRenderTarget();
         virtual ~RenderContext(){}
     };

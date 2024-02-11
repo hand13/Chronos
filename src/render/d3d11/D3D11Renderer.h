@@ -13,7 +13,10 @@ namespace Chronos {
         ComPtr<ID3D11DeviceContext> deviceContext;
         RenderContext * currentContext;
         ID3D11RenderTargetView * currentRTV;
+        ComPtr<ID3D11Buffer> cbuffer;
         D3D11_VIEWPORT viewport;
+
+        void createCBuffer();
 
         public:
         virtual void init()override;
