@@ -106,7 +106,7 @@ namespace Chronos{
         tdesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
         D3D11_SUBRESOURCE_DATA sub;
         ZeroMemory(&sub,sizeof(sub));
-        ThrowIfFailed(device->CreateTexture2D(&tdesc,NULL,&pBackBuffer));
+        ThrowIfFailed(device->CreateTexture2D(&tdesc,NULL,pBackBuffer.GetAddressOf()));
         ThrowIfFailed(device->CreateRenderTargetView(pBackBuffer.Get(), NULL,rtv.GetAddressOf()));
         std::unique_ptr<ChronosD3D11RenderTarget> result = std::make_unique<ChronosD3D11RenderTarget>();
         result->setRTV(rtv);

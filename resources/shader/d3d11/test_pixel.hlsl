@@ -6,7 +6,7 @@ struct PixelShaderInput{
 // Texture2D MyTex;
 float4 main(PixelShaderInput input):SV_Target {
     // return float4(1.f,1.f,1.f,1.f);
-    float2 uv = float2(input.pos.x,input.pos.y)/600.f;
+    float2 uv = input.uv;
 
     float dis = distance(uv,float2(uv.x,sin(uv.x*10.0)/10.0 + 0.5));
     float3 color = float3(0.0353, 0.3373, 0.9451);

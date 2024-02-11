@@ -5,7 +5,7 @@ find_package(fmt CONFIG REQUIRED)
 find_package(Poco CONFIG REQUIRED Foundation)
 find_package(Eigen3 CONFIG REQUIRED NO_MODULE)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 add_compile_options(-Wall)
 # set(THIRD_PARTY_DIR ${PROJECT_SOURCE_DIR}/third_party)
 # set(GLAD_DIR ${THIRD_PARTY_DIR}/glad)
@@ -49,7 +49,7 @@ add_executable(test test/test.cpp)
 
 target_link_libraries(test PRIVATE Poco::Foundation)
 
-target_link_libraries(Chronos PRIVATE render d3d11render dxgi d3d11  Eigen3::Eigen  Poco::Foundation fmt::fmt)
+target_link_libraries(Chronos PRIVATE dxgi d3d11  Eigen3::Eigen  Poco::Foundation fmt::fmt)
 
 # target_link_libraries(glworld glfw3 glad imgui_dx12 d3d12 dxgi assimp-vc142-mtd)
 

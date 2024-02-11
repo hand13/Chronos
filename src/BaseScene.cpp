@@ -14,13 +14,13 @@ namespace Chronos {
         initRenderState();
         initScene();
         std::vector<float> vertices = {
-            -1.f,-1.f,0,0,0,
-            1.f,1.f,0,1.f,1.f,
-            1.f,-1.f,0,1.f,0,
+            -1.f,-1.f,0.f,0,0,
+            1.f,1.f,0.f,1.f,1.f,
+            1.f,-1.f,0.f,1.f,0,
 
-            -1.f,-1.f,0,0,0,
-            -1.f,1.f,0,0,1.f,
-            1.f,1.f,0,1.f,1.f,
+            -1.f,-1.f,0.f,0,0,
+            -1.f,1.f,0.f,0,1.f,
+            1.f,1.f,0.f,1.f,1.f,
         };
         robj.setVertices(vertices);
         Geometry::AttributeSet as;

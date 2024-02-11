@@ -122,13 +122,13 @@ namespace  Chronos {
 
     void WinChronosWindow::createCanvasBuffer(){
         float vertices[] = {
-            -1.f,-1.f,0,0,0,
-            1.f,1.f,0,1.f,1.f,
-            1.f,-1.f,0,1.f,0,
+            -1.f,-1.f,0,0,1.f,
+            1.f,1.f,0,1.f,0.f,
+            1.f,-1.f,0,1.f,1.f,
 
-            -1.f,-1.f,0,0,0,
-            -1.f,1.f,0,0,1.f,
-            1.f,1.f,0,1.f,1.f,
+            -1.f,-1.f,0,0,1.f,
+            -1.f,1.f,0,0,0.f,
+            1.f,1.f,0,1.f,0.f,
         };
         D3D11_BUFFER_DESC desc;
         ZeroMemory(&desc,sizeof(desc));
