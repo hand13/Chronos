@@ -12,16 +12,21 @@ namespace Chronos {
         RenderContext rc;
         Camera camera;
 
-        virtual void init();
+        int lastMouseX;
+        int lastMouseY;
+
+        virtual void init()override;
         virtual void initRenderState();
         virtual void initScene() = 0;
         public:
-        virtual RenderTarget* getRenderTarget();
-        virtual Texture2D* getRenderTargetAsTexture();
-        virtual void begin();
-        virtual void render();
-        virtual void update();
-        virtual void changeSize(const SizeU& windowSize);
+        BaseScene();
+        virtual RenderTarget* getRenderTarget()override;
+        virtual Texture2D* getRenderTargetAsTexture()override;
+        virtual void begin()override;
+        virtual void render()override;
+        virtual void update()override;
+        virtual void processEvent(const IOEvent& event)override;
+        virtual void changeSize(const SizeU& windowSize)override;
         public:
         virtual ~BaseScene();
     };

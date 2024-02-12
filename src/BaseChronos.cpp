@@ -69,21 +69,24 @@ namespace Chronos {
 
     void BaseChronos::loop() {
         while(state == 1){
-            if(window->processEvent()){
-
+            auto es = window->processEvent();
+            for(auto & e : es){
+                if(e.eventType == QUIT){
+                    state = 0;
+                }else {
+                    mainScene->processEvent(e);
+                }
+            }
+            if(state){
                 SizeU tmpSize;
                 window->getSize(tmpSize.width, tmpSize.height);
                 if(tmpSize.width != windowSize.width || tmpSize.height != windowSize.height){
                     windowSize = tmpSize;
                     changeSize();
                 }
-
                 update();
                 render();
-
                 window->persent();
-            }else{
-                state = 0;
             }
         }
     }

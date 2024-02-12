@@ -1,6 +1,7 @@
 #include "../../ChronosWindow.h"
 #include <Windows.h>
 #include <minwindef.h>
+#include <vector>
 #include <windef.h>
 #include <winuser.h>
 #include <dxgi.h>
@@ -37,7 +38,7 @@ namespace Chronos {
         virtual void getSize(unsigned int & w,unsigned int & h)override;
         virtual void init() override;
         virtual void show() override;
-        virtual bool processEvent()override;
+        virtual std::vector<IOEvent> processEvent()override;
         virtual void persent() override;
         virtual void displayOffscreen(Texture2D * rt)override;
         void draw();

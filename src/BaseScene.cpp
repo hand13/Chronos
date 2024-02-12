@@ -3,6 +3,11 @@
 #include <vector>
 namespace Chronos {
 
+    BaseScene::BaseScene(){
+        lastMouseX = 0;
+        lastMouseY = 0;
+    }
+
     RenderTarget* BaseScene::getRenderTarget(){
         return rt.get();
     }
@@ -58,6 +63,28 @@ namespace Chronos {
         render->beginRender();
         render->renderBaseRenderableObject(&robj);
         render->endRender();
+    }
+
+    void BaseScene::processEvent(const IOEvent& event){
+        if(event.eventType == MOUSE_MOVE){
+            if(lastMouseX == 0 && lastMouseY == 0){
+                lastMouseX = event.detail.xy.x;
+                lastMouseY = event.detail.xy.y;
+                return;
+            }
+            int deltaX = event.detail.xy.x - lastMouseX;
+            int deltaY = event.detail.xy.y - lastMouseY;
+
+            lastMouseX = event.detail.xy.x;
+            lastMouseY = event.detail.xy.y;
+
+            float yawSpeed = 0.1;
+            float deltaYaw = static_cast<float>(deltaX) * yawSpeed;
+            camera.addYaw(deltaYaw);
+            float pitchSpeed = 0.1;
+            float deltaPitch = static_cast<float>(deltaY) * pitchSpeed;
+            camera.addPitch(-deltaPitch);
+        }
     }
 
     void BaseScene::update(){

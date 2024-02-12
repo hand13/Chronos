@@ -102,7 +102,8 @@ namespace  Chronos {
         ThrowIfFailed(swapChain->Present(1, 0));
     }
 
-    bool WinChronosWindow::processEvent(){
+    std::vector<IOEvent> WinChronosWindow::processEvent(){
+        std::vector<IOEvent> result;
         bool shouldRun = true;
         MSG msg;
         while (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
@@ -112,8 +113,22 @@ namespace  Chronos {
                 shouldRun = false;
                 break;
             }
+            if(msg.message == WM_MOUSEMOVE){
+                int x = LOWORD(msg.lParam);
+                int y = HIWORD(msg.lParam);
+                IOEvent e;
+                e.eventType = MOUSE_MOVE;
+                e.detail.xy={.x = x,.y = y};
+                result.push_back(e);
+                //
+            }
         }
-        return shouldRun;
+        if(!shouldRun) {
+            IOEvent e;
+            e.eventType = QUIT;
+            result.push_back(e);
+        }
+        return result;
     }
 
     void WinChronosWindow::persent() {
