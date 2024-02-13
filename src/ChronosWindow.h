@@ -12,6 +12,8 @@ namespace Chronos {
         virtual std::vector<IOEvent> processEvent() = 0;
         virtual void displayOffscreen(Texture2D * rt) = 0;
         virtual void persent() = 0;
+        virtual void captureCursor() = 0;
+        virtual void releaseCursor() = 0;
         virtual ~ChronosWindow(){}
     };
     std::unique_ptr<ChronosWindow> CreateWin();

@@ -6,6 +6,8 @@ namespace Chronos {
     BaseScene::BaseScene(){
         lastMouseX = 0;
         lastMouseY = 0;
+        lButtonPressed = false;
+        shouldInitMousePos = true;
     }
 
     RenderTarget* BaseScene::getRenderTarget(){
@@ -66,35 +68,45 @@ namespace Chronos {
     }
 
     void BaseScene::processEvent(const IOEvent& event){
-        if(event.eventType == MOUSE_MOVE){
-            if(lastMouseX == 0 && lastMouseY == 0){
+        if(event.eventType == MOUSE_MOVE && lButtonPressed){
+
+            if(shouldInitMousePos){
                 lastMouseX = event.detail.xy.x;
                 lastMouseY = event.detail.xy.y;
+                shouldInitMousePos = false;
                 return;
             }
+
             int deltaX = event.detail.xy.x - lastMouseX;
             int deltaY = event.detail.xy.y - lastMouseY;
 
             lastMouseX = event.detail.xy.x;
             lastMouseY = event.detail.xy.y;
 
-            float yawSpeed = 0.1;
+            float yawSpeed = 0.3;
             float deltaYaw = static_cast<float>(deltaX) * yawSpeed;
             camera.addYaw(deltaYaw);
-            float pitchSpeed = 0.1;
+            float pitchSpeed = 0.3;
             float deltaPitch = static_cast<float>(deltaY) * pitchSpeed;
             camera.addPitch(-deltaPitch);
         }
         if(event.eventType == KEY_PRESSED){
-            if(event.detail.key == CHVK_DOWN){
+            if(event.detail.key == CHVK_DOWN || event.detail.key == CHVK_S){
                 camera.moveForward(-0.1f);
-            }else if(event.detail.key == CHVK_UP){
+            }else if(event.detail.key == CHVK_UP || event.detail.key == CHVK_W){
                 camera.moveForward(0.1f);
-            }else if(event.detail.key == CHVK_RIGHT) {
+            }else if(event.detail.key == CHVK_RIGHT || event.detail.key == CHVK_D) {
                 camera.moveRight(0.1f);
-            }else if(event.detail.key == CHVK_LEFT) {
+            }else if(event.detail.key == CHVK_LEFT || event.detail.key == CHVK_A) {
                 camera.moveRight(-0.1f);
+            }else if(event.detail.key == CHVK_LBUTTON){
+                lButtonPressed = true;
             }
+        }
+        if(event.eventType == kEY_RELEASED){
+            if(event.detail.key == CHVK_LBUTTON){
+                lButtonPressed = false;            }
+                shouldInitMousePos = true;
         }
     }
 

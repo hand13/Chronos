@@ -1,6 +1,7 @@
 #include "../../ChronosWindow.h"
 #include <Windows.h>
 #include <minwindef.h>
+#include <rpcndr.h>
 #include <vector>
 #include <windef.h>
 #include <winuser.h>
@@ -30,6 +31,9 @@ namespace Chronos {
         HWND hWnd;
         unsigned int width;
         unsigned int height;
+
+        boolean cursorCapture;
+
         public:
         WinChronosWindow();
         void createD3D11DeviceAndSwapChain();
@@ -48,6 +52,10 @@ namespace Chronos {
         inline ComPtr<ID3D11DeviceContext> shareDeviceContext(){
             return deviceContext;
         }
+
+        virtual void captureCursor()override;
+        virtual void releaseCursor()override;
+
         virtual ~WinChronosWindow() override;
         private:
 

@@ -14,6 +14,8 @@ namespace Chronos {
 
         int lastMouseX;
         int lastMouseY;
+        bool lButtonPressed;
+        bool shouldInitMousePos;
 
         virtual void init()override;
         virtual void initRenderState();

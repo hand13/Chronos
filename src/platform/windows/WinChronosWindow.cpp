@@ -28,6 +28,7 @@ namespace  Chronos {
         width = 800;
         height = 600;
         sceneTexture = nullptr;
+        cursorCapture = false;
     }
     void WinChronosWindow::init(){
         wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, TEXT("Chronos"), NULL };
@@ -120,6 +121,27 @@ namespace  Chronos {
                     IOEvent e;
                     e.eventType = MOUSE_MOVE;
                     e.detail.xy={.x = x,.y = y};
+                    result.push_back(e);
+                    break;
+                }
+                case WM_LBUTTONDOWN:{
+                    IOEvent e;
+                    e.eventType = KEY_PRESSED;
+                    e.detail.key = CHVK_LBUTTON;
+                    result.push_back(e);
+                    break;
+                }
+                case WM_LBUTTONUP:{
+                    IOEvent e;
+                    e.eventType = kEY_RELEASED;
+                    e.detail.key = CHVK_LBUTTON;
+                    result.push_back(e);
+                    break;
+                }
+                case WM_KEYUP:{
+                    IOEvent e;
+                    e.eventType = kEY_RELEASED;
+                    e.detail.key = (VirtualKey)msg.wParam;
                     result.push_back(e);
                     break;
                 }
@@ -300,4 +322,15 @@ namespace  Chronos {
         return ::DefWindowProc(hWnd, msg, wParam, lParam);
     }
 
+    void WinChronosWindow::captureCursor(){//todo
+        // SetCapture(hWnd);
+        RECT tmp;
+        GetWindowRect(hWnd,&tmp);
+        ClipCursor(&tmp);
+        cursorCapture = true;
+    }
+    void WinChronosWindow::releaseCursor(){
+        ReleaseCapture();
+        cursorCapture = false;
+    }
 }

@@ -4,6 +4,7 @@ namespace Chronos{
     enum IOEventType {
         MOUSE_MOVE,
         KEY_PRESSED,
+        kEY_RELEASED,
         QUIT,
     };
     struct IOEvent{
