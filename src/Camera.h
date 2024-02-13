@@ -9,7 +9,7 @@ namespace Chronos{
     };
     /**
      * @brief 
-     * 左手系
+     * 世界默认z朝上左手系,view 左手系
      */
 
     class Camera {
@@ -57,15 +57,13 @@ namespace Chronos{
             shouldUpdateProjectionMatrix = true;
         }
 
-        inline void addYaw(float delta){
-            yaw += delta;
-            shouldUpdateViewMatrix = true;
-        }
-        inline void addPitch(float delta){
-            pitch += delta;
-            shouldUpdateViewMatrix = true;
-        }
+        void addYaw(float delta);
+        void addPitch(float delta);
+        void moveForward(float delta);
+        void moveRight(float delta);
 
+        Eigen::Vector3f getDirection()const;
+        Eigen::Vector3f getRight()const;
         inline unsigned int getWidth() const{
             return width;
         }

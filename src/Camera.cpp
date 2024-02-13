@@ -11,9 +11,10 @@ namespace Chronos{
             shouldUpdateViewMatrix = true;
             shouldUpdateProjectionMatrix = true;
 
-            pos.x() = 0.2f;
-            pos.z() =-4.f;
-            up = {0,1.f,0};
+            pos.x() = 0.f;
+            pos.y() =2.f;
+
+            up = {0,0.f,1.f};
             fov = 75.0;
             nearPanel = 0.1f;
             farPanel = 1000.f;
@@ -38,18 +39,23 @@ namespace Chronos{
         return projectionMatrix;
     }
 
-    Eigen::Matrix4f Camera::calcViewMatrix()const{
-
+    Eigen::Vector3f Camera::getDirection()const{
         float tmpYaw = yaw/180.0 * 3.14;
         float tmpPitch = pitch/180.0 * 3.14;
-
         Eigen::Vector3f zAxis; 
+        zAxis  << cos(tmpPitch) *sin(tmpYaw), -cos(tmpPitch) *cos(tmpYaw),sin(tmpPitch);//direction,初始-y方向
+        return zAxis.normalized();
+    }
 
-        zAxis  << sin(tmpYaw)*cos(tmpPitch),sin(tmpPitch)
-        ,cos(tmpYaw) *cos(tmpYaw);//direction
+    Eigen::Vector3f Camera::getRight()const {
+        Eigen::Vector3f direction = getDirection();
+        return up.cross(direction).normalized();
+    }
 
-        Eigen::Vector3f xAxis = up.cross(zAxis);
-        Eigen::Vector3f yAxis = zAxis.cross(xAxis);
+    Eigen::Matrix4f Camera::calcViewMatrix()const{
+        Eigen::Vector3f zAxis = getDirection();
+        Eigen::Vector3f xAxis = getRight();
+        Eigen::Vector3f yAxis = zAxis.cross(xAxis).normalized();
 
         Eigen::Matrix3f tmp;
         tmp << 
@@ -85,8 +91,7 @@ namespace Chronos{
         // Eigen::Matrix4f pitchMatrix;
 
 
-        return angleMatrix * result;
-        // return Eigen::Matrix4f::Identity();
+        return angleMatrix*result;
     }
     /**
      * @brief 
@@ -110,4 +115,23 @@ namespace Chronos{
         return resut;
         // return Eigen::Matrix4f::Identity();
     } 
+
+    void Camera::addYaw(float delta){
+        yaw += delta;
+        shouldUpdateViewMatrix = true;
+    }
+    void Camera::addPitch(float delta){
+        pitch += delta;
+        shouldUpdateViewMatrix = true;
+    }
+    void Camera::moveForward(float delta){
+        Eigen::Vector3f direction = getDirection();
+        pos += direction * delta;
+        shouldUpdateViewMatrix = true;
+    }
+    void Camera::moveRight(float delta){
+        Eigen::Vector3f right = getRight();
+        pos += right * delta;
+        shouldUpdateViewMatrix = true;
+    }
 }

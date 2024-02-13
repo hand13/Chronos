@@ -1,5 +1,6 @@
 #include "BaseScene.h"
 #include "Chronos.h"
+#include <cmath>
 #include <vector>
 namespace Chronos {
 
@@ -19,13 +20,13 @@ namespace Chronos {
         initRenderState();
         initScene();
         std::vector<float> vertices = {
-            -1.f,-1.f,0.f,0,0,
-            1.f,1.f,0.f,1.f,1.f,
-            1.f,-1.f,0.f,1.f,0,
+            -1.f,0.f,-1.f,0,0,
+            1.f,0.f,1.f,1.f,1.f,
+            1.f,0.f,-1.f,1.f,0,
 
-            -1.f,-1.f,0.f,0,0,
-            -1.f,1.f,0.f,0,1.f,
-            1.f,1.f,0.f,1.f,1.f,
+            -1.f,0.f,-1.f,0,0,
+            -1.f,0.f,1.f,0,1.f,
+            1.f,0.f,1.f,1.f,1.f,
         };
         robj.setVertices(vertices);
         Geometry::AttributeSet as;
@@ -84,6 +85,17 @@ namespace Chronos {
             float pitchSpeed = 0.1;
             float deltaPitch = static_cast<float>(deltaY) * pitchSpeed;
             camera.addPitch(-deltaPitch);
+        }
+        if(event.eventType == KEY_PRESSED){
+            if(event.detail.key == DOWN){
+                camera.moveForward(-0.1f);
+            }else if(event.detail.key == UP){
+                camera.moveForward(0.1f);
+            }else if(event.detail.key == RIGHT) {
+                camera.moveRight(0.1f);
+            }else if(event.detail.key == LEFT) {
+                camera.moveRight(-0.1f);
+            }
         }
     }
 

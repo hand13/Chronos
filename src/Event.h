@@ -7,7 +7,7 @@ namespace Chronos{
         QUIT
     };
     enum Key {
-        A,B
+        A,B,DOWN,UP,LEFT,RIGHT
     };
     struct IOEvent{
         IOEventType eventType;

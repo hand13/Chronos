@@ -113,14 +113,39 @@ namespace  Chronos {
                 shouldRun = false;
                 break;
             }
-            if(msg.message == WM_MOUSEMOVE){
-                int x = LOWORD(msg.lParam);
-                int y = HIWORD(msg.lParam);
-                IOEvent e;
-                e.eventType = MOUSE_MOVE;
-                e.detail.xy={.x = x,.y = y};
-                result.push_back(e);
-                //
+            switch (msg.message) {
+                case WM_MOUSEMOVE:{
+                    int x = LOWORD(msg.lParam);
+                    int y = HIWORD(msg.lParam);
+                    IOEvent e;
+                    e.eventType = MOUSE_MOVE;
+                    e.detail.xy={.x = x,.y = y};
+                    result.push_back(e);
+                    break;
+                }
+                case WM_KEYDOWN:{
+                    IOEvent e;
+                    e.eventType = KEY_PRESSED;
+                    if(msg.wParam == VK_UP){
+                        e.detail.key = Key::UP;
+                        result.push_back(e);
+                    }
+                    if(msg.wParam == VK_DOWN){
+                        e.detail.key = Key::DOWN;
+                        result.push_back(e);
+                    }
+                    if(msg.wParam == VK_LEFT){
+                        e.detail.key = Key::LEFT;
+                        result.push_back(e);
+                    }
+                    if(msg.wParam == VK_RIGHT){
+                        e.detail.key = Key::RIGHT;
+                        result.push_back(e);
+                    }
+                    break;
+                }
+                default:
+                break;
             }
         }
         if(!shouldRun) {
