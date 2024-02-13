@@ -86,13 +86,13 @@ namespace Chronos {
             camera.addPitch(-deltaPitch);
         }
         if(event.eventType == KEY_PRESSED){
-            if(event.detail.key == DOWN){
+            if(event.detail.key == CHVK_DOWN){
                 camera.moveForward(-0.1f);
-            }else if(event.detail.key == UP){
+            }else if(event.detail.key == CHVK_UP){
                 camera.moveForward(0.1f);
-            }else if(event.detail.key == RIGHT) {
+            }else if(event.detail.key == CHVK_RIGHT) {
                 camera.moveRight(0.1f);
-            }else if(event.detail.key == LEFT) {
+            }else if(event.detail.key == CHVK_LEFT) {
                 camera.moveRight(-0.1f);
             }
         }
