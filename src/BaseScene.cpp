@@ -1,6 +1,5 @@
 #include "BaseScene.h"
 #include "Chronos.h"
-#include <cmath>
 #include <vector>
 namespace Chronos {
 
