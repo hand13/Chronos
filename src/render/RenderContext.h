@@ -6,10 +6,13 @@ namespace Chronos{
         private:
         Camera* camera;
         RenderTarget* rtv;
+        bool useFXAA;
         public:
         RenderContext();
         void setCamera(Camera* camera);
         void setRenderTarget(RenderTarget* rtv);
+        void setFXAA(bool useFXAA);
+        bool shouldUseFXAA();
         Camera* getCamera();
         RenderTarget* getRenderTarget();
         virtual ~RenderContext(){}

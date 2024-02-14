@@ -3,6 +3,7 @@ namespace Chronos {
     RenderContext::RenderContext(){
         camera = nullptr;
         rtv = nullptr;
+        useFXAA = false;
     }
     void RenderContext::setCamera(Camera* camera){
         this->camera = camera;
@@ -16,5 +17,11 @@ namespace Chronos {
 
     RenderTarget* RenderContext::getRenderTarget(){
         return rtv;
+    }
+    void RenderContext::setFXAA(bool useFXAA){
+        this->useFXAA = useFXAA;
+    }
+    bool RenderContext::shouldUseFXAA(){
+        return useFXAA;
     }
 }

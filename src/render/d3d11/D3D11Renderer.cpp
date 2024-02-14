@@ -8,11 +8,16 @@
 #include <exception>
 #include <memory>
 #include <minwinbase.h>
+#include <utility>
 #include <wrl/client.h>
 #include "ChronosD3D11RenderTarget.h"
 #include "D3D11BaseRenderState.h"
 #include "common.h"
 namespace Chronos{
+
+    D3D11Renderer::D3D11Renderer() {
+        rtForRender = nullptr;
+    }
 
     void D3D11Renderer::init(){
         WinChronosWindow * wc = dynamic_cast<WinChronosWindow*>(Chronos::INSTANCE->getWindow());
@@ -21,9 +26,10 @@ namespace Chronos{
         }
         device = wc->shareDeivce();
         deviceContext = wc->shareDeviceContext();
+        createRasterizeState();
+        fm.init(device, deviceContext);
         createCBuffer();
         currentContext = nullptr;
-        currentRTV = nullptr;
         ZeroMemory(&viewport,sizeof(viewport));
     }
 
@@ -36,8 +42,7 @@ namespace Chronos{
     void D3D11Renderer::setRenderContext(RenderContext * rct){
         currentContext = rct;
         RenderTarget * rt = currentContext->getRenderTarget();
-        ChronosD3D11RenderTarget * crt = dynamic_cast<ChronosD3D11RenderTarget*>(rt);
-        currentRTV = crt->getRTV();
+        rtForRender = dynamic_cast<ChronosD3D11RenderTarget*>(rt);
         viewport =  genViewport(*rct->getCamera());
     }
 
@@ -64,10 +69,23 @@ namespace Chronos{
 
     void D3D11Renderer::beginRender() {
         deviceContext->RSSetViewports(1, &viewport);
-        deviceContext->OMSetRenderTargets(1, &currentRTV, NULL);
         float color[] = {1.0f,0.f,0.0f,1.f};
-        deviceContext->ClearRenderTargetView(currentRTV, color);
 
+        {
+            ID3D11RenderTargetView* rtv = rtForRender->getRTV();
+            ID3D11RenderTargetView* innerRTV = rtForRender->getInnerRTV();
+
+            if(currentContext->shouldUseFXAA()){
+                deviceContext->OMSetRenderTargets(1, &innerRTV, NULL);
+                deviceContext->ClearRenderTargetView(innerRTV, color);
+            }else {
+                deviceContext->OMSetRenderTargets(1, &rtv, NULL);
+                deviceContext->ClearRenderTargetView(rtv, color);
+            }
+
+        }
+
+        deviceContext->RSSetState(rasterizeState.Get());
         Camera* camera = currentContext->getCamera();
         CameraBuffer cameraBuffer = camera->getCameraBuffer();
         deviceContext->UpdateSubresource(cbuffer.Get(), 0, 0, &cameraBuffer,sizeof(cameraBuffer),0);
@@ -95,11 +113,29 @@ namespace Chronos{
 
     void D3D11Renderer::endRender() {
         deviceContext->ClearState();
+        if(currentContext->shouldUseFXAA()){
+            fm.apply(this->currentContext);
+        }
+        rtForRender = nullptr;
+        currentContext = nullptr;
     }
 
-    std::unique_ptr<RenderTarget> D3D11Renderer::createRenderTarget(const SizeU& size){
+    void D3D11Renderer::createRasterizeState(){
+        D3D11_RASTERIZER_DESC rdesc;
+        ZeroMemory(&rdesc,sizeof(rdesc));
+        rdesc.AntialiasedLineEnable = true;
+        rdesc.CullMode = D3D11_CULL_BACK;
+        rdesc.DepthBias = 0;
+        rdesc.DepthBiasClamp = 0.0f;
+        rdesc.DepthClipEnable = true;
+        rdesc.FillMode = D3D11_FILL_SOLID;
+        rdesc.FrontCounterClockwise = false;
+        rdesc.MultisampleEnable = false;
+        rdesc.ScissorEnable = false;
+        rdesc.SlopeScaledDepthBias = 0.0f;
+    }
 
-        ComPtr<ID3D11RenderTargetView> rtv;
+    void D3D11Renderer::createRenderTargetView(const SizeU& size,ID3D11RenderTargetView** rtv,ID3D11ShaderResourceView ** rsv){
         ComPtr<ID3D11Texture2D> pBackBuffer;
         CD3D11_TEXTURE2D_DESC tdesc(DXGI_FORMAT_R8G8B8A8_UNORM,size.width,size.height);
         tdesc.BindFlags =D3D11_BIND_RENDER_TARGET |D3D11_BIND_SHADER_RESOURCE;
@@ -107,22 +143,39 @@ namespace Chronos{
         D3D11_SUBRESOURCE_DATA sub;
         ZeroMemory(&sub,sizeof(sub));
         ThrowIfFailed(device->CreateTexture2D(&tdesc,NULL,pBackBuffer.GetAddressOf()));
-        ThrowIfFailed(device->CreateRenderTargetView(pBackBuffer.Get(), NULL,rtv.GetAddressOf()));
-        std::unique_ptr<ChronosD3D11RenderTarget> result = std::make_unique<ChronosD3D11RenderTarget>();
-        result->setRTV(rtv);
-        ComPtr<ID3D11ShaderResourceView> srv;
+        ThrowIfFailed(device->CreateRenderTargetView(pBackBuffer.Get(), NULL,rtv));
+
         D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
         ZeroMemory(&srvd,sizeof(srvd));
-
         srvd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         srvd.ViewDimension= D3D11_SRV_DIMENSION_TEXTURE2D;
         srvd.Texture2D.MipLevels = 1;
+        ThrowIfFailed(device->CreateShaderResourceView(pBackBuffer.Get(), &srvd,rsv));
+        // std::unique_ptr<ChronosD3D11Texture2D> texture = std::make_unique<ChronosD3D11Texture2D>();
+        // result->setTexture(std::move(texture));
+    }
+    std::unique_ptr<RenderTarget> D3D11Renderer::createRenderTarget(const SizeU& size){
+        std::unique_ptr<ChronosD3D11RenderTarget> result = std::make_unique<ChronosD3D11RenderTarget>();
 
-        ThrowIfFailed(device->CreateShaderResourceView(pBackBuffer.Get(), &srvd,srv.GetAddressOf()));
+        ComPtr<ID3D11RenderTargetView> rtv;
+        ComPtr<ID3D11ShaderResourceView> rsv;
+        createRenderTargetView(size, rtv.GetAddressOf(),rsv.GetAddressOf());
         std::unique_ptr<ChronosD3D11Texture2D> texture = std::make_unique<ChronosD3D11Texture2D>();
-        texture->setSRV(srv);
+        texture->setSRV(rsv);
+        result->setRTV(rtv);
         result->setTexture(std::move(texture));
+
+        ComPtr<ID3D11RenderTargetView> innerRTV;
+        ComPtr<ID3D11ShaderResourceView> innerRSV;
+        createRenderTargetView(size, innerRTV.GetAddressOf(),innerRSV.GetAddressOf());
+        std::unique_ptr<ChronosD3D11Texture2D> innertexture = std::make_unique<ChronosD3D11Texture2D>();
+        innertexture->setSRV(innerRSV);
+
+        result->setInnerRTV(innerRTV);
+        result->setInnerTexture(std::move(innertexture));
+
         return result;
+
     }
 
     std::shared_ptr<Shader> D3D11Renderer::loadShader(const std::string& path,ShaderType shaderType){

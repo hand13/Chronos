@@ -47,6 +47,7 @@ namespace Chronos {
         camera.setHeight(size.height);
 
         rc.setCamera(&camera);
+        rc.setFXAA(true);
     }
 
     void BaseScene::changeSize(const SizeU& windowSize){

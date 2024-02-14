@@ -17,4 +17,18 @@ namespace Chronos{
     Texture2D* ChronosD3D11RenderTarget::asTexture(){
         return texture.get();
     }
+
+    void ChronosD3D11RenderTarget::setInnerRTV(ComPtr<ID3D11RenderTargetView> innerRTV){
+        _innerRTV = innerRTV;
+    }
+    void ChronosD3D11RenderTarget::setInnerTexture(std::unique_ptr<ChronosD3D11Texture2D>&& innerTexture){
+        this->_innerTexture = std::move(innerTexture);
+    }
+
+    ID3D11RenderTargetView* ChronosD3D11RenderTarget::getInnerRTV(){
+        return _innerRTV.Get();
+    }
+    Texture2D* ChronosD3D11RenderTarget::innerAsTexture(){
+        return _innerTexture.get();
+    }
 }
