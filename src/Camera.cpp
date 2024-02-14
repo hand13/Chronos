@@ -12,7 +12,7 @@ namespace Chronos{
             shouldUpdateProjectionMatrix = true;
 
             pos.x() = 0.f;
-            pos.y() =2.f;
+            pos.y() =4.f;
 
             up = {0,0.f,1.f};
             fov = 75.0;
