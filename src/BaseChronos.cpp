@@ -32,6 +32,8 @@ namespace Chronos {
     void BaseChronos::createRender(){
         if(option.renderType == 1){
             createD3D11Render();
+        }else {
+            Panic("not support");
         }
     }
 

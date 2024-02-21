@@ -29,6 +29,7 @@ namespace  Chronos {
         height = 600;
         sceneTexture = nullptr;
         cursorCapture = false;
+        finished = false;
     }
     void WinChronosWindow::init(){
         wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, TEXT("Chronos"), NULL };
@@ -105,15 +106,16 @@ namespace  Chronos {
 
     std::vector<IOEvent> WinChronosWindow::processEvent(){
         std::vector<IOEvent> result;
-        bool shouldRun = true;
         MSG msg;
-        while (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
+        while (::PeekMessage(&msg, hWnd, 0U, 0U, PM_REMOVE)) {
             ::TranslateMessage(&msg);
             ::DispatchMessage(&msg);
-            if (msg.message == WM_QUIT){
-                shouldRun = false;
-                break;
-            }
+
+            // if (msg.message == WM_QUIT){
+            //     finished = true;
+            //     break;
+            // }
+
             switch (msg.message) {
                 case WM_MOUSEMOVE:{
                     int x = LOWORD(msg.lParam);
@@ -156,7 +158,7 @@ namespace  Chronos {
                 break;
             }
         }
-        if(!shouldRun) {
+        if(finished) {
             IOEvent e;
             e.eventType = QUIT;
             result.push_back(e);
@@ -288,6 +290,10 @@ namespace  Chronos {
 
     }
 
+    void WinChronosWindow::quit() {
+        finished = true;
+    }
+
     WinChronosWindow::~WinChronosWindow() {
         Log(TEXT("啊我死了"));
     }
@@ -316,7 +322,8 @@ namespace  Chronos {
                 return 0;
             break;
         case WM_DESTROY:
-            ::PostQuitMessage(0);
+            // ::PostQuitMessage(0);
+            wcw->quit();
             return 0;
         }
         return ::DefWindowProc(hWnd, msg, wParam, lParam);

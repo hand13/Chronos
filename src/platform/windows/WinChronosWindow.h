@@ -33,11 +33,13 @@ namespace Chronos {
         unsigned int height;
 
         boolean cursorCapture;
+        boolean finished;
 
         public:
         WinChronosWindow();
         void createD3D11DeviceAndSwapChain();
         void createRenderTargetView();
+        void quit();
         void resize(WPARAM wParam,unsigned int w,unsigned int h);
         virtual void getSize(unsigned int & w,unsigned int & h)override;
         virtual void init() override;

@@ -159,7 +159,7 @@ namespace Chronos{
 
         ComPtr<ID3D11RenderTargetView> rtv;
         ComPtr<ID3D11ShaderResourceView> rsv;
-        createRenderTargetView(size, rtv.GetAddressOf(),rsv.GetAddressOf());
+        createRenderTargetView(size, rtv.ReleaseAndGetAddressOf(),rsv.ReleaseAndGetAddressOf());
         std::unique_ptr<ChronosD3D11Texture2D> texture = std::make_unique<ChronosD3D11Texture2D>();
         texture->setSRV(rsv);
         result->setRTV(rtv);
@@ -167,7 +167,7 @@ namespace Chronos{
 
         ComPtr<ID3D11RenderTargetView> innerRTV;
         ComPtr<ID3D11ShaderResourceView> innerRSV;
-        createRenderTargetView(size, innerRTV.GetAddressOf(),innerRSV.GetAddressOf());
+        createRenderTargetView(size, innerRTV.ReleaseAndGetAddressOf(),innerRSV.ReleaseAndGetAddressOf());
         std::unique_ptr<ChronosD3D11Texture2D> innertexture = std::make_unique<ChronosD3D11Texture2D>();
         innertexture->setSRV(innerRSV);
 
