@@ -8,14 +8,14 @@ struct PixelShaderInput{
 };
 
 cbuffer transformMatrix : register(b0){
-    row_major matrix viewMatrix;
-    row_major matrix projectionMatrix;
+    column_major matrix viewMatrix;
+    column_major matrix projectionMatrix;
 }
 
 PixelShaderInput main(VertexShaderInput input) {
     PixelShaderInput output;
-    row_major matrix tmp = mul(viewMatrix ,projectionMatrix);
-    output.pos = mul(float4(input.pos,1.f),tmp);
+    matrix tmp = mul(projectionMatrix,viewMatrix);
+    output.pos = mul(tmp,float4(input.pos,1.f));
     output.uv = input.uv;
     return output;
 }
