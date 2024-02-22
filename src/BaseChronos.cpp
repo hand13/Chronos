@@ -5,6 +5,7 @@
 #ifdef _WIN32
 #include "render/d3d11/D3D11Renderer.h"
 #endif
+#include "imgui_control/TestUI.h"
 namespace Chronos {
 
     BaseChronos::BaseChronos(){
@@ -19,6 +20,8 @@ namespace Chronos {
         createRender();
         renderer->init();
         initStartScene();
+        cui = std::make_unique<TestUI>();
+        cui->init();
     }
 
     void BaseChronos::changeSize(){
@@ -71,6 +74,9 @@ namespace Chronos {
 
     void BaseChronos::loop() {
         while(state == 1){
+            
+            cui->runInLoop();
+
             auto es = window->processEvent();
             for(auto & e : es){
                 if(e.eventType == QUIT){
