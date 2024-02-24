@@ -1,8 +1,8 @@
 #include "Param.h"
 namespace Chronos {
 
-    Geometry::Type IntParam::type(){
-        return Geometry::INT;
+    ParamType IntParam::type(){
+        return ParamType::INT;
     }
     IntParam::IntParam(int value){
         this->value = value;
