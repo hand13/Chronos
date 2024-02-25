@@ -44,9 +44,9 @@ namespace Chronos{
         public:
         virtual ParamSignature signature()const = 0;
         virtual void* asData() = 0;
+        virtual std::string getName() = 0;
         virtual ~Param(){}
     };
-    Param* constructParamFromType(ParamType type);
-    void copyValue(Param& target,const Param& source);
+    Param* constructParamFromType(const std::string& name,ParamType type);
 
 }

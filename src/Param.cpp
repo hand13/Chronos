@@ -3,26 +3,22 @@
 #include "Utils.h"
 namespace Chronos {
 
-    Param* constructParamFromType(ParamType type){
+    Param* constructParamFromType(const std::string& name,ParamType type){
         Param * result = nullptr;
-        #define CASE_NEW(X,Y) case(X):{result = new GenericParam<Y>();break;}
+        #define CASE_NEW(X,Y,N) case(X):{result = new GenericParam<Y>(N);break;}
         switch (type) {
-            CASE_NEW(INT, int)
-            CASE_NEW(FLOAT,float)
-            CASE_NEW(FLOAT2, Float2)
-            CASE_NEW(FLOAT3, Float3)
-            CASE_NEW(FLOAT4, Float4)
-            CASE_NEW(MATRIX4F, Matrix4f)
-            CASE_NEW(RAWDATA,RawData)
+            CASE_NEW(INT, int,name)
+            CASE_NEW(FLOAT,float,name)
+            CASE_NEW(FLOAT2, Float2,name)
+            CASE_NEW(FLOAT3, Float3,name)
+            CASE_NEW(FLOAT4, Float4,name)
+            CASE_NEW(MATRIX4F, Matrix4f,name)
+            CASE_NEW(RAWDATA,RawData,name)
             NOTHING:
             default:
                 Panic("should not be here");
         }
         return result;
-    }
-    void copyValue(Param& target,const Param& source){
-        if(target.signature() != source.signature()) {
-            Panic("Fatal Param Copy");
-        }
+        #undef CASE_NEW
     }
 }

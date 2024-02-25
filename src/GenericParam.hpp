@@ -3,6 +3,8 @@
 namespace Chronos {
     template<typename T>
     class GenericParam:public Param{
+        private:
+        std::string name;
         public:
         virtual ParamSignature signature()const override{
             return ParamSignature(FetchType<T>()(),sizeof(T));
@@ -10,15 +12,20 @@ namespace Chronos {
         virtual void* asData()override{
             return &value;
         }
-        T value;
-        GenericParam(const T& value):value(value){
+        virtual std::string getName()override{
+            return name;
         }
-        GenericParam(){}
+        T value;
+        GenericParam(const std::string& name,const T& value):name(name),value(value){
+        }
+        GenericParam(const std::string& name):name(name){}
         virtual ~GenericParam(){};
     };
 
     template<>
     class GenericParam<RawData>:public Param{
+        private:
+        std::string name;
         public:
         virtual ParamSignature signature()const override{
             return ParamSignature(FetchType<RawData>()(),value.getSize());
@@ -26,10 +33,13 @@ namespace Chronos {
         virtual void* asData()override{
             return value.getData();
         }
-        RawData value;
-        GenericParam(const RawData& value):value(value){
+        virtual std::string getName()override{
+            return name;
         }
-        GenericParam(){}
+        RawData value;
+        GenericParam(const RawData& value,const std::string&name):name(name),value(value){
+        }
+        GenericParam(const std::string&name):name(name){}
         virtual ~GenericParam(){};
     };
 

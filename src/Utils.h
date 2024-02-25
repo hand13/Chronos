@@ -15,6 +15,7 @@ struct SizeU{
 struct Float2{
     float x;
     float y;
+    Float2(float x,float y):x(x),y(y){}
     Float2(){
         x = 0;
         y = 0;
@@ -24,6 +25,7 @@ struct Float3 {
     float x;
     float y;
     float z;
+    Float3(float x,float y,float z):x(x),y(y),z(z){}
     Float3() {
         x = 0;
         y = 0;
@@ -36,6 +38,7 @@ struct Float4 {
     float y;
     float z;
     float w;
+    Float4(float x,float y,float z,float w):x(x),y(y),z(z),w(w){}
     Float4(){
         x = 0;
         y = 0;

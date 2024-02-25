@@ -47,7 +47,7 @@ aux_source_directory("src/imgui_control" IMGUI_CONTROL_SRC)
 
 add_executable(Chronos ${SRC} ${PLATFORM_WIN_SRC} ${D3D11_RENDER_SRC} ${RENDER_SRC} ${IMGUI_CONTROL_SRC})
 
-add_executable(test test/test.cpp src/Param.cpp src/Utils.cpp src/Log.cpp)
+add_executable(test test/test.cpp src/Param.cpp src/Utils.cpp src/Log.cpp src/ParamList.cpp)
 
 target_link_libraries(test PRIVATE Poco::Foundation)
 
