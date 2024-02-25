@@ -1,5 +1,5 @@
 #pragma once
-#include "Param.h"
+#include "../Param.h"
 #include <map>
 #include <string>
 #include "Types.h"

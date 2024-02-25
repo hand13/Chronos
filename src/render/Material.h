@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Param.h"
+#include "../Param.h"
 namespace Chronos {
     class Material{
         private:

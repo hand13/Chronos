@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <Eigen/Eigen>
 
 struct SizeU{
     unsigned int width;
@@ -10,6 +11,25 @@ struct SizeU{
         height = 0;
     }
 };
+
+struct Float2{
+    float x;
+    float y;
+};
+struct Float3 {
+    float x;
+    float y;
+    float z;
+};
+
+struct Float4 {
+    float x;
+    float y;
+    float z;
+    float w;
+};
+
+typedef  Eigen::Matrix4f Matrix4f;
 
 void Panic(const std::wstring& msg);
 void Panic(const std::string& msg);
