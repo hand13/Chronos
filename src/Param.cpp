@@ -13,6 +13,7 @@ namespace Chronos {
             CASE_NEW(FLOAT3, Float3)
             CASE_NEW(FLOAT4, Float4)
             CASE_NEW(MATRIX4F, Matrix4f)
+            CASE_NEW(RAWDATA,RawData)
             NOTHING:
             default:
                 Panic("should not be here");

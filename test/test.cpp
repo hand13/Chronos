@@ -1,12 +1,11 @@
 #include "../src/GenericParam.hpp"
 #include <iostream>
+#include <string>
 int main() {
-    Chronos::Float2Param * param = (Chronos::Float2Param*)Chronos::constructParamFromType(Chronos::FLOAT2);
-    std::cout<<param->signature().size<<std::endl;
-    param->value.x = 2;
-    param->value.y = 2;
-    Float2 data = param->value;
-    std::cout<<data.x<<" "<<data.y<<std::endl;
-    delete param;
+    std::string test = "hello world";
+    Chronos::GenericParam<RawData> rd;
+    RawData tmp((unsigned char *)test.data(),test.size());
+    rd.value = tmp;
+    std::cout<<rd.signature().size<<" "<<rd.signature().type<<std::endl;
     return 0;
 };

@@ -1,5 +1,6 @@
 #include "Utils.h"
 #include <cstdio>
+#include <cstring>
 #include <exception>
 #include <iterator>
 #include <string>
@@ -42,4 +43,47 @@ std::vector<unsigned char> readDataFromFile(const char * fileName){
     fclose(file);
     file = nullptr;
     return result;
+}
+RawData::RawData(){
+    data = nullptr;
+    size = 0;
+}
+
+RawData::RawData(const unsigned char * odata,size_t size){
+    data = new unsigned char[size];
+    this->size = size;
+    memcpy(data, odata, size);
+}
+RawData::RawData(const RawData& other){
+    RawData(other.data,other.size);
+}
+
+void RawData::operator=(const RawData& other){
+    clean();
+    data = new unsigned char[other.size];
+    size = other.size;
+    memcpy(data, other.data, size);
+}
+
+RawData::RawData(RawData&& other){
+    data = other.data;
+    size = other.size;
+    other.data = nullptr;
+    other.size = 0;
+}
+void RawData::clean(){
+    if(data){
+        delete data;
+    }
+    size = 0;
+}
+unsigned char * RawData::getData(){
+    return data;
+}
+size_t RawData::getSize()const{
+    return size;
+}
+
+RawData::~RawData(){
+    clean();
 }

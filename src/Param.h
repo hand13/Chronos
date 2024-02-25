@@ -15,7 +15,7 @@ namespace Chronos{
         FLOAT3,
         FLOAT4,
         MATRIX4F,
-        BUFFER
+        RAWDATA
     };
     template<typename T>
     struct FetchType{
@@ -29,6 +29,7 @@ namespace Chronos{
     MakeFetchType(Float3, FLOAT3);
     MakeFetchType(Float4, FLOAT4);
     MakeFetchType(Matrix4f, MATRIX4F);
+    MakeFetchType(RawData,RAWDATA);
 
     struct ParamSignature{
         ParamSignature(ParamType type,size_t size):type(type),size(size){}
