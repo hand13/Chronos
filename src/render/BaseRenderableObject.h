@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderableObject.h"
 #include "Material.h"
+#include "VertexProc.h"
 #include <cstddef>
 #include <memory>
 #include <vector>
@@ -11,7 +12,8 @@ namespace Chronos {
         private:
         std::vector<float> vertices;
         std::vector<int> indices;
-        Material* material;
+        std::unique_ptr<Material> material;
+        std::unique_ptr<VertexProc> vertexProc;
         Geometry::AttributeSet as;
         std::unique_ptr<RenderState> renderState;//render 所需状态
         public:
@@ -23,7 +25,10 @@ namespace Chronos {
 
         void setVertices(const std::vector<float>& vertices);
         void setIndices(const std::vector<int>& indices);
-        void setMaterial(Material* material);
+
+        void setMaterial(std::unique_ptr<Material>&& material);
+        void setVertexProc(std::unique_ptr<VertexProc>&& vertexProc);
+
         void setAttributeSet(const Geometry::AttributeSet& as);
 
         size_t getVerticesCount()const;
@@ -34,6 +39,7 @@ namespace Chronos {
         const std::vector<float>& getVertices()const;
         const std::vector<int>& getIndices()const;
         Material* getMaterial();
+        VertexProc * getVertexProc();
         virtual ~BaseRenderableObject(){}
     };
 }

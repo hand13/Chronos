@@ -1,5 +1,6 @@
 #include "BaseRenderableObject.h"
 #include <cstddef>
+#include <memory>
 namespace Chronos {
     BaseRenderableObject::BaseRenderableObject(){
     }
@@ -10,9 +11,14 @@ namespace Chronos {
     void BaseRenderableObject::setIndices(const std::vector<int>& indices){
         this->indices = indices;
     }
-    void BaseRenderableObject::setMaterial(Material* material){
-        this->material = material;
+    void BaseRenderableObject::setMaterial(std::unique_ptr<Material> && material){
+        this->material = std::move(material);
     }
+
+    void BaseRenderableObject::setVertexProc(std::unique_ptr<VertexProc>&& vertexProc){
+        this->vertexProc = std::move(vertexProc);
+    }
+
     void BaseRenderableObject::setAttributeSet(const Geometry::AttributeSet& as){
         this->as =as;
     }
@@ -25,7 +31,12 @@ namespace Chronos {
     }
 
     Material* BaseRenderableObject::getMaterial(){
-        return material;
+        return material.get();
+    }
+
+
+    VertexProc* BaseRenderableObject::getVertexProc(){
+        return vertexProc.get();
     }
 
     void BaseRenderableObject::initRenderState(std::unique_ptr<RenderState>&& renderState){
