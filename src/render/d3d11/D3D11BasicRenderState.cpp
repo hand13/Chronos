@@ -24,8 +24,6 @@ namespace Chronos{
 
         ResourceLoader * rl = Chronos::INSTANCE->getResourceLoader();
 
-        ID3D11Device * device = render->getDevice();
-
         std::vector<float> vertices = robj->getVertices();
         D3D11_BUFFER_DESC desc;
         ZeroMemory(&desc,sizeof(desc));

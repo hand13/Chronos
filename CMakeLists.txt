@@ -62,6 +62,33 @@ target_link_libraries(Chronos PRIVATE dxgi d3d11 d3d12 imgui_dx12 Eigen3::Eigen 
 #  COMMAND ${CMAKE_COMMAND} -E copy_directory
 #  	${CMAKE_SOURCE_DIR}/shaders $<TARGET_FILE_DIR:glworld>/shaders)
 
+set(shader_src_dir "shaders/src")
+add_custom_target(shaders)
+file(GLOB vertex_shader_sources ${shader_src_dir}/*_vert.hlsl)
+file(GLOB pixel_shader_sources ${shader_src_dir}/*_pixel.hlsl)
+
+file(GLOB shader_sources ${shader_src_dir}/*.hlsl)
+
+set_source_files_properties(${vertex_shader_sources} PROPERTIES ShaderType "vs")
+set_source_files_properties(${pixel_shader_sources} PROPERTIES ShaderType "ps")
+
+set_source_files_properties(${vertex_shader_sources} PROPERTIES ShaderModel "5_0")
+set_source_files_properties(${pixel_shader_sources} PROPERTIES ShaderModel "5_0")
+
+foreach(FILE ${shader_sources})
+  get_filename_component(FILE_WE ${FILE} NAME_WE)
+  get_source_file_property(shadertype ${FILE} ShaderType)
+  get_source_file_property(shadermodel ${FILE} ShaderModel)
+  add_custom_command(TARGET shaders
+                     COMMAND fxc.exe /nologo /Emain /T ${shadertype}_${shadermodel} $<IF:$<CONFIG:DEBUG>,/Od,/O1> /Zi /Fo ${CMAKE_BINARY_DIR}/resources/shader/d3d11/${FILE_WE}.cso /Fd ${CMAKE_BINARY_DIR}/resources/shader/d3d11/${FILE_WE}.pdb ${FILE}
+                     MAIN_DEPENDENCY ${FILE}
+                     COMMENT "HLSL ${FILE}"
+                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                     VERBATIM)
+endforeach(FILE)
+
 add_custom_command(TARGET Chronos PRE_BUILD
  COMMAND ${CMAKE_COMMAND} -E copy_directory
  	${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:Chronos>/resources)
+
+add_dependencies(Chronos shaders)

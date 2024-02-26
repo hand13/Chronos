@@ -57,10 +57,10 @@ namespace Chronos {
         sd.pSysMem = vertice.data();
 
         ThrowIfFailed(device->CreateBuffer(&desc, &sd, verticeBuffer.GetAddressOf()));
-        std::vector<unsigned char> vbuffer =readDataFromFile("resources/shader/d3d11/vsfxaa.cso");
+        std::vector<unsigned char> vbuffer =readDataFromFile("resources/shader/d3d11/fxaa_vert.cso");
         ThrowIfFailed(device->CreateVertexShader(vbuffer.data()
             , vbuffer.size(),NULL,vs.GetAddressOf()));
-        std::vector<unsigned char> pbuffer =readDataFromFile("resources/shader/d3d11/psfxaa.cso");
+        std::vector<unsigned char> pbuffer =readDataFromFile("resources/shader/d3d11/fxaa_pixel.cso");
         ThrowIfFailed(device->CreatePixelShader(pbuffer.data()
             , pbuffer.size(),NULL,ps.GetAddressOf()));
         const D3D11_INPUT_ELEMENT_DESC BaseVertexLayoutDesc[] =
