@@ -53,7 +53,7 @@ class RawData{
     size_t size;
     void clean();
     public:
-    RawData();
+    RawData(size_t size);
     RawData(const unsigned char * data,size_t size);
     RawData(const RawData& other);
     RawData(RawData&& other);

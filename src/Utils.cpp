@@ -44,9 +44,10 @@ std::vector<unsigned char> readDataFromFile(const char * fileName){
     file = nullptr;
     return result;
 }
-RawData::RawData(){
-    data = nullptr;
-    size = 0;
+RawData::RawData(size_t size){
+   data = new unsigned char[size];
+   memset(data, 0, size);
+   this->size = size;
 }
 
 RawData::RawData(const unsigned char * odata,size_t size){
@@ -59,9 +60,11 @@ RawData::RawData(const RawData& other){
 }
 
 void RawData::operator=(const RawData& other){
-    clean();
-    data = new unsigned char[other.size];
-    size = other.size;
+    if(size != other.size){
+        clean();
+        data = new unsigned char[other.size];
+        size = other.size;
+    }
     memcpy(data, other.data, size);
 }
 

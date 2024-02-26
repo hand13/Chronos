@@ -12,7 +12,7 @@ namespace Chronos {
         void destroyParams();
         public:
         ParamList();
-        void registerParam(const std::string& name,ParamType type);
+        void registerParam(const std::string& name,ParamType type,size_t rawDataSize = 0);
         bool checkParam(const std::string& paramName,const ParamSignature& ps)const;
         Param* getParam(const std::string& name);
         const std::vector<Param*>& getParamList()const;

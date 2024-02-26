@@ -39,7 +39,7 @@ namespace Chronos {
         RawData value;
         GenericParam(const RawData& value,const std::string&name):name(name),value(value){
         }
-        GenericParam(const std::string&name):name(name){}
+        GenericParam(const std::string&name,size_t size):name(name),value(size){}
         virtual ~GenericParam(){};
     };
 

@@ -1,4 +1,5 @@
 #include "ParamList.h"
+#include <cstddef>
 namespace Chronos {
 
     void ParamList::destroyParams(){
@@ -11,8 +12,8 @@ namespace Chronos {
     }
     ParamList::ParamList(){
     }
-    void ParamList::registerParam(const std::string& name,ParamType type){
-        Param* res = constructParamFromType(name,type);
+    void ParamList::registerParam(const std::string& name,ParamType type,size_t rawDataSize){
+        Param* res = constructParamFromType(name,type,rawDataSize);
         params.push_back(res);
         paramIndex[name] = params.size()-1;
     }

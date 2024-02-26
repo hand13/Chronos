@@ -47,6 +47,6 @@ namespace Chronos{
         virtual std::string getName() = 0;
         virtual ~Param(){}
     };
-    Param* constructParamFromType(const std::string& name,ParamType type);
+    Param* constructParamFromType(const std::string& name,ParamType type,size_t rawDataSize = 0);
 
 }
