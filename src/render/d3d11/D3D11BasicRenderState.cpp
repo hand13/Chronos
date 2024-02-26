@@ -1,6 +1,7 @@
 #include "D3D11BaseRenderState.h"
 #include <cstddef>
 #include <d3d11.h>
+#include <dxgiformat.h>
 #include <memory>
 #include <minwindef.h>
 #include <vector>
@@ -42,16 +43,10 @@ namespace Chronos{
 
         ps = std::dynamic_pointer_cast<ChronosPixelShader>(rl->loadShader(psc->getShaderName(), psc->getShaderType(), true));
 
-        D3D11_INPUT_ELEMENT_DESC BaseVertexLayoutDesc[] =
-
-            {
-                { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                {"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0,3*sizeof(float),D3D11_INPUT_PER_VERTEX_DATA,0}
-            };
+        std::vector<D3D11_INPUT_ELEMENT_DESC> ied = genInputElementDescFromAttrSet(robj->getAttributeSet());
 
         vs =std::dynamic_pointer_cast<ChronosVertexShader>((rl->loadShader(vsc->getShaderName()
-        , vsc->getShaderType(), true,BaseVertexLayoutDesc,sizeof(BaseVertexLayoutDesc))));
-
+        , vsc->getShaderType(), true,ied.data(),sizeof(D3D11_INPUT_ELEMENT_DESC)*ied.size())));
         dirty = false;
     }
 
@@ -65,6 +60,37 @@ namespace Chronos{
         dc->IASetVertexBuffers(0, 1, verticeBuffer.GetAddressOf(), &stride, &offset);
         dc->VSSetShader(vs->getShader(), NULL, 0);
         dc->PSSetShader(ps->getShader(),NULL ,0);//tmp
+        applyShaderParam();
         
+    }
+    void D3D11BaseRenderState::applyShaderParam(){
+        //todo
+    }
+
+    std::vector<D3D11_INPUT_ELEMENT_DESC> D3D11BaseRenderState::genInputElementDescFromAttrSet(Geometry::AttributeSet* as){
+        std::vector<D3D11_INPUT_ELEMENT_DESC> result;
+        for(const Geometry::Attribute& attr:as->getAttributes()){
+            const char* semantic = nullptr;
+            DXGI_FORMAT format = DXGI_FORMAT_R32G32B32_FLOAT;
+            if(attr.name == "pos"){
+                semantic = "POSITION";
+                format = DXGI_FORMAT_R32G32B32_FLOAT;
+            }else if(attr.name == "uv"){
+                semantic = "TEXCOORD";
+                format = DXGI_FORMAT_R32G32_FLOAT;
+            }
+            UINT offset = as->getAttributeOffset(attr.name);
+            D3D11_INPUT_ELEMENT_DESC desc = 
+            {semantic,0,format,0,offset,D3D11_INPUT_PER_VERTEX_DATA,0};
+            result.push_back(desc);
+        }
+
+        // D3D11_INPUT_ELEMENT_DESC BaseVertexLayoutDesc[] =
+        // {
+        //     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        //     {"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0,3*sizeof(float),D3D11_INPUT_PER_VERTEX_DATA,0}
+        // };
+
+        return result;
     }
 }

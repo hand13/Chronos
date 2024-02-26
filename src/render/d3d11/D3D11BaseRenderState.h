@@ -23,6 +23,8 @@ namespace Chronos{
         virtual bool isDirty()override;
         virtual void update()override;
         virtual void apply()override;
+        void applyShaderParam();
         virtual ~D3D11BaseRenderState(){}
+        static std::vector<D3D11_INPUT_ELEMENT_DESC> genInputElementDescFromAttrSet(Geometry::AttributeSet* as);
     };
 }

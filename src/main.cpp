@@ -17,10 +17,12 @@ class TestChronos:public Chronos::BaseChronos{
 };
 
 int main() {
+
     TestChronos tc;
     Chronos::Chronos::MakeChronosGlobal(&tc);
     tc.init();
     tc.begin();
     tc.loop();
+
     return 0;
 }

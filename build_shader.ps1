@@ -7,3 +7,6 @@ fxc resources\shader\d3d11\test_pixel.hlsl /Zi /T ps_5_0 -Fo resources\shader\d3
 
 fxc resources\shader\d3d11\vsfxaa.hlsl /Zi /T vs_5_0 -Fo resources\shader\d3d11\vsfxaa.cso
 fxc resources\shader\d3d11\psfxaa.hlsl /Zi /T ps_5_0 -Fo resources\shader\d3d11\psfxaa.cso
+
+fxc resources\shader\d3d11\default_vert.hlsl /Zi /T vs_5_0 -Fo resources\shader\d3d11\default_vert.cso
+fxc resources\shader\d3d11\default_pixel.hlsl /Zi /T ps_5_0 -Fo resources\shader\d3d11\default_pixel.cso

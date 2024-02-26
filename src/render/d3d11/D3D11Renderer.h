@@ -21,7 +21,7 @@ namespace Chronos {
 
         D3D11_VIEWPORT viewport;
         ChronosD3D11RenderTarget * rtForRender;
-        std::string shaderDir = "resources/shader/d3d11";
+        std::string shaderDir = CHRONOS_D3D11_SHADER_DIR;
 
         void createCBuffer();
 

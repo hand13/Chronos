@@ -3,6 +3,7 @@
 #include "Material.h"
 #include "VertexProc.h"
 #include <cstddef>
+#include <d3d11.h>
 #include <memory>
 #include <vector>
 #include "AttributeSet.h"
