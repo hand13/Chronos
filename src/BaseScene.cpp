@@ -1,6 +1,10 @@
 #include "BaseScene.h"
 #include "Chronos.h"
+#include <memory>
+#include <utility>
 #include <vector>
+#include "render/TestMaterial.h"
+#include "render/TestVetexProc.h"
 namespace Chronos {
 
     BaseScene::BaseScene(){
@@ -78,6 +82,10 @@ namespace Chronos {
         as.addAttribute("uv", Geometry::VEC2);
 
         robj.setAttributeSet(as);
+        std::unique_ptr<Material> material = std::make_unique<TestMaterial>();
+        std::unique_ptr<VertexProc> vertexProc = std::make_unique<TestVertexProc>();
+        robj.setMaterial(std::move(material));
+        robj.setVertexProc(std::move(vertexProc));
 
     }
     void BaseScene::initRenderState(){

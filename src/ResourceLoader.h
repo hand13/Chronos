@@ -13,7 +13,7 @@ namespace Chronos {
         ShaderMap sm;
         FileBufferMap fbm;
         public:
-        std::shared_ptr<Shader> loadShader(const std::string& path,ShaderType shaderType,bool cached);
+        std::shared_ptr<Shader> loadShader(const std::string& path,ShaderType shaderType,bool cached,void * exdata = nullptr,size_t exdataSize = 0);
         std::vector<unsigned char> loadFile(const std::string& path,bool cached);
     };
 }

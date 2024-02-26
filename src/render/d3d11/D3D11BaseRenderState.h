@@ -4,6 +4,8 @@
 #include "common.h"
 #include <d3d11.h>
 #include <wrl/client.h>
+#include "ChronosVertexShader.h"
+#include "ChronosPixelShader.h"
 namespace Chronos{
     class D3D11BaseRenderState:public RenderState{
         private:
@@ -12,9 +14,8 @@ namespace Chronos{
         bool dirty;
 
         ComPtr<ID3D11Buffer> verticeBuffer;
-        ComPtr<ID3D11InputLayout> inputLayout;
-        ComPtr<ID3D11VertexShader> vertexShader;
-        ComPtr<ID3D11PixelShader> pixelShader;//for tmp
+        std::shared_ptr<ChronosVertexShader> vs;
+        std::shared_ptr<ChronosPixelShader> ps;
 
         public:
         D3D11BaseRenderState(D3D11Renderer * render,BaseRenderableObject * robj);

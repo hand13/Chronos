@@ -178,8 +178,39 @@ namespace Chronos{
 
     }
 
-    std::shared_ptr<Shader> D3D11Renderer::loadShader(const std::string& path,ShaderType shaderType){
-        throw std::exception("todo");
+    std::shared_ptr<Shader> D3D11Renderer::loadShader(const std::string& name,ShaderType shaderType,void * exdata,size_t exdataSize){
+        std::shared_ptr<Shader> result;
+        std::string path = shaderDir + "/" + name + ".cso";
+        switch (shaderType) {
+            case VERTEX_SHADER:{
+                ComPtr<ID3D11VertexShader> vertexShader;
+                ComPtr<ID3D11InputLayout> inputLayout;
+                std::vector<unsigned char> vbuffer =readDataFromFile(path.c_str());
+                ThrowIfFailed(device->CreateVertexShader(vbuffer.data()
+                    , vbuffer.size(),NULL,vertexShader.GetAddressOf()));
+                D3D11_INPUT_ELEMENT_DESC * desc = reinterpret_cast<D3D11_INPUT_ELEMENT_DESC*>(exdata);
+                size_t elementSize = exdataSize/sizeof(D3D11_INPUT_ELEMENT_DESC);
+                ThrowIfFailed(
+                    device->CreateInputLayout(
+                        desc,
+                        elementSize,
+                        vbuffer.data(),
+                        vbuffer.size(),
+                        inputLayout.GetAddressOf())
+                    );
+                result = std::make_shared<ChronosVertexShader>(vertexShader,inputLayout);
+            }
+            break;
+            case PIXEL_SHADER:{
+                ComPtr<ID3D11PixelShader> pixelShader;
+                std::vector<unsigned char> pbuffer =readDataFromFile(path.c_str());
+                ThrowIfFailed(device->CreatePixelShader(pbuffer.data()
+                    , pbuffer.size(),NULL,pixelShader.GetAddressOf()));
+                result = std::make_shared<ChronosPixelShader>(pixelShader);
+            }
+            break;
+        }
+        return result;
     }
     std::shared_ptr<Texture> D3D11Renderer::loaderTexture(const std::string& path,TextureParameter tparam){
         throw std::exception("todo");

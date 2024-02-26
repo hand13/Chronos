@@ -1,10 +1,11 @@
 #include "D3D11BaseRenderState.h"
 #include <cstddef>
 #include <d3d11.h>
+#include <memory>
 #include <minwindef.h>
 #include <vector>
 #include "common.h"
-#include "../../Utils.h"
+#include "../../Chronos.h"
 namespace Chronos{
     D3D11BaseRenderState::D3D11BaseRenderState(D3D11Renderer * render,BaseRenderableObject * robj){
         dirty = true;
@@ -19,6 +20,9 @@ namespace Chronos{
         return dirty;
     }
     void D3D11BaseRenderState::update(){
+
+        ResourceLoader * rl = Chronos::INSTANCE->getResourceLoader();
+
         ID3D11Device * device = render->getDevice();
 
         std::vector<float> vertices = robj->getVertices();
@@ -33,31 +37,22 @@ namespace Chronos{
         sd.pSysMem = vertices.data();
         ThrowIfFailed(render->getDevice()->CreateBuffer(&desc, &sd, verticeBuffer.GetAddressOf()));
 
-        std::vector<unsigned char> vbuffer =readDataFromFile("resources/shader/d3d11/test_vert.cso");
-        ThrowIfFailed(device->CreateVertexShader(vbuffer.data()
-            , vbuffer.size(),NULL,vertexShader.GetAddressOf()));
+        ShaderConfig* psc = robj->getMaterial()->getShaderConfig();
+        ShaderConfig* vsc = robj->getVertexProc()->getShaderConfig();
 
-        std::vector<unsigned char> pbuffer =readDataFromFile("resources/shader/d3d11/test_pixel.cso");
-        ThrowIfFailed(device->CreatePixelShader(pbuffer.data()
-            , pbuffer.size(),NULL,pixelShader.GetAddressOf()));
+        ps = std::dynamic_pointer_cast<ChronosPixelShader>(rl->loadShader(psc->getShaderName(), psc->getShaderType(), true));
 
-        const D3D11_INPUT_ELEMENT_DESC BaseVertexLayoutDesc[] =
+        D3D11_INPUT_ELEMENT_DESC BaseVertexLayoutDesc[] =
 
             {
                 { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
                 {"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0,3*sizeof(float),D3D11_INPUT_PER_VERTEX_DATA,0}
             };
 
-        ThrowIfFailed(
-            device->CreateInputLayout(
-                BaseVertexLayoutDesc,
-                ARRAYSIZE(BaseVertexLayoutDesc),
-                vbuffer.data(),
-                vbuffer.size(),
-                inputLayout.GetAddressOf())
-            );
+        vs =std::dynamic_pointer_cast<ChronosVertexShader>((rl->loadShader(vsc->getShaderName()
+        , vsc->getShaderType(), true,BaseVertexLayoutDesc,sizeof(BaseVertexLayoutDesc))));
 
-            dirty = false;
+        dirty = false;
     }
 
     void D3D11BaseRenderState::apply(){
@@ -65,11 +60,11 @@ namespace Chronos{
         UINT stride = this->robj->getAttributeSet()->totalSize();
         UINT offset = 0;
         ID3D11DeviceContext* dc = render->getDeviceContext();
-        dc->IASetInputLayout(inputLayout.Get());
+        dc->IASetInputLayout(vs->getInputLayout());
         dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         dc->IASetVertexBuffers(0, 1, verticeBuffer.GetAddressOf(), &stride, &offset);
-        dc->VSSetShader(vertexShader.Get(), NULL, 0);
-        dc->PSSetShader(pixelShader.Get(),NULL ,0);//tmp
+        dc->VSSetShader(vs->getShader(), NULL, 0);
+        dc->PSSetShader(ps->getShader(),NULL ,0);//tmp
         
     }
 }
