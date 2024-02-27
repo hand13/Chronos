@@ -9,6 +9,7 @@
 namespace Chronos {
 
     BaseChronos::BaseChronos(){
+        enableImgui = false;
     }
 
     void BaseChronos::init() {
@@ -20,8 +21,10 @@ namespace Chronos {
         createRender();
         renderer->init();
         initStartScene();
-        cui = std::make_unique<TestUI>();
-        cui->init();
+        if(enableImgui){
+            cui = std::make_unique<TestUI>();
+            cui->init();
+        }
     }
 
     void BaseChronos::changeSize(){
@@ -74,8 +77,9 @@ namespace Chronos {
 
     void BaseChronos::loop() {
         while(state == 1){
-            
-            cui->runInLoop();
+            if(enableImgui){
+                cui->runInLoop();
+            }
 
             auto es = window->processEvent();
             for(auto & e : es){

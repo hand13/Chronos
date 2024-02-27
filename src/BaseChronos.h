@@ -19,6 +19,7 @@ namespace Chronos {
         Option option;
         ResourceLoader resourceLoader;
         SizeU windowSize;
+        boolean enableImgui;
         public:
         BaseChronos();
         virtual void init()override;
