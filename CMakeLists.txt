@@ -40,12 +40,14 @@ aux_source_directory("src/render/d3d11" D3D11_RENDER_SRC)
 
 aux_source_directory("src/imgui_control" IMGUI_CONTROL_SRC)
 
+aux_source_directory("src/component" COMPONENT_SRC)
+
 
 # add_library(render STATIC ${RENDER_SRC})
 
 # add_library(d3d11render STATIC ${D3D11_RENDER_SRC})
 
-add_executable(Chronos ${SRC} ${PLATFORM_WIN_SRC} ${D3D11_RENDER_SRC} ${RENDER_SRC} ${IMGUI_CONTROL_SRC})
+add_executable(Chronos ${SRC} ${PLATFORM_WIN_SRC} ${D3D11_RENDER_SRC} ${RENDER_SRC} ${IMGUI_CONTROL_SRC} ${COMPONENT_SRC})
 
 add_executable(test test/test.cpp src/Param.cpp src/Utils.cpp src/Log.cpp src/ParamList.cpp)
 
