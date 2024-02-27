@@ -12,6 +12,7 @@ namespace Chronos {
         lastMouseY = 0;
         lButtonPressed = false;
         shouldInitMousePos = true;
+        objectCounts = 0;
     }
 
     RenderTarget* BaseScene::getRenderTarget(){
@@ -164,6 +165,36 @@ namespace Chronos {
 
     void BaseScene::update(){
     }
+
+    bool BaseScene::containObject(const std::string& name)const {
+        return gameObjectMap.find(name) != gameObjectMap.end();
+    }
+    GameObject* BaseScene::getGameObject(const std::string& name){
+        if(!containObject(name)){
+            return nullptr;
+        }
+        return gameObjectMap[name].get();
+    }
+
+    std::map<std::string,std::shared_ptr<GameObject>>& BaseScene::getAllGameObjects() {
+        return gameObjectMap;
+    }
+
+    void BaseScene::addGameObject(std::shared_ptr<GameObject> go,const std::string& name){
+        if(containObject(name)){
+            Panic(name+":this name has been used");
+        }
+        gameObjectMap[name] = go;
+    }
+
+    void BaseScene::solveAllComponents(){
+
+    }
+
+    void BaseScene::solveGameObjectComponent(GameObject * gameObject){
+
+    }
+
     BaseScene::~BaseScene(){
     }
 }

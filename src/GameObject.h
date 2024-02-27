@@ -19,7 +19,7 @@ namespace Chronos{
          * @param target 为null时即为root
          * @param componentName 组件名称
          */
-        virtual void attachComponentTo(std::shared_ptr<Component>& component,Component* target,const std::string& componentName) = 0;
+        virtual void attachComponentTo(std::shared_ptr<Component> component,Component* target,const std::string& componentName) = 0;
         virtual Component* getRootComponent() = 0;
         virtual Component* getComponent(const std::string& name) = 0;
         virtual void destroy() = 0;

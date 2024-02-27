@@ -1,9 +1,11 @@
 #include "BaseChronos.h"
 #include "BaseScene.h"
 #include <memory>
+#include "BaseGameObject.h"
 class TestScene:public Chronos::BaseScene{
     public:
         virtual void initScene()override{
+            spawnObject<Chronos::BaseGameObject>("test");
         }
         virtual ~TestScene(){}
 };
