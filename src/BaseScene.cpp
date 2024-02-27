@@ -7,12 +7,19 @@
 #include "render/DefaultVetexProc.h"
 namespace Chronos {
 
-    BaseScene::BaseScene(){
+    BaseScene::BaseScene():activeCamera(defaultCamera){
         lastMouseX = 0;
         lastMouseY = 0;
         lButtonPressed = false;
         shouldInitMousePos = true;
         objectCounts = 0;
+    }
+
+    Camera& BaseScene::getActiveCamera(){
+        return activeCamera;
+    }
+    void BaseScene::setActiveCamera(Camera& camera){
+        activeCamera = camera;
     }
 
     RenderTarget* BaseScene::getRenderTarget(){
@@ -90,34 +97,45 @@ namespace Chronos {
 
     }
     void BaseScene::initRenderState(){
-        Renderer * render = Chronos::INSTANCE->getRender();
+        Renderer * render = Chronos::INSTANCE->getRenderer();
         rt = render->createRenderTarget(Chronos::INSTANCE->getWindowSize());
         rc.setRenderTarget(rt.get());
 
         SizeU size = Chronos::INSTANCE->getWindowSize();
-        camera.setWidth(size.width);
-        camera.setHeight(size.height);
+        activeCamera.setWidth(size.width);
+        activeCamera.setHeight(size.height);
 
-        rc.setCamera(&camera);
+        rc.setCamera(&activeCamera);
         rc.setFXAA(true);
     }
 
     void BaseScene::changeSize(const SizeU& windowSize){
-        rt = Chronos::INSTANCE->getRender()->createRenderTarget(windowSize);
+        rt = Chronos::INSTANCE->getRenderer()->createRenderTarget(windowSize);
         rc.setRenderTarget(rt.get());
-        camera.setWidth(windowSize.width);
-        camera.setHeight(windowSize.height);
-        rc.setCamera(&camera);
+        activeCamera.setWidth(windowSize.width);
+        activeCamera.setHeight(windowSize.height);
+        rc.setCamera(&activeCamera);
     }
 
     void BaseScene::begin(){
     }
     void BaseScene::render(){
-        Renderer * render = Chronos::INSTANCE->getRender();
-        render->setRenderContext(&rc);
-        render->beginRender();
-        render->renderBaseRenderableObject(&robj);
-        render->endRender();
+        Renderer * renderer = Chronos::INSTANCE->getRenderer();
+        renderer->setRenderContext(&rc);
+        renderer->beginRender();
+        renderer->renderBaseRenderableObject(&robj);
+
+        /**
+        * @brief 渲染所用RenderableComponent
+        * 
+        * @param rc:rcs 
+        */
+        for(auto rc:rcs){
+            rc->render(renderer);
+        }
+        cleanRenderableComponent();
+
+        renderer->endRender();
     }
 
     void BaseScene::processEvent(const IOEvent& event){
@@ -138,20 +156,20 @@ namespace Chronos {
 
             float yawSpeed = 0.3;
             float deltaYaw = static_cast<float>(deltaX) * yawSpeed;
-            camera.addYaw(deltaYaw);
+            activeCamera.addYaw(deltaYaw);
             float pitchSpeed = 0.3;
             float deltaPitch = static_cast<float>(deltaY) * pitchSpeed;
-            camera.addPitch(-deltaPitch);
+            activeCamera.addPitch(-deltaPitch);
         }
         if(event.eventType == KEY_PRESSED){
             if(event.detail.key == CHVK_DOWN || event.detail.key == CHVK_S){
-                camera.moveForward(-0.1f);
+                activeCamera.moveForward(-0.1f);
             }else if(event.detail.key == CHVK_UP || event.detail.key == CHVK_W){
-                camera.moveForward(0.1f);
+                activeCamera.moveForward(0.1f);
             }else if(event.detail.key == CHVK_RIGHT || event.detail.key == CHVK_D) {
-                camera.moveRight(0.1f);
+                activeCamera.moveRight(0.1f);
             }else if(event.detail.key == CHVK_LEFT || event.detail.key == CHVK_A) {
-                camera.moveRight(-0.1f);
+                activeCamera.moveRight(-0.1f);
             }else if(event.detail.key == CHVK_LBUTTON){
                 lButtonPressed = true;
             }
@@ -164,6 +182,7 @@ namespace Chronos {
     }
 
     void BaseScene::update(){
+        solveAllComponents();
     }
 
     bool BaseScene::containObject(const std::string& name)const {
@@ -188,11 +207,33 @@ namespace Chronos {
     }
 
     void BaseScene::solveAllComponents(){
-
+        for(auto go : gameObjectMap){
+            solveGameObjectComponent(go.second.get());
+        }
     }
 
     void BaseScene::solveGameObjectComponent(GameObject * gameObject){
+        Component* root = gameObject->getRootComponent();
+        if(root != nullptr){
+            solveComponent(root);
+        }
+    }
 
+    void BaseScene::solveComponent(Component* component){
+        if(component != nullptr){
+            component->solve();
+        }
+        for(auto child:component->getChildren()){
+            solveComponent(child);
+        }
+    }
+
+    void BaseScene::addRenderableComponent(RenderableComponent* renderableComponent){
+        rcs.push_back(renderableComponent);
+    }
+
+    void BaseScene::cleanRenderableComponent(){
+        rcs.clear();
     }
 
     BaseScene::~BaseScene(){

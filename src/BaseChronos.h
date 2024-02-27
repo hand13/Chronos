@@ -28,7 +28,7 @@ namespace Chronos {
         virtual void shutdown() override;
         virtual ResourceLoader* getResourceLoader() override;
 
-        virtual Renderer* getRender()override;
+        virtual Renderer* getRenderer()override;
         virtual ChronosWindow* getWindow()override;
         virtual void changeSize();
         virtual SizeU getWindowSize()const override;

@@ -1,13 +1,13 @@
 #include "BaseGameObject.h"
-#include "Utils.h"
+#include "../Utils.h"
 #include <memory>
-#include "component/DefaultRootComponent.h"
+#include "../component/DefaultRootComponent.h"
 namespace Chronos {
     BaseGameObject::BaseGameObject(Scene * scene){
         root = nullptr;
         this->scene = scene;
-        attachComponentTo(std::make_shared<DefaultRootComponent>(),nullptr, "root");
-        auto tc = std::make_shared<TransformComponent>();
+        attachComponentTo(std::make_shared<DefaultRootComponent>(this),nullptr, "root");
+        auto tc = std::make_shared<TransformComponent>(this);
         transformComponent = tc.get();
         attachComponentTo(tc, root, "transform");
     }
@@ -37,6 +37,11 @@ namespace Chronos {
         }
         return components.at(name).get();
     }
+
+    Scene* BaseGameObject::getScene(){
+        return scene;
+    }
+
     void BaseGameObject::init(){
         //do nothing
     }

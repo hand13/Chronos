@@ -3,8 +3,8 @@
 #include <memory>
 #include <string>
 #include <map>
-#include "component/TransformComponent.h"
-#include "Scene.h"
+#include "../component/TransformComponent.h"
+#include "../Scene.h"
 namespace Chronos{
     class BaseGameObject:public GameObject {
         protected:
@@ -14,6 +14,7 @@ namespace Chronos{
         Scene* scene;
         public:
         BaseGameObject(Scene* scene);
+        virtual Scene* getScene() override;
         virtual void init()override;
         virtual void beginPlay()override;
         virtual void update()override;

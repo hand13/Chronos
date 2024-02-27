@@ -59,7 +59,7 @@ namespace Chronos {
         state = 0;
     }
 
-    Renderer* BaseChronos::getRender(){
+    Renderer* BaseChronos::getRenderer(){
         return renderer.get();
     }
     ChronosWindow* BaseChronos::getWindow() {

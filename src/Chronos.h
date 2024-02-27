@@ -10,7 +10,7 @@ namespace Chronos {
         virtual void init() = 0;
         virtual void begin() = 0;
         virtual void shutdown() = 0;
-        virtual Renderer* getRender() = 0;
+        virtual Renderer* getRenderer() = 0;
         virtual ChronosWindow* getWindow() = 0;
         virtual ResourceLoader * getResourceLoader() = 0;
         virtual void loop() = 0;

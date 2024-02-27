@@ -10,7 +10,7 @@ namespace Chronos {
         if(iter != sm.end()){
             return iter->second;
         }
-        Renderer * render = Chronos::INSTANCE->getRender();
+        Renderer * render = Chronos::INSTANCE->getRenderer();
         std::shared_ptr<Shader> result = render->loadShader(path, shaderType,exdata,exdataSize);
         if(cached){
         }

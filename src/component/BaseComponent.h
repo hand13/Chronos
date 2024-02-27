@@ -1,13 +1,16 @@
 #pragma once
 #include "Component.h"
 #include <vector>
+#include "../game_object/GameObject.h"
 namespace Chronos {
     class BaseComponent:public Component {
         std::string name;
         Component * parent;
         std::vector<Component*> children;
+        GameObject* gameObect;
         public:
-        BaseComponent();
+        BaseComponent(GameObject* gameObject);
+        virtual GameObject* getGameObject()override;
         virtual void init()override;
         virtual void setParent(Component* parent)override;
         virtual Component* getParent()override;

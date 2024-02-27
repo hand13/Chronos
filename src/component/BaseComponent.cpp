@@ -1,10 +1,14 @@
 #include "BaseComponent.h"
 namespace Chronos {
-        BaseComponent::BaseComponent(){
+        BaseComponent::BaseComponent(GameObject * gameObject):gameObect(gameObject){
             parent = nullptr;
         }
         void BaseComponent::init(){
             //do nothing
+        }
+
+        GameObject* BaseComponent::getGameObject(){
+            return gameObect;
         }
 
         void BaseComponent::setParent(Component* parent){

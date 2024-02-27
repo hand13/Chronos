@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include <memory>
 #include <string>
+#include <vector>
 #include "render/RenderContext.h"
 #include "render/BaseRenderableObject.h"
 
@@ -12,7 +13,8 @@ namespace Chronos {
         std::unique_ptr<RenderTarget> rt;
         BaseRenderableObject robj;
         RenderContext rc;
-        Camera camera;
+        Camera defaultCamera;
+        Camera& activeCamera;
         unsigned int objectCounts;
 
         int lastMouseX;
@@ -27,8 +29,17 @@ namespace Chronos {
         void addGameObject(std::shared_ptr<GameObject> go,const std::string& name);
         private:
         void solveGameObjectComponent(GameObject * gameObject);
+        void solveComponent(Component* component);
+        std::vector<RenderableComponent*> rcs;
         public:
         BaseScene();
+
+        virtual Camera& getActiveCamera()override;
+        virtual void setActiveCamera(Camera& camera)override;
+
+        virtual void addRenderableComponent(RenderableComponent* renderableComponent)override;
+        virtual void cleanRenderableComponent()override;
+
         virtual RenderTarget* getRenderTarget()override;
         virtual Texture2D* getRenderTargetAsTexture()override;
         virtual void begin()override;

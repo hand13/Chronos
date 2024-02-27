@@ -1,5 +1,5 @@
 #pragma once
-#include "component/Component.h"
+#include "../component/Component.h"
 #include <string>
 #include <memory>
 namespace Chronos{
@@ -7,11 +7,13 @@ namespace Chronos{
      * @brief component 生命周期由gameobject控制
      * 
      */
+    class Scene;
     class GameObject{
         public:
         virtual void init() = 0;
         virtual void beginPlay() = 0;
         virtual void update() = 0;
+        virtual Scene* getScene() = 0;
         /**
          * @brief 
          * 附加组件

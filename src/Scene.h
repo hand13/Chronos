@@ -3,13 +3,17 @@
 #include "render/Texture2D.h"
 #include "Utils.h"
 #include "Event.h"
-#include "GameObject.h"
+#include "game_object/GameObject.h"
 #include <map>
 #include <memory>
+#include "Camera.h"
+#include "component/RenderableComponent.h"
 namespace Chronos {
     typedef std::map<std::string, std::shared_ptr<GameObject>> GameObjectMap;
     class Scene {
         public:
+        virtual Camera& getActiveCamera() = 0;
+        virtual void setActiveCamera(Camera& camera) =0;
         virtual RenderTarget* getRenderTarget() = 0;
         virtual Texture2D* getRenderTargetAsTexture() = 0;
         virtual void init() = 0;
@@ -22,6 +26,19 @@ namespace Chronos {
         virtual bool containObject(const std::string& name)const = 0;
         virtual GameObject* getGameObject(const std::string& name) = 0;
         virtual GameObjectMap& getAllGameObjects() = 0;
+
+        /**
+         * @brief 
+         * 添加需要渲染的组件
+         * @param renderableComponent 
+         */
+
+        virtual void addRenderableComponent(RenderableComponent* renderableComponent) = 0;
+        /**
+         * @brief 
+         * 清空所用已渲染的组件
+         */
+        virtual void cleanRenderableComponent() = 0;
 
         virtual ~Scene(){};
     };

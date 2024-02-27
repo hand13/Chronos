@@ -2,8 +2,10 @@
 #include <string>
 #include <vector>
 namespace Chronos{
+    class GameObject;
     class Component {
         public:
+        virtual GameObject* getGameObject() = 0;
         virtual void init() = 0;
         virtual void setParent(Component* parent) = 0;
         virtual Component* getParent() = 0;
