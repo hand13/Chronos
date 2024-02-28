@@ -4,14 +4,12 @@
 #include <string>
 #include <vector>
 #include "render/RenderContext.h"
-#include "render/BaseRenderableObject.h"
 
 namespace Chronos {
     class BaseScene:public Scene{
         protected:
         GameObjectMap gameObjectMap;
         std::unique_ptr<RenderTarget> rt;
-        BaseRenderableObject robj;
         RenderContext rc;
         Camera defaultCamera;
         Camera& activeCamera;

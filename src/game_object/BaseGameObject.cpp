@@ -22,7 +22,7 @@ namespace Chronos {
             if(root != nullptr){
                 Panic("已存在root");
             }
-            root = target;
+            root = component.get();
         }
         components[componentName] = component;
         component->setName(componentName);

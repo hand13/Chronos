@@ -3,8 +3,6 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include "render/DefaultMaterial.h"
-#include "render/DefaultVetexProc.h"
 namespace Chronos {
 
     BaseScene::BaseScene():activeCamera(defaultCamera){
@@ -32,68 +30,6 @@ namespace Chronos {
     void BaseScene::init(){
         initRenderState();
         initScene();
-        std::vector<float> vertices = {
-
-            -1.f,1.f,-1.f,0,0,
-            1.f,1.f,1.f,1.f,1.f,
-            1.f,1.f,-1.f,1.f,0,
-
-            -1.f,1.f,-1.f,0,0,
-            -1.f,1.f,1.f,0,1.f,
-            1.f,1.f,1.f,1.f,1.f,
-
-            -1.f,-1.f,-1.f,0,0,
-            1.f,-1.f,-1.f,1.f,0,
-            1.f,-1.f,1.f,1.f,1.f,
-
-            -1.f,-1.f,-1.f,0,0,
-            1.f,-1.f,1.f,1.f,1.f,
-            -1.f,-1.f,1.f,0,1.f,
-
-            -1.f,-1.f,1.f,0,0,
-            1.f,-1.f,1.f,1.f,0,
-            1.f,1.f,1.f,1.f,1.f,
-
-            -1.f,-1.f,1.f,0,0,
-            1.f,1.f,1.f,1.f,1.f,
-            -1.f,1.f,1.f,0.f,1.f,
-
-            -1.f,-1.f,-1.f,0,0,
-            1.f,1.f,-1.f,1.f,1.f,
-            1.f,-1.f,-1.f,1.f,0,
-
-            -1.f,-1.f,-1.f,0,0,
-            -1.f,1.f,-1.f,0.f,1.f,
-            1.f,1.f,-1.f,1.f,1.f,
-
-            -1.f,-1.f,-1.f,0,0,
-            -1.f,1.f,1.f,1.f,1.f,
-            -1.f,1.f,-1.f,1.f,0,
-
-            -1.f,-1.f,-1.f,0,0,
-            -1.f,-1.f,1.f,0.f,1.f,
-            -1.f,1.f,1.f,1.f,1.f,
-
-            1.f,-1.f,-1.f,0,0,
-            1.f,1.f,-1.f,1.f,0,
-            1.f,1.f,1.f,1.f,1.f,
-
-            1.f,-1.f,-1.f,0,0,
-            1.f,1.f,1.f,1.f,1.f,
-            1.f,-1.f,1.f,0.f,1.f,
-
-        };
-
-        robj.setVertices(vertices);
-        Geometry::AttributeSet as;
-        as.addAttribute("pos", Geometry::VEC);
-        as.addAttribute("uv", Geometry::VEC2);
-
-        robj.setAttributeSet(as);
-        std::unique_ptr<Material> material = std::make_unique<DefaultMaterial>();
-        std::unique_ptr<VertexProc> vertexProc = std::make_unique<DefaultVertexProc>();
-        robj.setMaterial(std::move(material));
-        robj.setVertexProc(std::move(vertexProc));
 
     }
     void BaseScene::initRenderState(){
@@ -123,7 +59,6 @@ namespace Chronos {
         Renderer * renderer = Chronos::INSTANCE->getRenderer();
         renderer->setRenderContext(&rc);
         renderer->beginRender();
-        renderer->renderBaseRenderableObject(&robj);
 
         /**
         * @brief 渲染所用RenderableComponent
