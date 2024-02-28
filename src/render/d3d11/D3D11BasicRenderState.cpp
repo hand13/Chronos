@@ -45,6 +45,7 @@ namespace Chronos{
 
         vs =std::dynamic_pointer_cast<ChronosVertexShader>((rl->loadShader(vsc->getShaderName()
         , vsc->getShaderType(), true,ied.data(),sizeof(D3D11_INPUT_ELEMENT_DESC)*ied.size())));
+        createTmpBuffer();
         dirty = false;
     }
 
@@ -57,6 +58,17 @@ namespace Chronos{
         dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         dc->IASetVertexBuffers(0, 1, verticeBuffer.GetAddressOf(), &stride, &offset);
         dc->VSSetShader(vs->getShader(), NULL, 0);
+
+/**
+ * @brief tmp code
+ * 
+ */
+        Matrix4fParam * mp = dynamic_cast<Matrix4fParam*>(robj->getVertexProc()->getShaderConfig()->getParamList().getParam("model_matrix"));
+        Matrix4f tmp = mp->value;
+        dc->UpdateSubresource(tmpConsBuffer.Get(), 0, 0, &tmp,sizeof(tmp),0);
+        dc->VSSetConstantBuffers(1,1,tmpConsBuffer.GetAddressOf());//todo
+
+
         dc->PSSetShader(ps->getShader(),NULL ,0);//tmp
         applyShaderParam();
         
@@ -90,5 +102,14 @@ namespace Chronos{
         // };
 
         return result;
+    }
+    void D3D11BaseRenderState::createTmpBuffer(){//tmp for test
+        ID3D11Device * device = render->getDevice();
+        D3D11_BUFFER_DESC bdesc;
+        ZeroMemory(&bdesc,sizeof(bdesc));
+        bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bdesc.Usage = D3D11_USAGE_DEFAULT;
+        bdesc.ByteWidth = sizeof(float)*16;
+        ThrowIfFailed(device->CreateBuffer(&bdesc, nullptr,tmpConsBuffer.GetAddressOf()));
     }
 }

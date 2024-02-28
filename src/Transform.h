@@ -6,6 +6,6 @@ namespace Chronos {
         Float3 pos;
         Float3 scale;
         Float3 rotation;
-        Matrix4f getMatrix(){return Matrix4f::Identity();}
+        Matrix4f getMatrix();
     };
 }

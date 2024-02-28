@@ -17,6 +17,9 @@ namespace Chronos{
         std::shared_ptr<ChronosVertexShader> vs;
         std::shared_ptr<ChronosPixelShader> ps;
 
+        ComPtr<ID3D11Buffer> tmpConsBuffer;//todo
+        void createTmpBuffer();//todo
+
         public:
         D3D11BaseRenderState(D3D11Renderer * render,BaseRenderableObject * robj);
         virtual void setDirty(bool dirty)override;

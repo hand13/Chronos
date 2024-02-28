@@ -1,6 +1,7 @@
 #include "StaticMeshComponent.h"
 #include "../render/DefaultMaterial.h"
 #include "../render/DefaultVetexProc.h"
+#include "TransformComponent.h"
 namespace Chronos{
     void StaticMeshComponent::init(){
         std::vector<float> vertices = {
@@ -64,8 +65,18 @@ namespace Chronos{
         std::unique_ptr<VertexProc> vertexProc = std::make_unique<DefaultVertexProc>();
         bro.setMaterial(std::move(material));
         bro.setVertexProc(std::move(vertexProc));
+        vParamList = &bro.getVertexProc()->getShaderConfig()->getParamList();
+        vParamList->registerParam("model_matrix",ParamType::MATRIX4F);
     }
     void StaticMeshComponent::render(Renderer * renderer){
+        vParamList->setParamValue("model_matrix",getTransform().getMatrix());
         renderer->renderBaseRenderableObject(&bro);
+    }
+    Transform StaticMeshComponent::getTransform(){
+        TransformComponent * tc = dynamic_cast<TransformComponent*>(getGameObject()->getComponent("transform"));
+        if(tc == nullptr){
+            Panic("should not happened");
+        }
+        return tc->transform;
     }
 }
