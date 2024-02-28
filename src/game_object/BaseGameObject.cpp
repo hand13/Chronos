@@ -48,7 +48,7 @@ namespace Chronos {
     void BaseGameObject::beginPlay(){
         //do nothing;
     }
-    void BaseGameObject::update(){
+    void BaseGameObject::update(unsigned int delta){
         //do nothing
     }
     void BaseGameObject::destroy(){

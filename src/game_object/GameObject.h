@@ -12,7 +12,7 @@ namespace Chronos{
         public:
         virtual void init() = 0;
         virtual void beginPlay() = 0;
-        virtual void update() = 0;
+        virtual void update(unsigned int delta) = 0;
         virtual Scene* getScene() = 0;
         /**
          * @brief 

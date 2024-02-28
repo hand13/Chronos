@@ -10,6 +10,7 @@
 namespace Chronos {
     class BaseChronos:public Chronos{
         protected:
+        Timer timer;
         std::unique_ptr<Scene> mainScene;
         std::unique_ptr<ChronosWindow> window;
         std::unique_ptr<ControlUI> cui;//tmp

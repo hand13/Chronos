@@ -63,6 +63,17 @@ class RawData{
     ~RawData();
 };
 
+class Timer {
+    private:
+    long long startEpochTime;
+    long long lastEpochTime;//microsecond
+    public:
+    void start();
+    long long epochTime()const;
+    long long elpasedTimeFromStart()const;
+    unsigned int delta();
+};
+
 typedef Eigen::Matrix4f Matrix4f ;
 
 void Panic(const std::wstring& msg);

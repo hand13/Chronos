@@ -8,6 +8,7 @@ namespace Chronos {
         public:
         TestGameObject(Scene* scene):BaseGameObject(scene),smc(nullptr){};
         virtual void init()override;
+        virtual void update(unsigned int delta)override;
         virtual ~TestGameObject(){}
     };
 }

@@ -42,7 +42,7 @@ namespace Chronos {
         virtual Texture2D* getRenderTargetAsTexture()override;
         virtual void begin()override;
         virtual void render()override;
-        virtual void update()override;
+        virtual void update(unsigned int deltaTime)override;
         virtual void processEvent(const IOEvent& event)override;
         virtual void changeSize(const SizeU& windowSize)override;
 

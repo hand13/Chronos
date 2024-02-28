@@ -69,6 +69,7 @@ namespace Chronos {
     void BaseChronos::begin() {
         Log("game start");
         window->show();
+        timer.start();
     }
     
     SizeU BaseChronos::getWindowSize()const {
@@ -109,8 +110,9 @@ namespace Chronos {
     }
 
     void BaseChronos::update() {
-        mainScene->update();
+        mainScene->update(timer.delta());
     }
+
     BaseChronos::~BaseChronos() {
     }
 }

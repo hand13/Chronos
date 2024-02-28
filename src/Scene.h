@@ -19,7 +19,12 @@ namespace Chronos {
         virtual void init() = 0;
         virtual void begin() = 0;
         virtual void render() = 0;
-        virtual void update() = 0;
+        /**
+         * @brief 
+         * 
+         * @param deltaTime 毫秒
+         */
+        virtual void update(unsigned int deltaTime) = 0;
         virtual void processEvent(const IOEvent& event) = 0;
         virtual void changeSize(const SizeU& windowSize) = 0;
 

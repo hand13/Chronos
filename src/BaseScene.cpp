@@ -54,6 +54,11 @@ namespace Chronos {
     }
 
     void BaseScene::begin(){
+
+        for(auto obj:gameObjectMap){
+            obj.second->beginPlay();//todo
+        }
+
     }
     void BaseScene::render(){
         Renderer * renderer = Chronos::INSTANCE->getRenderer();
@@ -116,8 +121,13 @@ namespace Chronos {
         }
     }
 
-    void BaseScene::update(){
+    void BaseScene::update(unsigned int deltaTime){
         solveAllComponents();
+
+        for(auto obj:gameObjectMap){
+            obj.second->update(deltaTime);
+        }
+
     }
 
     bool BaseScene::containObject(const std::string& name)const {
