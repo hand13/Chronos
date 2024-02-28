@@ -6,6 +6,7 @@
 #include "ChronosWindow.h"
 #include "Option.h"
 #include "Utils.h"
+#include "Timer.h"
 #include "imgui_control/ControlUI.h"
 namespace Chronos {
     class BaseChronos:public Chronos{

@@ -69,7 +69,7 @@ namespace Chronos{
 
     void D3D11Renderer::beginRender() {
         deviceContext->RSSetViewports(1, &viewport);
-        float color[] = {1.0f,0.f,0.0f,1.f};
+        float color[] = {0.0f,0.f,0.0f,1.f};
 
         {
             ID3D11RenderTargetView* rtv = rtForRender->getRTV();
