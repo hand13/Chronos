@@ -3,6 +3,7 @@
 #include "D3D11Renderer.h"
 #include "common.h"
 #include <d3d11.h>
+#include <vector>
 #include <wrl/client.h>
 #include "ChronosVertexShader.h"
 #include "ChronosPixelShader.h"
@@ -17,8 +18,15 @@ namespace Chronos{
         std::shared_ptr<ChronosVertexShader> vs;
         std::shared_ptr<ChronosPixelShader> ps;
 
-        ComPtr<ID3D11Buffer> tmpConsBuffer;//todo
-        void createTmpBuffer();//todo
+
+        std::vector<ComPtr<ID3D11Buffer>> vertParamConstantBuffers;
+        std::vector<ComPtr<ID3D11Buffer>> pixelParamConstantBuffers;
+
+        void createBufferForShaderParams();
+        void transferParamsToConstantBuffers();
+        void applyShaderParamConstantBuffers();
+
+        ComPtr<ID3D11Buffer> createConstantBuffer(size_t size);
 
         public:
         D3D11BaseRenderState(D3D11Renderer * render,BaseRenderableObject * robj);
@@ -26,7 +34,6 @@ namespace Chronos{
         virtual bool isDirty()override;
         virtual void update()override;
         virtual void apply()override;
-        void applyShaderParam();
         virtual ~D3D11BaseRenderState(){}
         static std::vector<D3D11_INPUT_ELEMENT_DESC> genInputElementDescFromAttrSet(Geometry::AttributeSet* as);
     };

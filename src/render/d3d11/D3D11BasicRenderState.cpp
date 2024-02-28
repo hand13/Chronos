@@ -5,6 +5,7 @@
 #include <memory>
 #include <minwindef.h>
 #include <vector>
+#include <wrl/client.h>
 #include "common.h"
 #include "../../Chronos.h"
 namespace Chronos{
@@ -45,11 +46,15 @@ namespace Chronos{
 
         vs =std::dynamic_pointer_cast<ChronosVertexShader>((rl->loadShader(vsc->getShaderName()
         , vsc->getShaderType(), true,ied.data(),sizeof(D3D11_INPUT_ELEMENT_DESC)*ied.size())));
-        createTmpBuffer();
+
+        createBufferForShaderParams();
+
         dirty = false;
     }
 
     void D3D11BaseRenderState::apply(){
+
+        transferParamsToConstantBuffers();
 
         UINT stride = this->robj->getAttributeSet()->totalSize();
         UINT offset = 0;
@@ -58,23 +63,20 @@ namespace Chronos{
         dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         dc->IASetVertexBuffers(0, 1, verticeBuffer.GetAddressOf(), &stride, &offset);
         dc->VSSetShader(vs->getShader(), NULL, 0);
-
-/**
- * @brief tmp code
- * 
- */
-        Matrix4fParam * mp = dynamic_cast<Matrix4fParam*>(robj->getVertexProc()->getShaderConfig()->getParamList().getParam("model_matrix"));
-        Matrix4f tmp = mp->value;
-        dc->UpdateSubresource(tmpConsBuffer.Get(), 0, 0, &tmp,sizeof(tmp),0);
-        dc->VSSetConstantBuffers(1,1,tmpConsBuffer.GetAddressOf());//todo
+// /**
+//  * @brief tmp code
+//  * 
+//  */
+//         Matrix4fParam * mp = dynamic_cast<Matrix4fParam*>(robj->getVertexProc()->getShaderConfig()->getParamList().getParam("model_matrix"));
+//         Matrix4f tmp = mp->value;
+//         dc->UpdateSubresource(tmpConsBuffer.Get(), 0, 0, &tmp,sizeof(tmp),0);
+//         dc->VSSetConstantBuffers(1,1,tmpConsBuffer.GetAddressOf());//todo
 
 
         dc->PSSetShader(ps->getShader(),NULL ,0);//tmp
-        applyShaderParam();
+        applyShaderParamConstantBuffers();
+        // applyShaderParam();
         
-    }
-    void D3D11BaseRenderState::applyShaderParam(){
-        //todo
     }
 
     std::vector<D3D11_INPUT_ELEMENT_DESC> D3D11BaseRenderState::genInputElementDescFromAttrSet(Geometry::AttributeSet* as){
@@ -103,13 +105,73 @@ namespace Chronos{
 
         return result;
     }
-    void D3D11BaseRenderState::createTmpBuffer(){//tmp for test
+    ComPtr<ID3D11Buffer> D3D11BaseRenderState::createConstantBuffer(size_t size){
+        ComPtr<ID3D11Buffer> result;
         ID3D11Device * device = render->getDevice();
         D3D11_BUFFER_DESC bdesc;
         ZeroMemory(&bdesc,sizeof(bdesc));
         bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
         bdesc.Usage = D3D11_USAGE_DEFAULT;
-        bdesc.ByteWidth = sizeof(float)*16;
-        ThrowIfFailed(device->CreateBuffer(&bdesc, nullptr,tmpConsBuffer.GetAddressOf()));
+        bdesc.ByteWidth = size;
+        ThrowIfFailed(device->CreateBuffer(&bdesc, nullptr,result.GetAddressOf()));
+        return result;
+    }
+    
+    void D3D11BaseRenderState::createBufferForShaderParams(){
+
+        ParamList & vpl = robj->getVertexProc()->getShaderConfig()->getParamList();
+        for(auto param:vpl.getParamList()){
+            size_t size = param->signature().size;
+            vertParamConstantBuffers.push_back(createConstantBuffer(size));
+        }
+
+        ParamList & ppl = robj->getMaterial()->getShaderConfig()->getParamList();
+        for(auto param:ppl.getParamList()){
+            size_t size = param->signature().size;
+            pixelParamConstantBuffers.push_back(createConstantBuffer(size));
+        }
+    }
+
+    void D3D11BaseRenderState::transferParamsToConstantBuffers(){
+        ID3D11DeviceContext * dc = render->getDeviceContext();
+
+        ParamList & vpl = robj->getVertexProc()->getShaderConfig()->getParamList();
+        if(vpl.getParamList().size() != vertParamConstantBuffers.size()){
+            Panic("should not happended");
+        }
+
+        ParamList & ppl = robj->getMaterial()->getShaderConfig()->getParamList();
+        if(ppl.getParamList().size() != pixelParamConstantBuffers.size()){
+            Panic("should not happended");
+        }
+
+        int vindex = 0;
+        for(auto param:vpl.getParamList()){
+            dc->UpdateSubresource(vertParamConstantBuffers[vindex].Get(), 0, 0
+            , param->asData(),param->signature().size,0);
+            vindex++;
+        }
+
+        int pindex= 0;
+        for(auto param:ppl.getParamList()){
+            dc->UpdateSubresource(pixelParamConstantBuffers[pindex].Get(), 0, 0
+            , param->asData(),param->signature().size,0);
+            pindex++;
+        }
+
+    }
+
+    void D3D11BaseRenderState::applyShaderParamConstantBuffers(){
+        ID3D11DeviceContext* dc = render->getDeviceContext();
+        int vslot = 1;//todo
+        for(auto cb:vertParamConstantBuffers){
+            dc->VSSetConstantBuffers(vslot,1,cb.GetAddressOf());//todo
+            vslot++;
+        }
+        int pslot = 0;//todo
+        for(auto cb:pixelParamConstantBuffers){
+            dc->PSSetConstantBuffers(pslot,1,cb.GetAddressOf());//todo
+            pslot++;
+        }
     }
 }

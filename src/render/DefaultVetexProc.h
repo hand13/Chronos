@@ -9,6 +9,7 @@ namespace Chronos {
         public:
         DefaultVertexProc(){
             sc = std::make_unique<BaseShaderConfig>("default_vert",VERTEX_SHADER);
+            sc->getParamList().registerParam("model_matrix",ParamType::MATRIX4F);
         }
         virtual ShaderConfig * getShaderConfig(){
             return sc.get();

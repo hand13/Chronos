@@ -65,11 +65,11 @@ namespace Chronos{
         std::unique_ptr<VertexProc> vertexProc = std::make_unique<DefaultVertexProc>();
         bro.setMaterial(std::move(material));
         bro.setVertexProc(std::move(vertexProc));
-        vParamList = &bro.getVertexProc()->getShaderConfig()->getParamList();
-        vParamList->registerParam("model_matrix",ParamType::MATRIX4F);
     }
     void StaticMeshComponent::render(Renderer * renderer){
-        vParamList->setParamValue("model_matrix",getTransform().getMatrix());
+
+        bro.getVertexProc()->getShaderConfig()->getParamList().setParamValue("model_matrix",getTransform().getMatrix());
+
         renderer->renderBaseRenderableObject(&bro);
     }
     Transform StaticMeshComponent::getTransform(){
