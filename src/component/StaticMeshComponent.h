@@ -1,11 +1,12 @@
 #pragma once
 #include "RenderableComponent.h"
-#include "../render/BaseRenderableObject.h"
 #include "../Transform.h"
+#include "../model/PolygonModel.h"
+#include <memory>
 namespace Chronos{
     class StaticMeshComponent:public RenderableComponent{
         private:
-        BaseRenderableObject bro;
+        std::shared_ptr<PolygonModel> pm;
         public:
         virtual void init() override;
         StaticMeshComponent(GameObject* gameObject):RenderableComponent(gameObject){}

@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.22)
 
 set(CMAKE_BUILD_TYPE Debug)
 
+add_definitions(-DNOMINMAX)
+
 find_package(fmt CONFIG REQUIRED)
 find_package(Poco CONFIG REQUIRED Foundation)
 find_package(Eigen3 CONFIG REQUIRED NO_MODULE)
@@ -15,7 +17,7 @@ set(THIRD_PARTY_DIR ${PROJECT_SOURCE_DIR}/third_party)
 # set(STB_DIR ${THIRD_PARTY_DIR}/stb)
 # set(GLM_DIR ${THIRD_PARTY_DIR}/glm)
 set(IMGUI_DIR ${THIRD_PARTY_DIR}/imgui)
-# set(ASSIMP_DIR ${THIRD_PARTY_DIR}/assimp)
+set(ASSIMP_DIR ${THIRD_PARTY_DIR}/assimp)
 
 set(PHYSX_DIR "G:/PhysX-105.1-physx-5.3.1/physx")
 
@@ -29,12 +31,12 @@ include_directories(${PHYSX_DIR}/include)
 # include_directories(${GLAD_DIR}/include)
 # include_directories(${STB_DIR})
 # include_directories(${GLM_DIR})
-# include_directories(${ASSIMP_DIR}/include)
+include_directories(${ASSIMP_DIR}/include)
 
 # include_directories(${GLFW_DIR}/include)
 
 # link_directories(${GLFW_DIR}/lib)
-# link_directories(${ASSIMP_DIR}/debug/lib)
+link_directories(${ASSIMP_DIR}/debug/lib)
 
 aux_source_directory(src SRC)
 
@@ -44,19 +46,20 @@ aux_source_directory("src/render/d3d11" D3D11_RENDER_SRC)
 aux_source_directory("src/imgui_control" IMGUI_CONTROL_SRC)
 aux_source_directory("src/component" COMPONENT_SRC)
 aux_source_directory("src/game_object" GAME_OBJECT_SRC)
+aux_source_directory("src/model" MODEL_SRC)
 
 
 # add_library(render STATIC ${RENDER_SRC})
 
 # add_library(d3d11render STATIC ${D3D11_RENDER_SRC})
 
-add_executable(Chronos ${SRC} ${PLATFORM_WIN_SRC} ${D3D11_RENDER_SRC} ${RENDER_SRC} ${IMGUI_CONTROL_SRC} ${COMPONENT_SRC} ${GAME_OBJECT_SRC})
+add_executable(Chronos ${SRC} ${PLATFORM_WIN_SRC} ${D3D11_RENDER_SRC} ${RENDER_SRC} ${IMGUI_CONTROL_SRC} ${COMPONENT_SRC} ${GAME_OBJECT_SRC} ${MODEL_SRC})
 
 add_executable(test test/test.cpp src/Param.cpp src/Utils.cpp src/Log.cpp src/ParamList.cpp)
 
 target_link_libraries(test PRIVATE Poco::Foundation)
 
-target_link_libraries(Chronos PRIVATE dxgi d3d11 d3d12 imgui_dx12 Eigen3::Eigen  Poco::Foundation fmt::fmt)
+target_link_libraries(Chronos PRIVATE dxgi d3d11 d3d12 imgui_dx12 Eigen3::Eigen  assimp-vc142-mtd Poco::Foundation fmt::fmt)
 
 # target_link_libraries(glworld glfw3 glad imgui_dx12 d3d12 dxgi assimp-vc142-mtd)
 
@@ -98,6 +101,10 @@ endforeach(FILE)
 add_custom_command(TARGET Chronos PRE_BUILD
  COMMAND ${CMAKE_COMMAND} -E copy_directory
  	${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:Chronos>/resources)
+
+add_custom_command(TARGET Chronos PRE_BUILD
+ COMMAND ${CMAKE_COMMAND} -E copy
+ 	${ASSIMP_DIR}/debug/bin/assimp-vc142-mtd.dll $<TARGET_FILE_DIR:Chronos>/assimp-vc142-mtd.dll)
 
 option(PHYSX_BUILD_TYPE "The build type of PhysX, i.e., one of {debug, checked, profile, release}" "checked")
 

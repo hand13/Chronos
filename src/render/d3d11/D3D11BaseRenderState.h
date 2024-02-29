@@ -15,6 +15,7 @@ namespace Chronos{
         bool dirty;
 
         ComPtr<ID3D11Buffer> verticeBuffer;
+        ComPtr<ID3D11Buffer> indicesBuffer;
         std::shared_ptr<ChronosVertexShader> vs;
         std::shared_ptr<ChronosPixelShader> ps;
 

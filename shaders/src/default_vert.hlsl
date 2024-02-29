@@ -1,6 +1,7 @@
 struct VertexShaderInput{
     float3 pos:POSITION;
     float2 uv:TEXCOORD;
+    float3 normal:NORMAL;
 };
 struct PixelShaderInput{
     float4 pos:SV_POSITION;

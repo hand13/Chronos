@@ -28,4 +28,8 @@ namespace Chronos {
         }
         return result;
     }
+
+    std::shared_ptr<PolygonModel> ResourceLoader::loadPolygonModelFromFile(const std::string& filePath){
+        return pml.loadPolygonModel(filePath);
+    }
 }

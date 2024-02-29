@@ -25,17 +25,35 @@ namespace Chronos{
 
         ResourceLoader * rl = Chronos::INSTANCE->getResourceLoader();
 
-        std::vector<float> vertices = robj->getVertices();
-        D3D11_BUFFER_DESC desc;
-        ZeroMemory(&desc,sizeof(desc));
-        desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        desc.CPUAccessFlags = 0;//D3D11_CPU_ACCESS_READ;
-        desc.ByteWidth = vertices.size()*sizeof(float);
-        desc.Usage = D3D11_USAGE_DEFAULT;
-        D3D11_SUBRESOURCE_DATA sd;
-        ZeroMemory(&sd,sizeof(sd));
-        sd.pSysMem = vertices.data();
-        ThrowIfFailed(render->getDevice()->CreateBuffer(&desc, &sd, verticeBuffer.GetAddressOf()));
+        {
+            std::vector<float> vertices = robj->getVertices();
+            D3D11_BUFFER_DESC desc;
+            ZeroMemory(&desc,sizeof(desc));
+            desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+            desc.CPUAccessFlags = 0;//D3D11_CPU_ACCESS_READ;
+            desc.ByteWidth = vertices.size()*sizeof(float);
+            desc.Usage = D3D11_USAGE_DEFAULT;
+            D3D11_SUBRESOURCE_DATA sd;
+            ZeroMemory(&sd,sizeof(sd));
+            sd.pSysMem = vertices.data();
+            ThrowIfFailed(render->getDevice()->CreateBuffer(&desc, &sd, verticeBuffer.GetAddressOf()));
+        }
+
+        if(robj->getIndices().size() != 0){
+            std::vector<int> indices = robj->getIndices();
+            D3D11_BUFFER_DESC desc;
+            ZeroMemory(&desc,sizeof(desc));
+            desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+            desc.CPUAccessFlags = 0;//D3D11_CPU_ACCESS_READ;
+            desc.ByteWidth = indices.size()*sizeof(int);
+            desc.Usage = D3D11_USAGE_DEFAULT;
+            D3D11_SUBRESOURCE_DATA sd;
+            ZeroMemory(&sd,sizeof(sd));
+            sd.pSysMem = indices.data();
+            ThrowIfFailed(render->getDevice()->CreateBuffer(&desc, &sd, indicesBuffer.GetAddressOf()));
+        }
+
+
 
         ShaderConfig* psc = robj->getMaterial()->getShaderConfig();
         ShaderConfig* vsc = robj->getVertexProc()->getShaderConfig();
@@ -75,6 +93,12 @@ namespace Chronos{
 
         dc->PSSetShader(ps->getShader(),NULL ,0);//tmp
         applyShaderParamConstantBuffers();
+        if(indicesBuffer){
+            dc->IASetIndexBuffer(indicesBuffer.Get(), DXGI_FORMAT_R32_UINT,0);
+            dc->DrawIndexed(robj->getIndices().size(), 0,0);
+        }else{
+            dc->Draw(robj->getVerticesCount(),0);
+        }
         // applyShaderParam();
         
     }
@@ -90,6 +114,9 @@ namespace Chronos{
             }else if(attr.name == "uv"){
                 semantic = "TEXCOORD";
                 format = DXGI_FORMAT_R32G32_FLOAT;
+            }else if(attr.name == "normal"){
+                semantic = "NORMAL";
+                format = DXGI_FORMAT_R32G32B32_FLOAT;
             }
             UINT offset = as->getAttributeOffset(attr.name);
             D3D11_INPUT_ELEMENT_DESC desc = 

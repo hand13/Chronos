@@ -107,7 +107,6 @@ namespace Chronos{
         deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         RenderState* rs = robj->getRenderState();
         rs->apply();
-       deviceContext->Draw(robj->getVerticesCount(),0);
 
     }
 

@@ -1,7 +1,7 @@
 #include "../src/ParamList.h"
 #include <iostream>
 #include <string>
-int main() {
+void param_test(){
     const char * test = "hello world";
     Chronos::ParamList pl;
     pl.registerParam("id", Chronos::INT);
@@ -14,5 +14,12 @@ int main() {
     pl.setParamValue("name",tmp);
     Chronos::Param * pm =  pl.getParam("name");
     std::cout<<(const char*)pm->asData()<<std::endl;
+}
+void model_loader_test(){
+
+}
+int main() {
+    param_test();
+    model_loader_test();
     return 0;
 };
