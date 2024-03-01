@@ -31,4 +31,11 @@ namespace Chronos{
     Texture2D* ChronosD3D11RenderTarget::innerAsTexture(){
         return _innerTexture.get();
     }
+
+    void ChronosD3D11RenderTarget::setDSV(ComPtr<ID3D11DepthStencilView> dsv){
+        _dsv = dsv;
+    }
+    ID3D11DepthStencilView* ChronosD3D11RenderTarget::getDSV(){
+        return _dsv.Get();
+    }
 }

@@ -74,15 +74,22 @@ namespace Chronos{
         {
             ID3D11RenderTargetView* rtv = rtForRender->getRTV();
             ID3D11RenderTargetView* innerRTV = rtForRender->getInnerRTV();
+            ID3D11DepthStencilView * dsv = rtForRender->getDSV();
 
             if(currentContext->shouldUseFXAA()){
-                deviceContext->OMSetRenderTargets(1, &innerRTV, NULL);
+                deviceContext->OMSetRenderTargets(1, &innerRTV, dsv);
                 deviceContext->ClearRenderTargetView(innerRTV, color);
             }else {
-                deviceContext->OMSetRenderTargets(1, &rtv, NULL);
+                deviceContext->OMSetRenderTargets(1, &rtv, dsv);
                 deviceContext->ClearRenderTargetView(rtv, color);
             }
 
+            deviceContext->ClearDepthStencilView(
+            dsv,
+            D3D11_CLEAR_DEPTH,
+            1.0f,
+            0
+            );
         }
 
         deviceContext->RSSetState(rasterizeState.Get());
@@ -134,6 +141,43 @@ namespace Chronos{
         rdesc.SlopeScaledDepthBias = 0.0f;
     }
 
+    void D3D11Renderer::createDepthStencilView(const SizeU& size,ID3D11DepthStencilView** dsv){
+        D3D11_TEXTURE2D_DESC depthStencilDesc;
+        depthStencilDesc.Width = size.width;
+        depthStencilDesc.Height = size.height;
+        depthStencilDesc.MipLevels = 1;
+        depthStencilDesc.ArraySize = 1;
+        depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        depthStencilDesc.SampleDesc.Count = 1;
+        depthStencilDesc.SampleDesc.Quality = 0;
+        depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+        depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+        depthStencilDesc.CPUAccessFlags = 0;
+        depthStencilDesc.MiscFlags = 0;
+        ComPtr<ID3D11Texture2D> depthStencil;
+        ThrowIfFailed(
+            device->CreateTexture2D(
+                &depthStencilDesc,
+                nullptr,
+                &depthStencil
+                )
+            );
+
+        D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+        depthStencilViewDesc.Format = depthStencilDesc.Format;
+        depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+        depthStencilViewDesc.Flags = 0;
+        depthStencilViewDesc.Texture2D.MipSlice = 0;
+        ThrowIfFailed(
+            device->CreateDepthStencilView(
+                depthStencil.Get(),
+                &depthStencilViewDesc,
+                dsv
+                )
+            );
+    }
+
+
     void D3D11Renderer::createRenderTargetView(const SizeU& size,ID3D11RenderTargetView** rtv,ID3D11ShaderResourceView ** rsv){
         ComPtr<ID3D11Texture2D> pBackBuffer;
         CD3D11_TEXTURE2D_DESC tdesc(DXGI_FORMAT_R8G8B8A8_UNORM,size.width,size.height);
@@ -173,6 +217,9 @@ namespace Chronos{
         result->setInnerRTV(innerRTV);
         result->setInnerTexture(std::move(innertexture));
 
+        ComPtr<ID3D11DepthStencilView> dsv;
+        createDepthStencilView(size, dsv.ReleaseAndGetAddressOf());
+        result->setDSV(dsv);
         return result;
 
     }

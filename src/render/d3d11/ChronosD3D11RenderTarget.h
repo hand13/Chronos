@@ -15,6 +15,8 @@ namespace Chronos{
 
         ComPtr<ID3D11RenderTargetView> _innerRTV;
         std::unique_ptr<ChronosD3D11Texture2D> _innerTexture;
+
+        ComPtr<ID3D11DepthStencilView> _dsv;
         public:
 
         void setRTV(ComPtr<ID3D11RenderTargetView> rtv);
@@ -28,6 +30,9 @@ namespace Chronos{
 
         ID3D11RenderTargetView* getInnerRTV();
         Texture2D* innerAsTexture();
+
+        void setDSV(ComPtr<ID3D11DepthStencilView> dsv);
+        ID3D11DepthStencilView* getDSV();
 
         virtual ~ChronosD3D11RenderTarget();
     };

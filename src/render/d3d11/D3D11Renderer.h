@@ -52,6 +52,7 @@ namespace Chronos {
         static D3D11_VIEWPORT genViewport(const Camera& cmamea);
         virtual std::unique_ptr<RenderTarget> createRenderTarget(const SizeU& size)override;
         void createRenderTargetView(const SizeU& size,ID3D11RenderTargetView** rtv,ID3D11ShaderResourceView ** rsv);
+        void createDepthStencilView(const SizeU& size,ID3D11DepthStencilView** dsv);
         virtual ~D3D11Renderer();
     };
 };
