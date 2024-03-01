@@ -94,10 +94,10 @@ namespace Chronos {
             lastMouseX = event.detail.xy.x;
             lastMouseY = event.detail.xy.y;
 
-            float yawSpeed = 0.3;
+            float yawSpeed = 0.3f;
             float deltaYaw = static_cast<float>(deltaX) * yawSpeed;
             activeCamera.addYaw(deltaYaw);
-            float pitchSpeed = 0.3;
+            float pitchSpeed = 0.3f;
             float deltaPitch = static_cast<float>(deltaY) * pitchSpeed;
             activeCamera.addPitch(-deltaPitch);
         }

@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_BUILD_TYPE Debug)
 
 add_definitions(-DNOMINMAX)
+add_definitions(-D_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
 
 find_package(fmt CONFIG REQUIRED)
 find_package(Poco CONFIG REQUIRED Foundation)

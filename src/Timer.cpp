@@ -22,7 +22,7 @@ namespace Chronos{
 
     unsigned int Timer::delta(){
         long long tmp = epoch_time();
-        unsigned int delta = tmp - lastEpochTime;
+        unsigned int delta = static_cast<unsigned int>(tmp - lastEpochTime);
         lastEpochTime = tmp;
         return delta;
     }

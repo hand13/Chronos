@@ -31,7 +31,7 @@ namespace Chronos{
             ZeroMemory(&desc,sizeof(desc));
             desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
             desc.CPUAccessFlags = 0;//D3D11_CPU_ACCESS_READ;
-            desc.ByteWidth = vertices.size()*sizeof(float);
+            desc.ByteWidth = static_cast<UINT>(vertices.size()*sizeof(float));
             desc.Usage = D3D11_USAGE_DEFAULT;
             D3D11_SUBRESOURCE_DATA sd;
             ZeroMemory(&sd,sizeof(sd));
@@ -45,7 +45,7 @@ namespace Chronos{
             ZeroMemory(&desc,sizeof(desc));
             desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
             desc.CPUAccessFlags = 0;//D3D11_CPU_ACCESS_READ;
-            desc.ByteWidth = indices.size()*sizeof(int);
+            desc.ByteWidth = static_cast<UINT>(indices.size()*sizeof(int));
             desc.Usage = D3D11_USAGE_DEFAULT;
             D3D11_SUBRESOURCE_DATA sd;
             ZeroMemory(&sd,sizeof(sd));
@@ -74,7 +74,7 @@ namespace Chronos{
 
         transferParamsToConstantBuffers();
 
-        UINT stride = this->robj->getAttributeSet()->totalSize();
+        UINT stride = static_cast<UINT>(this->robj->getAttributeSet()->totalSize());
         UINT offset = 0;
         ID3D11DeviceContext* dc = render->getDeviceContext();
         dc->IASetInputLayout(vs->getInputLayout());
@@ -95,9 +95,9 @@ namespace Chronos{
         applyShaderParamConstantBuffers();
         if(indicesBuffer){
             dc->IASetIndexBuffer(indicesBuffer.Get(), DXGI_FORMAT_R32_UINT,0);
-            dc->DrawIndexed(robj->getIndices().size(), 0,0);
+            dc->DrawIndexed(static_cast<UINT>(robj->getIndices().size()), 0,0);
         }else{
-            dc->Draw(robj->getVerticesCount(),0);
+            dc->Draw(static_cast<UINT>(robj->getVerticesCount()),0);
         }
         // applyShaderParam();
         
@@ -118,7 +118,7 @@ namespace Chronos{
                 semantic = "NORMAL";
                 format = DXGI_FORMAT_R32G32B32_FLOAT;
             }
-            UINT offset = as->getAttributeOffset(attr.name);
+            UINT offset = static_cast<UINT>(as->getAttributeOffset(attr.name));
             D3D11_INPUT_ELEMENT_DESC desc = 
             {semantic,0,format,0,offset,D3D11_INPUT_PER_VERTEX_DATA,0};
             result.push_back(desc);
@@ -139,7 +139,7 @@ namespace Chronos{
         ZeroMemory(&bdesc,sizeof(bdesc));
         bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
         bdesc.Usage = D3D11_USAGE_DEFAULT;
-        bdesc.ByteWidth = size;
+        bdesc.ByteWidth = static_cast<UINT>(size);
         ThrowIfFailed(device->CreateBuffer(&bdesc, nullptr,result.GetAddressOf()));
         return result;
     }
@@ -175,14 +175,14 @@ namespace Chronos{
         int vindex = 0;
         for(auto param:vpl.getParamList()){
             dc->UpdateSubresource(vertParamConstantBuffers[vindex].Get(), 0, 0
-            , param->asData(),param->signature().size,0);
+            , param->asData(),static_cast<UINT>(param->signature().size),0);
             vindex++;
         }
 
         int pindex= 0;
         for(auto param:ppl.getParamList()){
             dc->UpdateSubresource(pixelParamConstantBuffers[pindex].Get(), 0, 0
-            , param->asData(),param->signature().size,0);
+            , param->asData(),static_cast<UINT>(param->signature().size),0);
             pindex++;
         }
 

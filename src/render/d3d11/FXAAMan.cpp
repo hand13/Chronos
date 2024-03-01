@@ -50,7 +50,7 @@ namespace Chronos {
         ZeroMemory(&desc,sizeof(desc));
         desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         desc.CPUAccessFlags = 0;//D3D11_CPU_ACCESS_READ;
-        desc.ByteWidth = vertice.size()*sizeof(float);
+        desc.ByteWidth = static_cast<UINT>(vertice.size()*sizeof(float));
         desc.Usage = D3D11_USAGE_DEFAULT;
         D3D11_SUBRESOURCE_DATA sd;
         ZeroMemory(&sd,sizeof(sd));

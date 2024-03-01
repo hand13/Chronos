@@ -15,7 +15,7 @@ namespace Chronos {
     void ParamList::registerParam(const std::string& name,ParamType type,size_t rawDataSize){
         Param* res = constructParamFromType(name,type,rawDataSize);
         params.push_back(res);
-        paramIndex[name] = params.size()-1;
+        paramIndex[name] = static_cast<unsigned int>(params.size()-1);
     }
 
     bool ParamList::checkParam(const std::string& paramName,const ParamSignature& ps)const{

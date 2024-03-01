@@ -4,7 +4,7 @@ namespace Geometry {
 
     void AttributeSet::addAttribute(const std::string& name,Type type) {
         
-        int prevIndex = attributes.size()> 0? attributes.size() -1 : -1;//顶端节点
+        int prevIndex = attributes.size()> 0? static_cast<int>(attributes.size() -1) : -1;//顶端节点
 
         Attribute attribute(name,type);
         attributeSet[name] = attribute;

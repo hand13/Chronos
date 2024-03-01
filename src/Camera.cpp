@@ -2,6 +2,7 @@
 #include <Eigen/src/Core/Matrix.h>
 #include <Eigen/src/Core/util/ForwardDeclarations.h>
 #include <cmath>
+#include "Constants.h"
 
 namespace Chronos{
 
@@ -40,8 +41,8 @@ namespace Chronos{
     }
 
     Eigen::Vector3f Camera::getDirection()const{
-        float tmpYaw = yaw/180.0 * 3.14;
-        float tmpPitch = pitch/180.0 * 3.14;
+        float tmpYaw = yaw/180.f * CHRONOS_PI;
+        float tmpPitch = pitch/180.f * CHRONOS_PI;
         Eigen::Vector3f zAxis; 
         zAxis  << cos(tmpPitch) *sin(tmpYaw), -cos(tmpPitch) *cos(tmpYaw),sin(tmpPitch);//direction,初始-y方向
         return zAxis.normalized();

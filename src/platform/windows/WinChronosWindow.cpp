@@ -65,8 +65,8 @@ namespace  Chronos {
 
         viewport.TopLeftX = 0.f;
         viewport.TopLeftY = 0.f;
-        viewport.Width = w;
-        viewport.Height = h;
+        viewport.Width =static_cast<float>(w);
+        viewport.Height = static_cast<float>(h);
         viewport.MinDepth = D3D11_MIN_DEPTH;
         viewport.MaxDepth = D3D11_MAX_DEPTH;
         // RECT rect = {0,0,static_cast<LONG>(w),static_cast<LONG>(h)};

@@ -50,15 +50,15 @@ namespace Chronos {
         if(mesh->HasNormals()) {
             as.addAttribute("normal", Geometry::VEC);
         }
-        int vertCompoentCount = as.totalSize()/sizeof(float);//一个顶点有多少个float数据
+        size_t vertCompoentCount = as.totalSize()/sizeof(float);//一个顶点有多少个float数据
 
         std::vector<float> data(vertCompoentCount * mesh->mNumVertices);
         std::vector<int> indices;
 
         if(mesh->HasPositions()){
-            int attr_offset = as.getAttributeOffset("pos")/sizeof(float);
-            for(int i = 0;i<mesh->mNumVertices;i++) {
-                int offset = i * vertCompoentCount + attr_offset;
+            size_t attr_offset = as.getAttributeOffset("pos")/sizeof(float);
+            for(unsigned int i = 0;i<mesh->mNumVertices;i++) {
+                unsigned int offset = static_cast<unsigned int>(i * vertCompoentCount + attr_offset);
                 data[offset+0] = mesh->mVertices[i].x;
                 data[offset+1] = mesh->mVertices[i].y;
                 data[offset+2] = mesh->mVertices[i].z;
@@ -66,26 +66,26 @@ namespace Chronos {
         }
 
         if(mesh->HasTextureCoords(0)){
-            int attr_offset = as.getAttributeOffset("uv")/sizeof(float);
-            for(int i = 0;i<mesh->mNumVertices;i++) {
-                int offset = i * vertCompoentCount + attr_offset;
+            size_t attr_offset = as.getAttributeOffset("uv")/sizeof(float);
+            for(unsigned int i = 0;i<mesh->mNumVertices;i++) {
+                unsigned int offset = static_cast<unsigned int>(i * vertCompoentCount + attr_offset);
                 data[offset+0] = mesh->mTextureCoords[0][i].x;
                 data[offset+1] = mesh->mTextureCoords[0][i].y;
             }
         }
 
         if(mesh->HasNormals()){
-            int attr_offset = as.getAttributeOffset("normal")/sizeof(float);
+            size_t attr_offset = as.getAttributeOffset("normal")/sizeof(float);
             for(unsigned int i = 0;i<mesh->mNumVertices;i++) {
-                int offset = i * vertCompoentCount + attr_offset;
+                unsigned int offset = static_cast<unsigned int>(i * vertCompoentCount + attr_offset);
                 data[offset+0] = mesh->mNormals[i].x;
                 data[offset+1] = mesh->mNormals[i].y;
                 data[offset+2] = mesh->mNormals[i].z;
             }
         }
-        for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
+        for(size_t i = 0; i < mesh->mNumFaces; i++) {
             aiFace face = mesh->mFaces[i];
-            for(unsigned int j = 0; j < face.mNumIndices; j++){
+            for(size_t j = 0; j < face.mNumIndices; j++){
                 indices.push_back(face.mIndices[j]);
             }
         }

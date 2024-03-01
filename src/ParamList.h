@@ -8,7 +8,7 @@ namespace Chronos {
     class ParamList{
         protected:
         std::vector<Param*> params;
-        std::map<std::string,int> paramIndex;
+        std::map<std::string,unsigned int> paramIndex;
         void destroyParams();
         public:
         ParamList();

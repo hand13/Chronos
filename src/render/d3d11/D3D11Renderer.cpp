@@ -51,8 +51,8 @@ namespace Chronos{
         D3D11_VIEWPORT dv;
         dv.TopLeftX = 0.f;
         dv.TopLeftY = 0.f;
-        dv.Width = camera.getWidth();
-        dv.Height = camera.getHeight();
+        dv.Width = static_cast<float>(camera.getWidth());
+        dv.Height = static_cast<float>(camera.getHeight());
         dv.MinDepth = D3D11_MIN_DEPTH;
         dv.MaxDepth = D3D11_MAX_DEPTH;
         return dv;
@@ -192,7 +192,7 @@ namespace Chronos{
                 ThrowIfFailed(
                     device->CreateInputLayout(
                         desc,
-                        elementSize,
+                        static_cast<UINT>(elementSize),
                         vbuffer.data(),
                         vbuffer.size(),
                         inputLayout.GetAddressOf())
