@@ -47,7 +47,6 @@ namespace Chronos{
     }
 
     D3D11_VIEWPORT D3D11Renderer::genViewport(const Camera& camera){
-
         D3D11_VIEWPORT dv;
         dv.TopLeftX = 0.f;
         dv.TopLeftY = 0.f;

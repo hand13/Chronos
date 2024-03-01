@@ -8,6 +8,7 @@
 #include <vector>
 #include "AttributeSet.h"
 #include "RenderState.h"
+#include "DrawTopologyType.h"
 namespace Chronos {
     class BaseRenderableObject:public RenderableObject{
         private:
@@ -19,7 +20,7 @@ namespace Chronos {
         std::unique_ptr<RenderState> renderState;//render 所需状态
         public:
         BaseRenderableObject();
-
+        DrawTopologyType drawTopologyType;
         virtual void setDirty(bool dirty)override;
         virtual void initRenderState(std::unique_ptr<RenderState>&& renderState)override;
         virtual RenderState* getRenderState()override;

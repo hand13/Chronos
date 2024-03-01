@@ -1,6 +1,7 @@
 #include "D3D11BaseRenderState.h"
 #include <cstddef>
 #include <d3d11.h>
+#include <d3dcommon.h>
 #include <dxgiformat.h>
 #include <memory>
 #include <minwindef.h>
@@ -78,7 +79,9 @@ namespace Chronos{
         UINT offset = 0;
         ID3D11DeviceContext* dc = render->getDeviceContext();
         dc->IASetInputLayout(vs->getInputLayout());
-        dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+        dc->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(robj->drawTopologyType));
+
         dc->IASetVertexBuffers(0, 1, verticeBuffer.GetAddressOf(), &stride, &offset);
         dc->VSSetShader(vs->getShader(), NULL, 0);
 // /**

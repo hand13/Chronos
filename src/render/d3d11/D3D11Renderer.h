@@ -49,6 +49,13 @@ namespace Chronos {
         virtual void renderObject(RenderableObject * robj)override;
         virtual void renderBaseRenderableObject(BaseRenderableObject * robj)override;
 
+        /**
+        * @brief 
+        * depth from 0 to 1
+        * @param cmamea 
+        * @return D3D11_VIEWPORT 
+        */
+
         static D3D11_VIEWPORT genViewport(const Camera& cmamea);
         virtual std::unique_ptr<RenderTarget> createRenderTarget(const SizeU& size)override;
         void createRenderTargetView(const SizeU& size,ID3D11RenderTargetView** rtv,ID3D11ShaderResourceView ** rsv);

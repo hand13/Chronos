@@ -3,6 +3,7 @@
 #include <memory>
 namespace Chronos {
     BaseRenderableObject::BaseRenderableObject(){
+        drawTopologyType = CHRONOS_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     }
 
     void BaseRenderableObject::setVertices(const std::vector<float>& vertices){
