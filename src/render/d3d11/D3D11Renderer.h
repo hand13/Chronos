@@ -24,6 +24,7 @@ namespace Chronos {
         std::string shaderDir = CHRONOS_D3D11_SHADER_DIR;
 
         void createCBuffer();
+        void createDevice();
 
         public:
         D3D11Renderer();
@@ -37,12 +38,19 @@ namespace Chronos {
         void applyFxaa();
         void createRasterizeState();
 
-        ID3D11Device* getDevice(){
+        inline ID3D11Device* getDevice(){
             return device.Get();
         }
 
-        ID3D11DeviceContext* getDeviceContext(){
+        inline ID3D11DeviceContext* getDeviceContext(){
             return deviceContext.Get();
+        }
+
+        inline ComPtr<ID3D11Device> shareDevice(){
+            return device;
+        }
+        inline ComPtr<ID3D11DeviceContext> shareDeviceCOntext(){
+            return deviceContext;
         }
         virtual void setRenderContext(RenderContext * rct)override;
 

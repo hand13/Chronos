@@ -1,7 +1,6 @@
 #include "D3D11Renderer.h"
-#include "../../Chronos.h"
-#include "../../platform/windows/WinChronosWindow.h"
 #include "../../Utils.h"
+#include <cstddef>
 #include <d3d11.h>
 #include <d3dcommon.h>
 #include <dxgiformat.h>
@@ -20,25 +19,32 @@ namespace Chronos{
     }
 
     void D3D11Renderer::init(){
-        WinChronosWindow * wc = dynamic_cast<WinChronosWindow*>(Chronos::INSTANCE->getWindow());
-        if(wc == nullptr){
-            Panic(L"fatal");
-        }
-        device = wc->shareDeivce();
-        deviceContext = wc->shareDeviceContext();
+        createDevice();
         createRasterizeState();
         fm.init(device, deviceContext);
         createCBuffer();
         currentContext = nullptr;
         ZeroMemory(&viewport,sizeof(viewport));
     }
+    
+    void D3D11Renderer::createDevice(){
+        createDefaultDevice(device.GetAddressOf(), deviceContext.GetAddressOf());
+    }
 
     void D3D11Renderer::createDefaultDevice(ID3D11Device** device,ID3D11DeviceContext** deviceContext){
+        D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
+        UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+        #if defined (_DEBUG)
+        flags |= D3D11_CREATE_DEVICE_DEBUG;
+        #endif
+        ThrowIfFailed(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,flags,&featureLevel,1, D3D11_SDK_VERSION
+        ,device, NULL,deviceContext));
     }
 
     void D3D11Renderer::createDefaultRenderTarget(ID3D11RenderTargetView** rtv){
 
     }
+
     void D3D11Renderer::setRenderContext(RenderContext * rct){
         currentContext = rct;
         RenderTarget * rt = currentContext->getRenderTarget();

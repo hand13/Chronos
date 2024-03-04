@@ -15,16 +15,20 @@ namespace Chronos {
     void BaseChronos::init() {
         state = 1;
         option.renderType = 1;
-        createWindow();
-        window->init();
-        window->getSize(windowSize.width,windowSize.height);
         createRender();
         renderer->init();
-        initStartScene();
+
+        createWindow();
+        window->init(renderer.get());
+        window->getSize(windowSize.width,windowSize.height);
+
+        
         if(enableImgui){
             cui = std::make_unique<TestUI>();
-            cui->init();
+            cui->init(renderer.get());
         }
+
+        initStartScene();
     }
 
     void BaseChronos::changeSize(){
@@ -78,9 +82,6 @@ namespace Chronos {
 
     void BaseChronos::loop() {
         while(state == 1){
-            if(enableImgui){
-                cui->runInLoop();
-            }
 
             auto es = window->processEvent();
             for(auto & e : es){
@@ -100,6 +101,10 @@ namespace Chronos {
                 update();
                 render();
                 window->persent();
+            }
+            if(enableImgui){
+                cui->displayOffscreen(mainScene->getRenderTargetAsTexture());
+                cui->runInLoop();
             }
         }
     }

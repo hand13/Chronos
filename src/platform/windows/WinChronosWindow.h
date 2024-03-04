@@ -37,12 +37,12 @@ namespace Chronos {
 
         public:
         WinChronosWindow();
-        void createD3D11DeviceAndSwapChain();
+        void createSwapChain();
         void createRenderTargetView();
         void quit();
         void resize(WPARAM wParam,unsigned int w,unsigned int h);
         virtual void getSize(unsigned int & w,unsigned int & h)override;
-        virtual void init() override;
+        virtual void init(Renderer * renderer) override;
         virtual void show() override;
         virtual std::vector<IOEvent> processEvent()override;
         virtual void persent() override;

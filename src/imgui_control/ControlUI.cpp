@@ -12,6 +12,7 @@
 #include <tchar.h>
 #include <winuser.h>
 #include "ControlUI.h"
+#include "../render/d3d11/D3D11Renderer.h"
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 // Data
@@ -37,21 +38,20 @@ namespace Chronos {
         ::UnregisterClass(wc.lpszClassName, wc.hInstance);
     }
 
-    void ControlUI::init(){
+    void ControlUI::init(Renderer * renderer){
+        D3D11Renderer * dr = dynamic_cast<D3D11Renderer*>(renderer);
+        if(dr == nullptr){
+            throw std::exception("should not happended");
+        }
+        device = dr->shareDevice();
+        deviceContext = dr->shareDeviceCOntext();
         wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("ImGui Example"), NULL };
         ::RegisterClassEx(&wc);
         hWnd = ::CreateWindow(wc.lpszClassName, _T("Dear ImGui DirectX11 Example"), WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, NULL, NULL, wc.hInstance,this);
-
-        // Initialize Direct3D
-        if (!createDevice())
-        {
-            ::UnregisterClass(wc.lpszClassName, wc.hInstance);
-            throw std::exception("init imgui failed");
-        }
+        createSwapChain();
         // Show the window
         ::ShowWindow(hWnd, SW_SHOWDEFAULT);
         ::UpdateWindow(hWnd);
-
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -114,7 +114,16 @@ namespace Chronos {
     void ControlUI::quit(){
         finished = true;
     }
-    bool ControlUI::createDevice(){
+    bool ControlUI::createSwapChain(){
+
+        IDXGIFactory*  factory =nullptr;
+        IDXGIDevice * pDXGIDevice = nullptr;
+        ThrowIfFailed(device->QueryInterface(__uuidof(IDXGIDevice), (void **)&pDXGIDevice));
+        IDXGIAdapter * pDXGIAdapter = nullptr;
+        ThrowIfFailed(pDXGIDevice->GetAdapter( &pDXGIAdapter));
+        pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&factory);
+        //todo 不知道需不需要release
+
 
         DXGI_SWAP_CHAIN_DESC sd;
         ZeroMemory(&sd, sizeof(sd));
@@ -132,21 +141,18 @@ namespace Chronos {
         sd.Windowed = TRUE;
         sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-        UINT createDeviceFlags = 0;
-        //createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-        D3D_FEATURE_LEVEL featureLevel;
-        const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0, };
-        if (D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, createDeviceFlags, featureLevelArray, 2, D3D11_SDK_VERSION, 
-            &sd, swapChain.GetAddressOf(), device.GetAddressOf(), &featureLevel, deviceContext.GetAddressOf()) != S_OK)
-            return false;
+        if(FAILED(factory->CreateSwapChain(device.Get(),&sd,swapChain.GetAddressOf()))){
+            throw std::exception("should not happended");
+        }
         createRTV();
+
         return true;
     }
     bool ControlUI::createRTV(){
 
         ID3D11Texture2D* pBackBuffer;
         swapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
-        device->CreateRenderTargetView(pBackBuffer, NULL, rtv.ReleaseAndGetAddressOf());
+        device->CreateRenderTargetView(pBackBuffer, NULL, rtv.GetAddressOf());
         pBackBuffer->Release();
         return true;
     }

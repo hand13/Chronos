@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include <dxgi.h>
 #include <wrl/client.h>
+#include "../render/Renderer.h"
 using Microsoft::WRL::ComPtr;
 namespace Chronos {
     class ControlUI{
@@ -17,13 +18,13 @@ namespace Chronos {
         WNDCLASSEX wc;
         UINT resizeWidth;
         UINT resizeHeight;
-        bool createDevice();
+        bool createSwapChain();
         protected:
         virtual void showWindow() = 0;
         virtual void cleanResource();
         public:
         ControlUI();
-        void init();
+        void init(Renderer * renderer);
         void runInLoop();
         void quit();
         bool createRTV();

@@ -19,6 +19,7 @@
 #include "../../Log.h"
 #include "../../Utils.h"
 #include "../../render/d3d11/ChronosD3D11Texture2D.h"
+#include "../../render/d3d11/D3D11Renderer.h"
 #include <d3d11shader.h>
 namespace  Chronos {
     static  LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -31,7 +32,14 @@ namespace  Chronos {
         cursorCapture = false;
         finished = false;
     }
-    void WinChronosWindow::init(){
+    void WinChronosWindow::init(Renderer* renderer){
+        D3D11Renderer * dr = dynamic_cast<D3D11Renderer*>(renderer);
+        if(dr == nullptr){
+            Panic("this should not happended");
+        }
+        d3d11Device = dr->shareDevice();
+        deviceContext = dr->shareDeviceCOntext();
+
         wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, TEXT("Chronos"), NULL };
         wc.hCursor = LoadCursor(NULL,IDC_ARROW);
         ::RegisterClassEx(&wc);
@@ -39,8 +47,9 @@ namespace  Chronos {
          WS_OVERLAPPEDWINDOW, 100, 100,width,height, NULL, NULL
          , wc.hInstance, this);
         // Show the window
-        this->createD3D11DeviceAndSwapChain();
-        this->createRenderTargetView();
+        createSwapChain();
+        createRenderTargetView();
+
         createCanvasBuffer();
         createCanvaShader();
     }
@@ -225,8 +234,7 @@ namespace  Chronos {
         pBackBuffer->Release();
     }
 
-    void WinChronosWindow::createD3D11DeviceAndSwapChain() {
-        D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
+    void WinChronosWindow::createSwapChain() {
         DXGI_SWAP_CHAIN_DESC sd;
         ZeroMemory(&sd,sizeof(sd));
         sd.BufferCount = 2;
@@ -243,14 +251,15 @@ namespace  Chronos {
         sd.SampleDesc.Quality = 0;
         sd.Windowed = true;
 
-        HRESULT hr;
-        UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-        #if defined (_DEBUG)
-        flags |= D3D11_CREATE_DEVICE_DEBUG;
-        #endif
-        hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,flags, &featureLevel, 1, D3D11_SDK_VERSION
-        , &sd, swapChain.GetAddressOf(),d3d11Device.GetAddressOf(), NULL,deviceContext.GetAddressOf());
-        ThrowIfFailed(hr);
+        IDXGIFactory*  factory =nullptr;
+        IDXGIDevice * pDXGIDevice = nullptr;
+
+        ThrowIfFailed(d3d11Device->QueryInterface(__uuidof(IDXGIDevice), (void **)&pDXGIDevice));
+        IDXGIAdapter * pDXGIAdapter = nullptr;
+        ThrowIfFailed(pDXGIDevice->GetAdapter( &pDXGIAdapter));
+        pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&factory);
+
+        ThrowIfFailed(factory->CreateSwapChain(d3d11Device.Get(),&sd,swapChain.GetAddressOf()));
 
         D3D11_SAMPLER_DESC samplerDesc;
         ZeroMemory(&samplerDesc, sizeof(samplerDesc));
