@@ -17,7 +17,7 @@ set(THIRD_PARTY_DIR ${PROJECT_SOURCE_DIR}/third_party)
 # set(GLFW_DIR ${THIRD_PARTY_DIR}/glfw)
 # set(STB_DIR ${THIRD_PARTY_DIR}/stb)
 # set(GLM_DIR ${THIRD_PARTY_DIR}/glm)
-set(IMGUI_DIR ${THIRD_PARTY_DIR}/imgui)
+set(IMGUI_DIR ${THIRD_PARTY_DIR}/imgui_dx11)
 set(ASSIMP_DIR ${THIRD_PARTY_DIR}/assimp)
 
 set(PHYSX_DIR "G:/PhysX-105.1-physx-5.3.1/physx")
@@ -60,7 +60,7 @@ add_executable(test test/test.cpp src/Param.cpp src/Utils.cpp src/Log.cpp src/Pa
 
 target_link_libraries(test PRIVATE Poco::Foundation)
 
-target_link_libraries(Chronos PRIVATE dxgi d3d11 d3d12 imgui_dx12 Eigen3::Eigen  assimp-vc142-mtd Poco::Foundation fmt::fmt)
+target_link_libraries(Chronos PRIVATE dxgi d3d11 imgui_dx11 Eigen3::Eigen  assimp-vc142-mtd Poco::Foundation fmt::fmt)
 
 # target_link_libraries(glworld glfw3 glad imgui_dx12 d3d12 dxgi assimp-vc142-mtd)
 
