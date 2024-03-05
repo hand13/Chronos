@@ -1,5 +1,13 @@
 # Just another game framework
 
+## todo
+
+- texture
+- pbr
+- reflect
+- editor
+- component
+
 ## gallary
 
 ### 2024 02 26

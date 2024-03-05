@@ -9,6 +9,8 @@ add_definitions(-D_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
 find_package(fmt CONFIG REQUIRED)
 find_package(Poco CONFIG REQUIRED Foundation)
 find_package(Eigen3 CONFIG REQUIRED NO_MODULE)
+find_package(directxtk CONFIG REQUIRED)
+find_package(ICU REQUIRED uc)
 
 include_directories(${EIGEN3_INCLUDE_DIR})
 
@@ -63,17 +65,15 @@ add_library(component STATIC ${COMPONENT_SRC})
 add_library(game_object STATIC ${GAME_OBJECT_SRC})
 add_library(model STATIC ${MODEL_SRC})
 
+target_link_libraries(d3d11_renderer PRIVATE Microsoft::DirectXTK)
 
 aux_source_directory(src SRC)
 add_executable(Chronos ${SRC})
 
 target_link_libraries(Chronos PRIVATE renderer imgui_control component game_object model d3d11_renderer d3d11_window platform_window)
-target_link_libraries(Chronos PRIVATE dxgi d3d11 imgui_dx11 Eigen3::Eigen  assimp-vc142-mtd Poco::Foundation fmt::fmt)
-
-
-
+target_link_libraries(Chronos PRIVATE ICU::uc dxgi d3d11 imgui_dx11 Eigen3::Eigen  assimp-vc142-mtd Poco::Foundation fmt::fmt)
 add_executable(test test/test.cpp src/Param.cpp src/Utils.cpp src/Log.cpp src/ParamList.cpp)
-target_link_libraries(test PRIVATE Poco::Foundation)
+target_link_libraries(test PRIVATE Poco::Foundation ICU::uc)
 # target_link_libraries(glworld glfw3 glad imgui_dx12 d3d12 dxgi assimp-vc142-mtd)
 
 # file(COPY_FILE ${GLFW_DIR}/lib/glfw3.dll ${CMAKE_BINARY_DIR}/glfw3.dll)

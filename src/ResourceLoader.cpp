@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include "ChronosEngine.h"
+#include "render/Texture.h"
 namespace Chronos {
 
     std::shared_ptr<Shader> ResourceLoader::loadShader(const std::string& path,ShaderType shaderType,bool cached,void * exdata,size_t exdataSize){
@@ -13,6 +14,20 @@ namespace Chronos {
         Renderer * render = Engine->getRenderer();
         std::shared_ptr<Shader> result = render->loadShader(path, shaderType,exdata,exdataSize);
         if(cached){
+            sm[path] = result;
+        }
+        return result;
+    }
+
+    std::shared_ptr<Texture2D> ResourceLoader::loadTexture2D(const std::string& path,const TextureParameter& tp,bool cached){
+        auto iter = tm.find(path);
+        if(iter != tm.end()){
+            return iter->second;
+        }
+        Renderer * render = Engine->getRenderer();
+        auto result = render->loaderTexture2D(path,tp);
+        if(cached){
+            tm[path] = result;
         }
         return result;
     }

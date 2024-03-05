@@ -1,4 +1,5 @@
 #include "../src/ParamList.h"
+#include "Utils.h"
 #include <iostream>
 #include <string>
 void param_test(){
@@ -21,5 +22,8 @@ void model_loader_test(){
 int main() {
     param_test();
     model_loader_test();
+    std::wstring md = UTF8toWide("你他妈在逗我");
+    std::string off = WideToUTF8(md);
+    std::cout<<off<<std::endl;
     return 0;
 };

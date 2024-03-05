@@ -19,7 +19,7 @@ namespace Chronos {
         virtual void init() = 0;
 
         virtual std::shared_ptr<Shader> loadShader(const std::string& path,ShaderType shaderType,void * exdata,size_t exdataSize) = 0;
-        virtual std::shared_ptr<Texture> loaderTexture(const std::string& path,TextureParameter tparam) =0;
+        virtual std::shared_ptr<Texture2D> loaderTexture2D(const std::string& path,const TextureParameter& tparam) =0;
 
         virtual std::unique_ptr<RenderTarget> createRenderTarget(const SizeU& size) = 0;
 

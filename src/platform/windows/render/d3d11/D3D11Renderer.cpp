@@ -4,13 +4,16 @@
 #include <d3d11.h>
 #include <d3dcommon.h>
 #include <dxgiformat.h>
-#include <exception>
 #include <memory>
 #include <minwinbase.h>
+#include <string>
 #include <utility>
 #include <wrl/client.h>
 #include "ChronosD3D11RenderTarget.h"
 #include "D3D11BaseRenderState.h"
+#include "platform/windows/render/d3d11/ChronosD3D11Texture2D.h"
+#include "platform/windows/windows_common.h"
+#include <WICTextureLoader.h>
 namespace Chronos{
 
     D3D11Renderer::D3D11Renderer() {
@@ -262,9 +265,23 @@ namespace Chronos{
         }
         return result;
     }
-    std::shared_ptr<Texture> D3D11Renderer::loaderTexture(const std::string& path,TextureParameter tparam){
-        throw std::exception("todo");
+
+    std::shared_ptr<Texture2D> D3D11Renderer::loaderTexture2D(const std::string& path,const TextureParameter& tparam){
+        std::shared_ptr<ChronosD3D11Texture2D> result;
+        std::wstring wp = UTF8toWide(path);
+        ComPtr<ID3D11ShaderResourceView> rsv;
+        ID3D11Resource * res;
+        ThrowIfFailed(DirectX::CreateWICTextureFromFile(device.Get(),wp.c_str(),&res,rsv.GetAddressOf()));
+        ID3D11Texture2D * t;
+        ThrowIfFailed(res->QueryInterface(&t));
+        D3D11_TEXTURE2D_DESC dtd={};
+        t->GetDesc(&dtd);
+        result->setSRV(rsv);
+        result->width = dtd.Width;
+        result->height = dtd.Height;
+        return result;
     }
+
     D3D11Renderer::~D3D11Renderer(){
     }
 }

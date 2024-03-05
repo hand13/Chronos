@@ -1,11 +1,14 @@
 #pragma once
 #include "Utils.h"
+#include <memory>
+#include <render/Texture2D.h>
 #define MakeFetchType(X,Y) template<> \
 struct FetchType<X> {\
     constexpr ParamType operator()(){\
         return Y;\
     }\
 };
+typedef std::shared_ptr<Chronos::Texture2D> SPTexture2D;
 namespace Chronos{
     enum ParamType {
         NOTHING,
@@ -15,7 +18,8 @@ namespace Chronos{
         FLOAT3,
         FLOAT4,
         MATRIX4F,
-        RAWDATA
+        RAWDATA,
+        SPTEXTURE2D
     };
     template<typename T>
     struct FetchType{
@@ -30,6 +34,7 @@ namespace Chronos{
     MakeFetchType(Float4, FLOAT4);
     MakeFetchType(Matrix4f, MATRIX4F);
     MakeFetchType(RawData,RAWDATA);
+    MakeFetchType(SPTexture2D,SPTEXTURE2D)
 
     struct ParamSignature{
         ParamSignature(ParamType type,size_t size):type(type),size(size){}

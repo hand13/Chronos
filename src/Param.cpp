@@ -13,6 +13,7 @@ namespace Chronos {
             CASE_NEW(FLOAT3, Float3,name)
             CASE_NEW(FLOAT4, Float4,name)
             CASE_NEW(MATRIX4F, Matrix4f,name)
+            CASE_NEW(SPTEXTURE2D,SPTexture2D,name)
             case RAWDATA:
                 result = new GenericParam<RawData>(name,size);
                 break;

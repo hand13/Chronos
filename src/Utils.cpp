@@ -4,17 +4,53 @@
 #include <exception>
 #include <iterator>
 #include <string>
+#include <unicode/ucnv_err.h>
+#include <unicode/umachine.h>
+#include <unicode/urename.h>
+#include <unicode/utypes.h>
 #include <vector>
 #include <winerror.h>
 #include "Log.h"
-#include <codecvt>
 #include <Poco/File.h>
+#include <unicode/ucnv.h>
 
 std::string WideToUTF8(const std::wstring& str) {
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conversion;
-    std::string out = conversion.to_bytes(str);
-    return out;
+    UErrorCode code;
+    UConverter * convert = ucnv_open("utf_8",&code);
+    if(U_FAILURE(code)){
+        Panic("should not happended");
+    }
+    char tmp[1024];
+    memset(tmp, 0, sizeof(tmp));
+    UChar * t = (UChar*)str.c_str();
+    ucnv_fromUChars(convert,tmp,sizeof(tmp),t,str.size(),&code);
+    if(U_FAILURE(code)){
+        Panic("should not happended");
+    }
+    std::string result;
+    result.append(tmp);
+    ucnv_close(convert);
+    return result;
 }
+
+std::wstring UTF8toWide(const std::string& str){
+    UErrorCode code;
+    UConverter * convert = ucnv_open("utf_8",&code);
+    
+    if(U_FAILURE(code)){
+        Panic("should not happended");
+    }
+    UChar tmp[512];
+    memset(tmp, 0, sizeof(tmp));
+    ucnv_toUChars(convert,tmp,sizeof(tmp),str.c_str(),str.size(),&code);
+    if(U_FAILURE(code)){
+        Panic("should not happended");
+    }
+    std::wstring wc = (wchar_t*)tmp;
+    ucnv_close(convert);
+    return wc;
+}
+
 void Panic(const std::wstring& msg) {
     std::string tmp = WideToUTF8(msg);
     Chronos::Log(msg);

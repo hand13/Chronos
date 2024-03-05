@@ -34,7 +34,7 @@ namespace Chronos {
         virtual void endRender()override;
         void createDefaultDevice(ID3D11Device** device,ID3D11DeviceContext** deviceContext);
         virtual std::shared_ptr<Shader> loadShader(const std::string& name,ShaderType shaderType,void * exdata,size_t exdataSize)override;
-        virtual std::shared_ptr<Texture> loaderTexture(const std::string& path,TextureParameter tparam)override;
+        virtual std::shared_ptr<Texture2D> loaderTexture2D(const std::string& path,const TextureParameter& tparam)override;
         void createDefaultRenderTarget(ID3D11RenderTargetView** rtv);
         void applyFxaa();
         void createRasterizeState();
