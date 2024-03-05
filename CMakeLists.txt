@@ -10,6 +10,8 @@ find_package(fmt CONFIG REQUIRED)
 find_package(Poco CONFIG REQUIRED Foundation)
 find_package(Eigen3 CONFIG REQUIRED NO_MODULE)
 
+include_directories(${EIGEN3_INCLUDE_DIR})
+
 set(CMAKE_CXX_STANDARD 20)
 # add_compile_options(-Wall)
 set(THIRD_PARTY_DIR ${PROJECT_SOURCE_DIR}/third_party)
@@ -40,29 +42,38 @@ include_directories(${ASSIMP_DIR}/include)
 link_directories(${ASSIMP_DIR}/debug/lib)
 
 include_directories(src)
-aux_source_directory(src SRC)
 
 aux_source_directory("src/platform/windows" PLATFORM_WIN_SRC)
+aux_source_directory("src/platform/windows/window/d3d11" PLATFORM_WINDOW_D3D11_SRC)
+aux_source_directory("src/platform/windows/render/d3d11" PLATFORM_RENDER_D3D11_SRC)
+
+add_library(platform_window STATIC ${PLATFORM_WIN_SRC})
+add_library(d3d11_renderer STATIC ${PLATFORM_RENDER_D3D11_SRC})
+add_library(d3d11_window STATIC ${PLATFORM_WINDOW_D3D11_SRC})
+
 aux_source_directory("src/render" RENDER_SRC)
-aux_source_directory("src/render/d3d11" D3D11_RENDER_SRC)
 aux_source_directory("src/imgui_control" IMGUI_CONTROL_SRC)
 aux_source_directory("src/component" COMPONENT_SRC)
 aux_source_directory("src/game_object" GAME_OBJECT_SRC)
 aux_source_directory("src/model" MODEL_SRC)
 
+add_library(renderer STATIC ${RENDER_SRC})
+add_library(imgui_control STATIC ${IMGUI_CONTROL_SRC})
+add_library(component STATIC ${COMPONENT_SRC})
+add_library(game_object STATIC ${GAME_OBJECT_SRC})
+add_library(model STATIC ${MODEL_SRC})
 
-# add_library(render STATIC ${RENDER_SRC})
 
-# add_library(d3d11render STATIC ${D3D11_RENDER_SRC})
+aux_source_directory(src SRC)
+add_executable(Chronos ${SRC})
 
-add_executable(Chronos ${SRC} ${PLATFORM_WIN_SRC} ${D3D11_RENDER_SRC} ${RENDER_SRC} ${IMGUI_CONTROL_SRC} ${COMPONENT_SRC} ${GAME_OBJECT_SRC} ${MODEL_SRC})
-
-add_executable(test test/test.cpp src/Param.cpp src/Utils.cpp src/Log.cpp src/ParamList.cpp)
-
-target_link_libraries(test PRIVATE Poco::Foundation)
-
+target_link_libraries(Chronos PRIVATE renderer imgui_control component game_object model d3d11_renderer d3d11_window platform_window)
 target_link_libraries(Chronos PRIVATE dxgi d3d11 imgui_dx11 Eigen3::Eigen  assimp-vc142-mtd Poco::Foundation fmt::fmt)
 
+
+
+add_executable(test test/test.cpp src/Param.cpp src/Utils.cpp src/Log.cpp src/ParamList.cpp)
+target_link_libraries(test PRIVATE Poco::Foundation)
 # target_link_libraries(glworld glfw3 glad imgui_dx12 d3d12 dxgi assimp-vc142-mtd)
 
 # file(COPY_FILE ${GLFW_DIR}/lib/glfw3.dll ${CMAKE_BINARY_DIR}/glfw3.dll)

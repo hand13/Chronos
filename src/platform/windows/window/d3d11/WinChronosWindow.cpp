@@ -18,8 +18,8 @@
 #include "Utils.h"
 #include <Log.h>
 #include <Utils.h>
-#include <render/d3d11/ChronosD3D11Texture2D.h>
-#include <render/d3d11/D3D11Renderer.h>
+#include <platform/windows/render/d3d11/D3D11Renderer.h>
+#include <platform/windows/windows_common.h>
 #include <d3d11shader.h>
 namespace  Chronos {
     static  LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

@@ -11,7 +11,6 @@
 #include <wrl/client.h>
 #include "ChronosD3D11RenderTarget.h"
 #include "D3D11BaseRenderState.h"
-#include "common.h"
 namespace Chronos{
 
     D3D11Renderer::D3D11Renderer() {

@@ -1,7 +1,7 @@
 #pragma once
 #include <render/RenderState.h>
 #include "D3D11Renderer.h"
-#include "common.h"
+#include <platform/windows/windows_common.h>
 #include <d3d11.h>
 #include <vector>
 #include <wrl/client.h>

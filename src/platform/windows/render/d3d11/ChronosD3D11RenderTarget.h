@@ -1,6 +1,6 @@
 #pragma once
 #include <render/RenderTarget.h>
-#include "common.h"
+#include <platform/windows/windows_common.h>
 #include <d3d11.h>
 #include <memory>
 #include <rpcndr.h>

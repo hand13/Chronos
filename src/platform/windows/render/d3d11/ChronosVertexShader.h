@@ -2,7 +2,7 @@
 #include <render/VertexShader.h>
 #include <d3d11.h>
 #include <wrl/client.h>
-#include "common.h"
+#include <platform/windows/windows_common.h>
 namespace Chronos{
     class ChronosVertexShader:public VertexShader{
         private:

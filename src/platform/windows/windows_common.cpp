@@ -1,5 +1,5 @@
 #include <comdef.h>
-#include <winnt.h>
+#include "windows_common.h"
 #include <Utils.h>
 void ThrowIfFailed(HRESULT x) {
     if(FAILED(x)){

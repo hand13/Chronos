@@ -5,6 +5,7 @@
 #include <render/Renderer.h>
 #include <render/RenderContext.h>
 #include <render/BaseRenderableObject.h>
+#include <platform/windows/windows_common.h>
 #include "ChronosD3D11RenderTarget.h"
 #include "FXAAMan.h"
 using Microsoft::WRL::ComPtr;

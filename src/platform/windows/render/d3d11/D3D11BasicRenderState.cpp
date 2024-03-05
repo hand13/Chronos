@@ -7,7 +7,6 @@
 #include <minwindef.h>
 #include <vector>
 #include <wrl/client.h>
-#include "common.h"
 #include <Chronos.h>
 namespace Chronos{
     D3D11BaseRenderState::D3D11BaseRenderState(D3D11Renderer * render,BaseRenderableObject * robj){
