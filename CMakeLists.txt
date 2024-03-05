@@ -72,7 +72,8 @@ add_executable(Chronos ${SRC})
 
 target_link_libraries(Chronos PRIVATE renderer imgui_control component game_object model d3d11_renderer d3d11_window platform_window)
 target_link_libraries(Chronos PRIVATE ICU::uc dxgi d3d11 imgui_dx11 Eigen3::Eigen  assimp-vc142-mtd Poco::Foundation fmt::fmt)
-add_executable(test test/test.cpp src/Param.cpp src/Utils.cpp src/Log.cpp src/ParamList.cpp)
+
+add_executable(test test/test.cpp src/Param.cpp src/Utils.cpp src/Log.cpp src/ParamList.cpp src/StringHelper.cpp)
 target_link_libraries(test PRIVATE Poco::Foundation ICU::uc)
 # target_link_libraries(glworld glfw3 glad imgui_dx12 d3d12 dxgi assimp-vc142-mtd)
 

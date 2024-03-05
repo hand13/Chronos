@@ -14,6 +14,7 @@
 #include "platform/windows/render/d3d11/ChronosD3D11Texture2D.h"
 #include "platform/windows/windows_common.h"
 #include <WICTextureLoader.h>
+#include <StringHelper.h>
 namespace Chronos{
 
     D3D11Renderer::D3D11Renderer() {

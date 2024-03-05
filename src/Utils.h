@@ -68,6 +68,4 @@ typedef Eigen::Matrix4f Matrix4f ;
 
 void Panic(const std::wstring& msg);
 void Panic(const std::string& msg);
-std::string WideToUTF8(const std::wstring& str);
-std::wstring UTF8toWide(const std::string& str);
 std::vector<unsigned char> readDataFromFile(const char * fileName);

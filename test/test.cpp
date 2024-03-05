@@ -1,7 +1,8 @@
-#include "../src/ParamList.h"
+#include "ParamList.h"
 #include "Utils.h"
 #include <iostream>
 #include <string>
+#include "StringHelper.h"
 void param_test(){
     const char * test = "hello world";
     Chronos::ParamList pl;

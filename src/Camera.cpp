@@ -64,7 +64,7 @@ namespace Chronos{
         xAxis.y(),yAxis.y(),zAxis.y(),
         xAxis.z(),yAxis.z(),zAxis.z();
 
-        Eigen::Matrix3f it = tmp.inverse();
+        Eigen::Matrix3f it = tmp.transpose();//幺正矩阵,转置与逆相同
 
 
         Eigen::Matrix4f result;//列主序矩阵
@@ -80,17 +80,6 @@ namespace Chronos{
         it(1,0),it(1,1),it(1,2),0,
         it(2,0),it(2,1),it(2,2),0,
         0,0,0,1.f;
-
-        // Eigen::Matrix4f yawMatrix;
-
-        // yawMatrix <<
-        //     cos(tmpYaw),0,sin(tmpYaw),0,
-        //     0,1.f,0,0,
-        //     -sin(tmpYaw),0,cos(tmpYaw),0,
-        //     0,0,0,1.f;
-
-        // Eigen::Matrix4f pitchMatrix;
-
 
         return angleMatrix*result;
     }

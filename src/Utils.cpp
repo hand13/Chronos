@@ -12,45 +12,7 @@
 #include <winerror.h>
 #include "Log.h"
 #include <Poco/File.h>
-#include <unicode/ucnv.h>
-
-std::string WideToUTF8(const std::wstring& str) {
-    UErrorCode code;
-    UConverter * convert = ucnv_open("utf_8",&code);
-    if(U_FAILURE(code)){
-        Panic("should not happended");
-    }
-    char tmp[1024];
-    memset(tmp, 0, sizeof(tmp));
-    UChar * t = (UChar*)str.c_str();
-    ucnv_fromUChars(convert,tmp,sizeof(tmp),t,str.size(),&code);
-    if(U_FAILURE(code)){
-        Panic("should not happended");
-    }
-    std::string result;
-    result.append(tmp);
-    ucnv_close(convert);
-    return result;
-}
-
-std::wstring UTF8toWide(const std::string& str){
-    UErrorCode code;
-    UConverter * convert = ucnv_open("utf_8",&code);
-    
-    if(U_FAILURE(code)){
-        Panic("should not happended");
-    }
-    UChar tmp[512];
-    memset(tmp, 0, sizeof(tmp));
-    ucnv_toUChars(convert,tmp,sizeof(tmp),str.c_str(),str.size(),&code);
-    if(U_FAILURE(code)){
-        Panic("should not happended");
-    }
-    std::wstring wc = (wchar_t*)tmp;
-    ucnv_close(convert);
-    return wc;
-}
-
+#include "StringHelper.h"
 void Panic(const std::wstring& msg) {
     std::string tmp = WideToUTF8(msg);
     Chronos::Log(msg);
