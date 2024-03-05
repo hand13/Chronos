@@ -1,5 +1,5 @@
 #pragma once
-#include "../Camera.h"
+#include <Camera.h>
 #include "RenderTarget.h"
 namespace Chronos{
     class RenderContext {

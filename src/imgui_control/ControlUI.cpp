@@ -12,7 +12,7 @@
 #include <tchar.h>
 #include <winuser.h>
 #include "ControlUI.h"
-#include "../render/d3d11/D3D11Renderer.h"
+#include <render/d3d11/D3D11Renderer.h>
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 // Data

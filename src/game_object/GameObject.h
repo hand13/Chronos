@@ -1,5 +1,5 @@
 #pragma once
-#include "../component/Component.h"
+#include <component/Component.h>
 #include <string>
 #include <memory>
 namespace Chronos{

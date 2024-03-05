@@ -6,7 +6,7 @@
 #include <string>
 #include "Shader.h"
 #include "Types.h"
-#include "../Utils.h"
+#include <Utils.h>
 
 namespace Chronos {
     class Renderer{

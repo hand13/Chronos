@@ -8,8 +8,8 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include "../render/DefaultMaterial.h"
-#include "../render/DefaultVetexProc.h"
+#include <render/DefaultMaterial.h>
+#include <render/DefaultVetexProc.h>
 namespace Chronos {
 
     PolygonModelLoader::PolygonModelLoader(){

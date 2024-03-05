@@ -1,4 +1,4 @@
-#include "../../ChronosWindow.h"
+#include <ChronosWindow.h>
 #include <Windows.h>
 #include <minwindef.h>
 #include <rpcndr.h>

@@ -1,5 +1,5 @@
 #pragma once
-#include "../RenderState.h"
+#include <render/RenderState.h>
 #include "D3D11Renderer.h"
 #include "common.h"
 #include <d3d11.h>

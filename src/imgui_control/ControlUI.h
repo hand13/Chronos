@@ -3,7 +3,7 @@
 #include <d3d11.h>
 #include <dxgi.h>
 #include <wrl/client.h>
-#include "../render/Renderer.h"
+#include <render/Renderer.h>
 using Microsoft::WRL::ComPtr;
 namespace Chronos {
     class ControlUI{

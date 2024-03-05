@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseComponent.h"
-#include "../render/Renderer.h"
+#include <render/Renderer.h>
 namespace Chronos{
     class RenderableComponent:public BaseComponent{
         public:

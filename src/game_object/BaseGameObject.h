@@ -3,8 +3,8 @@
 #include <memory>
 #include <string>
 #include <map>
-#include "../component/TransformComponent.h"
-#include "../Scene.h"
+#include <component/TransformComponent.h>
+#include <Scene.h>
 namespace Chronos{
     class BaseGameObject:public GameObject {
         protected:

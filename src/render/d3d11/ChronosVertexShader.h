@@ -1,5 +1,5 @@
 #pragma once
-#include "../VertexShader.h"
+#include <render/VertexShader.h>
 #include <d3d11.h>
 #include <wrl/client.h>
 #include "common.h"

@@ -2,9 +2,9 @@
 #include <d3d11.h>
 #include <rpcndr.h>
 #include <wrl/client.h>
-#include "../Renderer.h"
-#include "../RenderContext.h"
-#include "../BaseRenderableObject.h"
+#include <render/Renderer.h>
+#include <render/RenderContext.h>
+#include <render/BaseRenderableObject.h>
 #include "ChronosD3D11RenderTarget.h"
 #include "FXAAMan.h"
 using Microsoft::WRL::ComPtr;

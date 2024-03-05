@@ -1,6 +1,6 @@
 #pragma once
 #include "ControlUI.h"
-#include "../render/Texture2D.h"
+#include <render/Texture2D.h>
 
 namespace Chronos{
     class TestUI :public ControlUI{

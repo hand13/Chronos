@@ -1,6 +1,6 @@
 #include "TestUI.h"
 #include "imgui.h"
-#include "../render/d3d11/ChronosD3D11Texture2D.h"
+#include <render/d3d11/ChronosD3D11Texture2D.h>
 namespace Chronos{
     TestUI::TestUI():ControlUI(){
         srv = nullptr;

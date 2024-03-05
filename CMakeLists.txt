@@ -39,6 +39,7 @@ include_directories(${ASSIMP_DIR}/include)
 # link_directories(${GLFW_DIR}/lib)
 link_directories(${ASSIMP_DIR}/debug/lib)
 
+include_directories(src)
 aux_source_directory(src SRC)
 
 aux_source_directory("src/platform/windows" PLATFORM_WIN_SRC)

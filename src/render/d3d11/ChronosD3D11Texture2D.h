@@ -1,5 +1,5 @@
 #pragma once
-#include "../Texture2D.h"
+#include <render/Texture2D.h>
 #include "common.h"
 #include <d3d11.h>
 #include <wrl/client.h>

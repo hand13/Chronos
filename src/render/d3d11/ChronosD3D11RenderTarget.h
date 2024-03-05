@@ -1,5 +1,5 @@
 #pragma once
-#include "../RenderTarget.h"
+#include <render/RenderTarget.h>
 #include "common.h"
 #include <d3d11.h>
 #include <memory>

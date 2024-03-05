@@ -1,7 +1,7 @@
 #pragma once
 #include "RenderableComponent.h"
-#include "../Transform.h"
-#include "../model/PolygonModel.h"
+#include <Transform.h>
+#include <model/PolygonModel.h>
 #include <memory>
 namespace Chronos{
     class StaticMeshComponent:public RenderableComponent{

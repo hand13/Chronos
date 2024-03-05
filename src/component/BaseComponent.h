@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 #include <vector>
-#include "../game_object/GameObject.h"
+#include <game_object/GameObject.h>
 namespace Chronos {
     class BaseComponent:public Component {
         std::string name;
