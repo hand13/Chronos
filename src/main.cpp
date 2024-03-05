@@ -1,4 +1,4 @@
-#include "BaseChronos.h"
+#include "BaseChronosEngine.h"
 #include "BaseScene.h"
 #include <memory>
 #include "TestGameObject.h"
@@ -10,7 +10,7 @@ class TestScene:public Chronos::BaseScene{
         virtual ~TestScene(){}
 };
 
-class TestChronos:public Chronos::BaseChronos{
+class TestChronosEngine:public Chronos::BaseChronosEngine{
     protected:
     virtual void initStartScene()override{
         mainScene = std::make_unique<TestScene>();
@@ -20,8 +20,8 @@ class TestChronos:public Chronos::BaseChronos{
 
 int main() {
 
-    TestChronos tc;
-    Chronos::Chronos::MakeChronosGlobal(&tc);
+    TestChronosEngine tc;
+    Chronos::MakeChronosGlobal(&tc);
     tc.init();
     tc.begin();
     tc.loop();

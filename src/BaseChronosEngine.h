@@ -1,5 +1,5 @@
 #pragma once
-#include "Chronos.h"
+#include "ChronosEngine.h"
 #include "Scene.h"
 #include <memory>
 #include "render/Renderer.h"
@@ -9,7 +9,7 @@
 #include "Timer.h"
 #include "imgui_control/TestUI.h"
 namespace Chronos {
-    class BaseChronos:public Chronos{
+    class BaseChronosEngine:public ChronosEngine{
         protected:
         Timer timer;
         std::unique_ptr<Scene> mainScene;
@@ -24,7 +24,7 @@ namespace Chronos {
         SizeU windowSize;
         boolean enableImgui;
         public:
-        BaseChronos();
+        BaseChronosEngine();
         virtual void init()override;
         virtual void begin()override;
         virtual void loop()override;
@@ -42,6 +42,6 @@ namespace Chronos {
         void createD3D11Render();
         virtual void render()override;
         virtual void update()override;
-        virtual ~BaseChronos();
+        virtual ~BaseChronosEngine();
     };
 }

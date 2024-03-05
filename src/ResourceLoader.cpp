@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include <memory>
 #include <vector>
-#include "Chronos.h"
+#include "ChronosEngine.h"
 namespace Chronos {
 
     std::shared_ptr<Shader> ResourceLoader::loadShader(const std::string& path,ShaderType shaderType,bool cached,void * exdata,size_t exdataSize){
@@ -10,7 +10,7 @@ namespace Chronos {
         if(iter != sm.end()){
             return iter->second;
         }
-        Renderer * render = Chronos::INSTANCE->getRenderer();
+        Renderer * render = Engine->getRenderer();
         std::shared_ptr<Shader> result = render->loadShader(path, shaderType,exdata,exdataSize);
         if(cached){
         }

@@ -1,9 +1,9 @@
 #include "StaticMeshComponent.h"
 #include "TransformComponent.h"
-#include <Chronos.h>
+#include <ChronosEngine.h>
 namespace Chronos{
     void StaticMeshComponent::init(){
-        pm = Chronos::INSTANCE->getResourceLoader()->loadPolygonModelFromFile("resources/models/test.fbx");
+        pm = Engine->getResourceLoader()->loadPolygonModelFromFile("resources/models/test.fbx");
     }
     void StaticMeshComponent::render(Renderer * renderer){
         for(auto m : pm->getMeshes()){

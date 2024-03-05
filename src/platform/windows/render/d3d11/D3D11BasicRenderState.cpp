@@ -7,7 +7,7 @@
 #include <minwindef.h>
 #include <vector>
 #include <wrl/client.h>
-#include <Chronos.h>
+#include <ChronosEngine.h>
 namespace Chronos{
     D3D11BaseRenderState::D3D11BaseRenderState(D3D11Renderer * render,BaseRenderableObject * robj){
         dirty = true;
@@ -23,7 +23,7 @@ namespace Chronos{
     }
     void D3D11BaseRenderState::update(){
 
-        ResourceLoader * rl = Chronos::INSTANCE->getResourceLoader();
+        ResourceLoader * rl = Engine->getResourceLoader();
 
         {
             std::vector<float> vertices = robj->getVertices();

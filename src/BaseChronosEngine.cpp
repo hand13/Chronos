@@ -1,4 +1,4 @@
-#include "BaseChronos.h"
+#include "BaseChronosEngine.h"
 #include "Log.h"
 #include "Utils.h"
 #include <memory>
@@ -8,11 +8,11 @@
 #include "imgui_control/TestUI.h"
 namespace Chronos {
 
-    BaseChronos::BaseChronos(){
+    BaseChronosEngine::BaseChronosEngine(){
         enableImgui = true;
     }
 
-    void BaseChronos::init() {
+    void BaseChronosEngine::init() {
         state = 1;
         option.renderType = 1;
         createRender();
@@ -31,15 +31,15 @@ namespace Chronos {
         initStartScene();
     }
 
-    void BaseChronos::changeSize(){
+    void BaseChronosEngine::changeSize(){
         mainScene->changeSize(windowSize);
     }
 
-    void BaseChronos::createWindow(){
+    void BaseChronosEngine::createWindow(){
         window = CreateWin();
     }
 
-    void BaseChronos::createRender(){
+    void BaseChronosEngine::createRender(){
         if(option.renderType == 1){
             createD3D11Render();
         }else {
@@ -47,7 +47,7 @@ namespace Chronos {
         }
     }
 
-    void BaseChronos::createD3D11Render(){
+    void BaseChronosEngine::createD3D11Render(){
         #ifdef _WIN32
         renderer = std::make_unique<D3D11Renderer>();
         #endif
@@ -56,31 +56,31 @@ namespace Chronos {
         #endif
     }
 
-    ResourceLoader* BaseChronos::getResourceLoader(){
+    ResourceLoader* BaseChronosEngine::getResourceLoader(){
         return &resourceLoader;
     }
-    void BaseChronos::shutdown() {
+    void BaseChronosEngine::shutdown() {
         state = 0;
     }
 
-    Renderer* BaseChronos::getRenderer(){
+    Renderer* BaseChronosEngine::getRenderer(){
         return renderer.get();
     }
-    ChronosWindow* BaseChronos::getWindow() {
+    ChronosWindow* BaseChronosEngine::getWindow() {
         return window.get();
     }
 
-    void BaseChronos::begin() {
+    void BaseChronosEngine::begin() {
         Log("game start");
         window->show();
         timer.start();
     }
     
-    SizeU BaseChronos::getWindowSize()const {
+    SizeU BaseChronosEngine::getWindowSize()const {
         return windowSize;
     }
 
-    void BaseChronos::loop() {
+    void BaseChronosEngine::loop() {
         while(state == 1){
 
             auto es = window->processEvent();
@@ -109,15 +109,15 @@ namespace Chronos {
         }
     }
 
-    void BaseChronos::render(){
+    void BaseChronosEngine::render(){
         mainScene->render();
         window->displayOffscreen(mainScene->getRenderTargetAsTexture());
     }
 
-    void BaseChronos::update() {
+    void BaseChronosEngine::update() {
         mainScene->update(timer.delta());
     }
 
-    BaseChronos::~BaseChronos() {
+    BaseChronosEngine::~BaseChronosEngine() {
     }
 }

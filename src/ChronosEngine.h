@@ -4,7 +4,7 @@
 #include "ResourceLoader.h"
 
 namespace Chronos {
-    class Chronos {
+    class ChronosEngine {
         public:
 
         virtual void init() = 0;
@@ -19,9 +19,9 @@ namespace Chronos {
         protected:
         virtual void render() = 0;
         virtual void update() = 0;
-        virtual ~Chronos(){}
+        virtual ~ChronosEngine(){}
         public:
-        static Chronos* INSTANCE;
-        static void MakeChronosGlobal(Chronos* chronos);
     };
+    void MakeChronosGlobal(ChronosEngine* chronos);
+    extern ChronosEngine* Engine;
 }

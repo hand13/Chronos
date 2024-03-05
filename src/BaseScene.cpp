@@ -1,5 +1,5 @@
 #include "BaseScene.h"
-#include "Chronos.h"
+#include "ChronosEngine.h"
 #include <memory>
 #include <utility>
 #include <vector>
@@ -33,11 +33,11 @@ namespace Chronos {
 
     }
     void BaseScene::initRenderState(){
-        Renderer * render = Chronos::INSTANCE->getRenderer();
-        rt = render->createRenderTarget(Chronos::INSTANCE->getWindowSize());
+        Renderer * render = Engine->getRenderer();
+        rt = render->createRenderTarget(Chronos::Engine->getWindowSize());
         rc.setRenderTarget(rt.get());
 
-        SizeU size = Chronos::INSTANCE->getWindowSize();
+        SizeU size = Chronos::Engine->getWindowSize();
         activeCamera.setWidth(size.width);
         activeCamera.setHeight(size.height);
 
@@ -46,7 +46,7 @@ namespace Chronos {
     }
 
     void BaseScene::changeSize(const SizeU& windowSize){
-        rt = Chronos::INSTANCE->getRenderer()->createRenderTarget(windowSize);
+        rt = Chronos::Engine->getRenderer()->createRenderTarget(windowSize);
         rc.setRenderTarget(rt.get());
         activeCamera.setWidth(windowSize.width);
         activeCamera.setHeight(windowSize.height);
@@ -61,7 +61,7 @@ namespace Chronos {
 
     }
     void BaseScene::render(){
-        Renderer * renderer = Chronos::INSTANCE->getRenderer();
+        Renderer * renderer = Chronos::Engine->getRenderer();
         renderer->setRenderContext(&rc);
         renderer->beginRender();
 
