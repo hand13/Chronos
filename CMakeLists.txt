@@ -6,6 +6,8 @@ set(CMAKE_BUILD_TYPE Debug)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
 
+add_subdirectory(reflect)
+
 find_package(fmt CONFIG REQUIRED)
 find_package(Poco CONFIG REQUIRED Foundation)
 find_package(Eigen3 CONFIG REQUIRED NO_MODULE)
