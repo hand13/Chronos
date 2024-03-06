@@ -268,7 +268,7 @@ namespace Chronos{
     }
 
     std::shared_ptr<Texture2D> D3D11Renderer::loaderTexture2D(const std::string& path,const TextureParameter& tparam){
-        std::shared_ptr<ChronosD3D11Texture2D> result;
+        std::shared_ptr<ChronosD3D11Texture2D> result = std::make_shared<ChronosD3D11Texture2D>();
         std::wstring wp = UTF8toWide(path);
         ComPtr<ID3D11ShaderResourceView> rsv;
         ID3D11Resource * res;

@@ -4,6 +4,7 @@
 #include <vector>
 #include "ChronosEngine.h"
 #include "render/Texture.h"
+#include "Log.h"
 namespace Chronos {
 
     std::shared_ptr<Shader> ResourceLoader::loadShader(const std::string& path,ShaderType shaderType,bool cached,void * exdata,size_t exdataSize){
@@ -46,5 +47,8 @@ namespace Chronos {
 
     std::shared_ptr<PolygonModel> ResourceLoader::loadPolygonModelFromFile(const std::string& filePath){
         return pml.loadPolygonModel(filePath);
+    }
+    ResourceLoader::~ResourceLoader(){
+        Log("ResourceLoader destroyed");
     }
 }

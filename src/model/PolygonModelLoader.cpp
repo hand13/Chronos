@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 #include <render/DefaultMaterial.h>
+#include <render/TestMaterial.h>
 #include <render/DefaultVetexProc.h>
 namespace Chronos {
 
@@ -93,7 +94,7 @@ namespace Chronos {
         bro->setAttributeSet(as);
         bro->setIndices(std::move(indices));
         bro->setVertices(std::move(data));
-        bro->setMaterial(std::make_unique<DefaultMaterial>());
+        bro->setMaterial(std::make_unique<TestMaterial>());
         bro->setVertexProc(std::make_unique<DefaultVertexProc>());
         target->getMeshes().push_back(bro);
 

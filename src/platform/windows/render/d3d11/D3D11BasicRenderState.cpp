@@ -1,4 +1,7 @@
 #include "D3D11BaseRenderState.h"
+#include "GenericParam.hpp"
+#include "Param.h"
+#include "platform/windows/render/d3d11/ChronosD3D11Texture2D.h"
 #include <cstddef>
 #include <d3d11.h>
 #include <d3dcommon.h>
@@ -156,6 +159,10 @@ namespace Chronos{
 
         ParamList & ppl = robj->getMaterial()->getShaderConfig()->getParamList();
         for(auto param:ppl.getParamList()){
+            if(param->signature().type == ParamType::SPTEXTURE2D){
+                textures.push_back(nullptr);
+                continue;
+            }
             size_t size = param->signature().size;
             pixelParamConstantBuffers.push_back(createConstantBuffer(size));
         }
@@ -170,7 +177,7 @@ namespace Chronos{
         }
 
         ParamList & ppl = robj->getMaterial()->getShaderConfig()->getParamList();
-        if(ppl.getParamList().size() != pixelParamConstantBuffers.size()){
+        if(ppl.getParamList().size() != pixelParamConstantBuffers.size() + textures.size()){
             Panic("should not happended");
         }
 
@@ -182,7 +189,21 @@ namespace Chronos{
         }
 
         int pindex= 0;
+        int tindex = 0;
         for(auto param:ppl.getParamList()){
+            if(param->signature().type == ParamType::SPTEXTURE2D){
+                Texture2DParam* spt = dynamic_cast<Texture2DParam*>(param);
+                if(spt == nullptr){
+                    Panic("should not happended");
+                }
+                std::shared_ptr<ChronosD3D11Texture2D> sc = std::dynamic_pointer_cast<ChronosD3D11Texture2D>(spt->value);
+                if(sc == nullptr){
+                    Panic("should not happended");
+                }
+                textures[tindex] = sc;
+                tindex++;
+                continue;
+            }
             dc->UpdateSubresource(pixelParamConstantBuffers[pindex].Get(), 0, 0
             , param->asData(),static_cast<UINT>(param->signature().size),0);
             pindex++;
@@ -201,6 +222,12 @@ namespace Chronos{
         for(auto cb:pixelParamConstantBuffers){
             dc->PSSetConstantBuffers(pslot,1,cb.GetAddressOf());//todo
             pslot++;
+        }
+        int tslot = 0;
+        for(auto t:textures){
+            ID3D11ShaderResourceView *srv = t->getSRV();
+            dc->PSSetShaderResources(tslot, 1, &srv);
+            tslot++;
         }
     }
 }

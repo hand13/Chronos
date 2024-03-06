@@ -6,6 +6,7 @@
 #include "platform/windows/render/d3d11/D3D11Renderer.h"
 #endif
 #include "imgui_control/TestUI.h"
+#include "Log.h"
 namespace Chronos {
 
     BaseChronosEngine::BaseChronosEngine(){
@@ -119,5 +120,6 @@ namespace Chronos {
     }
 
     BaseChronosEngine::~BaseChronosEngine() {
+        Log("Engine destroyed");
     }
 }

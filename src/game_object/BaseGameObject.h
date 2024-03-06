@@ -22,6 +22,6 @@ namespace Chronos{
         virtual Component* getRootComponent()override;
         virtual Component* getComponent(const std::string& name)override;
         virtual void destroy()override;
-        virtual ~BaseGameObject(){}
+        virtual ~BaseGameObject();
     };
 }

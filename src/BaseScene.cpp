@@ -3,6 +3,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include "Log.h"
 namespace Chronos {
 
     BaseScene::BaseScene():activeCamera(defaultCamera){
@@ -182,5 +183,6 @@ namespace Chronos {
     }
 
     BaseScene::~BaseScene(){
+        Log("Scene destroyed");
     }
 }

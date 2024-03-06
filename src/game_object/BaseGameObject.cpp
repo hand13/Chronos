@@ -2,6 +2,7 @@
 #include <Utils.h>
 #include <memory>
 #include <component/DefaultRootComponent.h>
+#include <Log.h>
 namespace Chronos {
     BaseGameObject::BaseGameObject(Scene * scene){
         root = nullptr;
@@ -53,5 +54,8 @@ namespace Chronos {
     }
     void BaseGameObject::destroy(){
         //do nothing
+    }
+    BaseGameObject::~BaseGameObject(){
+        Log("GameObject destructed");
     }
 }

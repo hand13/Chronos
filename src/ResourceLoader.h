@@ -22,6 +22,7 @@ namespace Chronos {
         std::shared_ptr<Shader> loadShader(const std::string& path,ShaderType shaderType,bool cached,void * exdata = nullptr,size_t exdataSize = 0);
         std::vector<unsigned char> loadFile(const std::string& path,bool cached);
         std::shared_ptr<PolygonModel> loadPolygonModelFromFile(const std::string& filePath);
-        std::shared_ptr<Texture2D> loadTexture2D(const std::string& path,const TextureParameter& tp,bool cached);
+        std::shared_ptr<Texture2D> loadTexture2D(const std::string& path,const TextureParameter& tp,bool cached = true);
+        ~ResourceLoader();
     };
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include <render/RenderState.h>
 #include "D3D11Renderer.h"
 #include <platform/windows/windows_common.h>
@@ -7,6 +8,7 @@
 #include <wrl/client.h>
 #include "ChronosVertexShader.h"
 #include "ChronosPixelShader.h"
+#include "ChronosD3D11Texture2D.h"
 namespace Chronos{
     class D3D11BaseRenderState:public RenderState{
         private:
@@ -22,6 +24,7 @@ namespace Chronos{
 
         std::vector<ComPtr<ID3D11Buffer>> vertParamConstantBuffers;
         std::vector<ComPtr<ID3D11Buffer>> pixelParamConstantBuffers;
+        std::vector<std::shared_ptr<ChronosD3D11Texture2D>> textures;
 
         void createBufferForShaderParams();
         void transferParamsToConstantBuffers();

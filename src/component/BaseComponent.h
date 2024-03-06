@@ -22,6 +22,6 @@ namespace Chronos {
         virtual void addComponent(Component* component)override;
 
         virtual void destroy()override;
-        virtual ~BaseComponent(){}
+        virtual ~BaseComponent();
     };
 }

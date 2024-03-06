@@ -1,4 +1,5 @@
 #include "BaseComponent.h"
+#include <Log.h>
 namespace Chronos {
         BaseComponent::BaseComponent(GameObject * gameObject):gameObect(gameObject){
             parent = nullptr;
@@ -34,5 +35,9 @@ namespace Chronos {
         }
         void BaseComponent::destroy(){
             //do nothing
+        }
+
+        BaseComponent::~BaseComponent(){
+            Log("Component destructed");
         }
 }

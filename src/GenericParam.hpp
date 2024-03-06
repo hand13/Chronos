@@ -50,4 +50,5 @@ namespace Chronos {
     typedef GenericParam<Float4> Float4Param;
     typedef GenericParam<Matrix4f> Matrix4fParam;
     typedef GenericParam<RawData> RawDataParam;
+    typedef GenericParam<SPTexture2D> Texture2DParam;
 }

@@ -2,11 +2,15 @@
 
 ## todo
 
-- texture
 - pbr
 - reflect
+- Resource And ResourceLoader
 - editor
 - component
+
+## done
+
+- texture done
 
 ## gallary
 
