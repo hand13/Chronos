@@ -149,12 +149,19 @@ namespace Chronos{
         ThrowIfFailed(device->CreateBuffer(&bdesc, nullptr,result.GetAddressOf()));
         return result;
     }
+
+    static u16 Span(u16 size){
+        if((size % MAX_PACK_SIZE) == 0){
+            return size;
+        }
+        return MAX_PACK_SIZE + size - (size % MAX_PACK_SIZE);
+    }
     
     void D3D11BaseRenderState::createBufferForShaderParams(){
 
         ParamList & vpl = robj->getVertexProc()->getShaderConfig()->getParamList();
         for(auto slot : vpl.getAllSlotAndSize()){
-            vertParamConstantBuffers[slot.first] = createConstantBuffer(slot.second);
+            vertParamConstantBuffers[slot.first] = createConstantBuffer(Span(slot.second));
         }
         // for(auto param:vpl.getParamList()){
         //     size_t size = param->signature().size;
@@ -163,7 +170,7 @@ namespace Chronos{
 
         ParamList & ppl = robj->getMaterial()->getShaderConfig()->getParamList();
         for(auto slot:ppl.getAllSlotAndSize()){
-            pixelParamConstantBuffers[slot.first] = createConstantBuffer(slot.second);
+            pixelParamConstantBuffers[slot.first] = createConstantBuffer(Span(slot.second));
         }
         for(auto param:ppl.getParamList()){
             if(param->signature().type == ParamType::SPTEXTURE2D){

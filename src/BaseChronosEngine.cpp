@@ -10,7 +10,7 @@
 namespace Chronos {
 
     BaseChronosEngine::BaseChronosEngine(){
-        enableImgui = true;
+        enableImgui = false;
     }
 
     void BaseChronosEngine::init() {

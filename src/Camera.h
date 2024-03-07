@@ -1,6 +1,7 @@
 #pragma once
 #include <Eigen/Eigen>
 #include <Eigen/src/Core/Matrix.h>
+#include "Utils.h"
 namespace Chronos{
 
     struct CameraBuffer{
@@ -55,6 +56,9 @@ namespace Chronos{
         inline void setHeight(unsigned int height) {
             this->height = height;
             shouldUpdateProjectionMatrix = true;
+        }
+        inline Float3 getPos(){
+            return Float3(pos.x(),pos.y(),pos.z());
         }
 
         void addYaw(float delta);

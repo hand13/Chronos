@@ -8,9 +8,8 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include <render/DefaultMaterial.h>
-#include <render/TestMaterial.h>
-#include <render/DefaultVetexProc.h>
+#include <render/PBRMaterial.h>
+#include <render/PBRVertexProc.h>
 namespace Chronos {
 
     PolygonModelLoader::PolygonModelLoader(){
@@ -94,8 +93,8 @@ namespace Chronos {
         bro->setAttributeSet(as);
         bro->setIndices(std::move(indices));
         bro->setVertices(std::move(data));
-        bro->setMaterial(std::make_unique<TestMaterial>());
-        bro->setVertexProc(std::make_unique<DefaultVertexProc>());
+        bro->setMaterial(std::make_unique<PBRMaterial>());
+        bro->setVertexProc(std::make_unique<PBRVertexProc>());
         target->getMeshes().push_back(bro);
 
         // if(mesh->mMaterialIndex >= 0) {

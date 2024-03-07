@@ -68,24 +68,27 @@ namespace Chronos {
 
     void ParamList::appendPackInfo(const std::string& paramName,size_t size,PackInfo packInfo){
         u8 slot = Slot(packInfo);
-        u16 packOffset = POffset(packInfo);//todo
+        // u16 packOffset = POffset(packInfo);//todo
         u16 currentSlotSize = slotAndSize[slot];
         u16 t_size = static_cast<u16>(size);
         u16 t_offset = currentSlotSize;
         u16 pack_size =  static_cast<u16>(size);
 
-        if(pack_size >= MAX_PACK_SIZE || ((currentSlotSize%MAX_PACK_SIZE+packOffset)> MAX_PACK_SIZE)){//float4塞不下
-
-            if(pack_size > MAX_PACK_SIZE){
-                pack_size = MAX_PACK_SIZE;
+        if(pack_size >= MAX_PACK_SIZE || ((currentSlotSize%MAX_PACK_SIZE+pack_size)> MAX_PACK_SIZE)){//float4塞不下
+            if(currentSlotSize%MAX_PACK_SIZE != 0){
+                u16 bias = MAX_PACK_SIZE -  (currentSlotSize % MAX_PACK_SIZE);
+                t_size += bias;
+                t_offset += bias;
             }
-            u16 rem = currentSlotSize % pack_size;
+            // if(pack_size > MAX_PACK_SIZE){
+            //     pack_size = MAX_PACK_SIZE;
+            // }
+            // u16 rem = currentSlotSize % pack_size;
 
-            if(rem != 0){
-                t_size +=pack_size - rem;
-                t_offset += pack_size -rem;
-            }
-
+            // if(rem != 0){
+            //     t_size +=pack_size - rem;
+            //     t_offset += pack_size -rem;
+            // }
         }
 
         slotAndSize[slot] = currentSlotSize + t_size;

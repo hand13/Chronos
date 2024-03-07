@@ -6,6 +6,7 @@ namespace Chronos {
         Float3 pos;
         Float3 scale;
         Float3 rotation;
+        Transform();
         Matrix4f getMatrix();
     };
 }

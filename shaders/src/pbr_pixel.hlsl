@@ -1,6 +1,7 @@
 struct PixelShaderInput{
     float2 TexCoords:TEXCOORD;
-    float4 WorldPos:SV_Position;
+    float4 Pos:SV_POSITION;
+    float4 WorldPos:POSITION;
     float3 Normal:NORMAL;
 };
 cbuffer PBRParam: register(b0){
@@ -10,8 +11,8 @@ cbuffer PBRParam: register(b0){
     float ao;
 }
 cbuffer LightParam:register(b1){
-    float3 lightPostion[4];
-    float3 lightColor[4];
+    float3 lightPostion[1];
+    float3 lightColor[1];
 }
 cbuffer Camera:register(b2){
     float3 camPos;
@@ -28,14 +29,15 @@ float3 mix(float3 a,float3 b,float value){
 
 float4 main(PixelShaderInput input) :SV_TARGET{
     float3 N = normalize(input.Normal);
-    float3 V = normalize(camPos - input.WorldPos.xyz);
+    float3 WorldPos = (float3)input.WorldPos;
+    float3 V = normalize(camPos - WorldPos);
     float3 F0 = float3(0.04,0.04,0.04);
     F0 = mix(F0,albedo,metallic);
     float3 Lo = float3(0.0,0.0,0.0);
-    for(int i = 0;i<4;++i){
-        float3 L = normalize(lightPostion[i] - input.WorldPos.xzy);
+    for(int i = 0;i<1;++i){
+        float3 L = normalize(lightPostion[i] - WorldPos);
         float3 H = normalize(V+L);
-        float dis = length(lightPostion[i] - input.WorldPos.xzy);
+        float dis = length(lightPostion[i] - WorldPos);
         float attenuation = 1.0/(dis * dis);
         float3 radiance = lightColor[i] * attenuation;
 
@@ -61,7 +63,7 @@ float4 main(PixelShaderInput input) :SV_TARGET{
 float DIstributionGGX(float3 N,float3 H,float roughness){
     float a = roughness * roughness;
     float a2 = a * a;
-    float NdotH = max(dot(N,N),0.0);
+    float NdotH = max(dot(N,H),0.0);
     float NdotH2 = NdotH * NdotH;
     float num = a2;
     float denom = (NdotH2 * (a2 - 1.0) + 1.0);
