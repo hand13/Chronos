@@ -23,19 +23,19 @@ void Panic(const std::string& msg) {
     throw std::exception(msg.c_str());
 }
 
-std::vector<unsigned char> readDataFromFile(const char * fileName){
+std::vector<u8> readDataFromFile(const char * fileName){
     Poco::File pf(fileName);
     if(!pf.exists()){
         Panic(L"未知文件");
     }
-    std::vector<unsigned char> result;
+    std::vector<u8> result;
     FILE* file = std::fopen(fileName,"rb");
     if(file == nullptr){
         Panic(L"fatal");
     }
-    unsigned char buffer[1024];
+    u8 buffer[1024];
     size_t s = 0;
-    while((s=fread(buffer, sizeof(unsigned char),1024,file))>0) {
+    while((s=fread(buffer, sizeof(u8),1024,file))>0) {
         result.insert(result.end(),std::begin(buffer),std::begin(buffer) + s);
     }
     fclose(file);
@@ -43,13 +43,13 @@ std::vector<unsigned char> readDataFromFile(const char * fileName){
     return result;
 }
 RawData::RawData(size_t size){
-   data = new unsigned char[size];
+   data = new u8[size];
    memset(data, 0, size);
    this->size = size;
 }
 
-RawData::RawData(const unsigned char * odata,size_t size){
-    data = new unsigned char[size];
+RawData::RawData(const u8 * odata,size_t size){
+    data = new u8[size];
     this->size = size;
     memcpy(data, odata, size);
 }
@@ -60,7 +60,7 @@ RawData::RawData(const RawData& other){
 void RawData::operator=(const RawData& other){
     if(size != other.size){
         clean();
-        data = new unsigned char[other.size];
+        data = new u8[other.size];
         size = other.size;
     }
     memcpy(data, other.data, size);
@@ -78,11 +78,15 @@ void RawData::clean(){
     }
     size = 0;
 }
-unsigned char * RawData::getData(){
+u8 * RawData::getData(){
     return data;
 }
 size_t RawData::getSize()const{
     return size;
+}
+
+void RawData::copyIntoThis(const u8* from,size_t from_start,size_t this_start,size_t size){
+    memcpy(data+this_start, from + from_start, size);
 }
 
 RawData::~RawData(){

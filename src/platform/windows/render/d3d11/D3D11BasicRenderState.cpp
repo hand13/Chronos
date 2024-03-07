@@ -1,6 +1,7 @@
 #include "D3D11BaseRenderState.h"
 #include "GenericParam.hpp"
 #include "Param.h"
+#include "Utils.h"
 #include "platform/windows/render/d3d11/ChronosD3D11Texture2D.h"
 #include <cstddef>
 #include <d3d11.h>
@@ -152,19 +153,23 @@ namespace Chronos{
     void D3D11BaseRenderState::createBufferForShaderParams(){
 
         ParamList & vpl = robj->getVertexProc()->getShaderConfig()->getParamList();
-        for(auto param:vpl.getParamList()){
-            size_t size = param->signature().size;
-            vertParamConstantBuffers.push_back(createConstantBuffer(size));
+        for(auto slot : vpl.getAllSlotAndSize()){
+            vertParamConstantBuffers[slot.first] = createConstantBuffer(slot.second);
         }
+        // for(auto param:vpl.getParamList()){
+        //     size_t size = param->signature().size;
+        //     vertParamConstantBuffers.push_back(createConstantBuffer(size));
+        // }
 
         ParamList & ppl = robj->getMaterial()->getShaderConfig()->getParamList();
+        for(auto slot:ppl.getAllSlotAndSize()){
+            pixelParamConstantBuffers[slot.first] = createConstantBuffer(slot.second);
+        }
         for(auto param:ppl.getParamList()){
             if(param->signature().type == ParamType::SPTEXTURE2D){
                 textures.push_back(nullptr);
                 continue;
             }
-            size_t size = param->signature().size;
-            pixelParamConstantBuffers.push_back(createConstantBuffer(size));
         }
     }
 
@@ -172,23 +177,30 @@ namespace Chronos{
         ID3D11DeviceContext * dc = render->getDeviceContext();
 
         ParamList & vpl = robj->getVertexProc()->getShaderConfig()->getParamList();
-        if(vpl.getParamList().size() != vertParamConstantBuffers.size()){
+        if(vpl.getAllSlotAndSize().size() != vertParamConstantBuffers.size()){
             Panic("should not happended");
         }
 
         ParamList & ppl = robj->getMaterial()->getShaderConfig()->getParamList();
-        if(ppl.getParamList().size() != pixelParamConstantBuffers.size() + textures.size()){
+        if(ppl.getAllSlotAndSize().size() != pixelParamConstantBuffers.size() ){
+            Panic("should not happended");
+        }
+        if(ppl.getTexturesCount() != textures.size()){
             Panic("should not happended");
         }
 
-        int vindex = 0;
-        for(auto param:vpl.getParamList()){
-            dc->UpdateSubresource(vertParamConstantBuffers[vindex].Get(), 0, 0
-            , param->asData(),static_cast<UINT>(param->signature().size),0);
-            vindex++;
+        for(auto slotAndCb:vertParamConstantBuffers){
+            RawData rd = vpl.packDataInSlot(slotAndCb.first);
+            dc->UpdateSubresource(slotAndCb.second.Get(), 0, 0
+            , rd.getData(),static_cast<UINT>(rd.getSize()),0);
         }
 
-        int pindex= 0;
+        for(auto slotAndCb:pixelParamConstantBuffers){
+            RawData rd = ppl.packDataInSlot(slotAndCb.first);
+            dc->UpdateSubresource(slotAndCb.second.Get(), 0, 0
+            , rd.getData(),static_cast<UINT>(rd.getSize()),0);
+        }
+
         int tindex = 0;
         for(auto param:ppl.getParamList()){
             if(param->signature().type == ParamType::SPTEXTURE2D){
@@ -204,24 +216,17 @@ namespace Chronos{
                 tindex++;
                 continue;
             }
-            dc->UpdateSubresource(pixelParamConstantBuffers[pindex].Get(), 0, 0
-            , param->asData(),static_cast<UINT>(param->signature().size),0);
-            pindex++;
         }
 
     }
 
     void D3D11BaseRenderState::applyShaderParamConstantBuffers(){
         ID3D11DeviceContext* dc = render->getDeviceContext();
-        int vslot = 1;//todo
         for(auto cb:vertParamConstantBuffers){
-            dc->VSSetConstantBuffers(vslot,1,cb.GetAddressOf());//todo
-            vslot++;
+            dc->VSSetConstantBuffers(cb.first,1,cb.second.GetAddressOf());//todo
         }
-        int pslot = 0;//todo
         for(auto cb:pixelParamConstantBuffers){
-            dc->PSSetConstantBuffers(pslot,1,cb.GetAddressOf());//todo
-            pslot++;
+            dc->PSSetConstantBuffers(cb.first,1,cb.second.GetAddressOf());//todo
         }
         int tslot = 0;
         for(auto t:textures){

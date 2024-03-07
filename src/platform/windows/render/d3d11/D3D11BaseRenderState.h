@@ -1,6 +1,8 @@
 #pragma once
+#include <map>
 #include <memory>
 #include <render/RenderState.h>
+#include "BaseTypes.h"
 #include "D3D11Renderer.h"
 #include <platform/windows/windows_common.h>
 #include <d3d11.h>
@@ -20,10 +22,8 @@ namespace Chronos{
         ComPtr<ID3D11Buffer> indicesBuffer;
         std::shared_ptr<ChronosVertexShader> vs;
         std::shared_ptr<ChronosPixelShader> ps;
-
-
-        std::vector<ComPtr<ID3D11Buffer>> vertParamConstantBuffers;
-        std::vector<ComPtr<ID3D11Buffer>> pixelParamConstantBuffers;
+        std::map<u8, ComPtr<ID3D11Buffer>> vertParamConstantBuffers;//slot,buffer
+        std::map<u8, ComPtr<ID3D11Buffer>> pixelParamConstantBuffers;//slot,buffer
         std::vector<std::shared_ptr<ChronosD3D11Texture2D>> textures;
 
         void createBufferForShaderParams();

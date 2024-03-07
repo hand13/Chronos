@@ -5,6 +5,7 @@ namespace Chronos {
     class GenericParam:public Param{
         private:
         std::string name;
+        PackInfo packInfo;
         public:
         virtual ParamSignature signature()const override{
             return ParamSignature(FetchType<T>()(),sizeof(T));
@@ -15,10 +16,13 @@ namespace Chronos {
         virtual std::string getName()override{
             return name;
         }
-        T value;
-        GenericParam(const std::string& name,const T& value):name(name),value(value){
+        virtual PackInfo getPackInfo() override{
+            return packInfo;
         }
-        GenericParam(const std::string& name):name(name){}
+        T value;
+        GenericParam(const std::string& name,const T& value,PackInfo packInfo):name(name),value(value),packInfo(packInfo){
+        }
+        GenericParam(const std::string& name,PackInfo packInfo):name(name),packInfo(packInfo){}
         virtual ~GenericParam(){};
     };
 
@@ -26,6 +30,7 @@ namespace Chronos {
     class GenericParam<RawData>:public Param{
         private:
         std::string name;
+        PackInfo packInfo;
         public:
         virtual ParamSignature signature()const override{
             return ParamSignature(FetchType<RawData>()(),value.getSize());
@@ -36,10 +41,13 @@ namespace Chronos {
         virtual std::string getName()override{
             return name;
         }
-        RawData value;
-        GenericParam(const RawData& value,const std::string&name):name(name),value(value){
+        virtual PackInfo getPackInfo() override {
+            return packInfo;
         }
-        GenericParam(const std::string&name,size_t size):name(name),value(size){}
+        RawData value;
+        GenericParam(const RawData& value,const std::string&name,PackInfo packInfo):name(name),packInfo(packInfo),value(value){
+        }
+        GenericParam(const std::string&name,size_t size,PackInfo packInfo):name(name),packInfo(packInfo),value(size){}
         virtual ~GenericParam(){};
     };
 

@@ -2,10 +2,11 @@
 #include <string>
 #include <vector>
 #include <Eigen/Eigen>
+#include "BaseTypes.h"
 
 struct SizeU{
-    unsigned int width;
-    unsigned int height;
+    u32 width;
+    u32 height;
     SizeU(){
         width = 0;
         height = 0;
@@ -49,17 +50,18 @@ struct Float4 {
 
 class RawData{
     private:
-    unsigned char * data;
+    u8 * data;
     size_t size;
     void clean();
     public:
     RawData(size_t size);
-    RawData(const unsigned char * data,size_t size);
+    RawData(const u8 * data,size_t size);
     RawData(const RawData& other);
     RawData(RawData&& other);
     void operator=(const RawData& other);
-    unsigned char * getData();
+    u8 * getData();
     size_t getSize()const;
+    void copyIntoThis(const u8* from,size_t from_start,size_t this_start,size_t size);
     ~RawData();
 };
 
@@ -68,4 +70,4 @@ typedef Eigen::Matrix4f Matrix4f ;
 
 void Panic(const std::wstring& msg);
 void Panic(const std::string& msg);
-std::vector<unsigned char> readDataFromFile(const char * fileName);
+std::vector<u8> readDataFromFile(const char * fileName);

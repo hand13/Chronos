@@ -2,12 +2,18 @@
 #include "Utils.h"
 #include <memory>
 #include <render/Texture2D.h>
+#include "BaseTypes.h"
 #define MakeFetchType(X,Y) template<> \
 struct FetchType<X> {\
     constexpr ParamType operator()(){\
         return Y;\
     }\
 };
+typedef u16 PackInfo;
+#define MAX_PACK_SIZE 16//float4
+#define MakePackInfo(Slot,Offset) (Slot<<12 | Offset)
+#define Slot(X) (X >> 12)
+#define POffset(X) (X & 0x0000111111111111)
 typedef std::shared_ptr<Chronos::Texture2D> SPTexture2D;
 namespace Chronos{
     enum ParamType {
@@ -50,8 +56,9 @@ namespace Chronos{
         virtual ParamSignature signature()const = 0;
         virtual void* asData() = 0;
         virtual std::string getName() = 0;
+        virtual PackInfo getPackInfo() = 0;
         virtual ~Param(){}
     };
-    Param* constructParamFromType(const std::string& name,ParamType type,size_t rawDataSize = 0);
+    Param* constructParamFromType(const std::string& name,ParamType type,PackInfo packInfo = 0,size_t rawDataSize = 0);
 
 }

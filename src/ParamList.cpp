@@ -1,4 +1,6 @@
 #include "ParamList.h"
+#include "Param.h"
+#include "Utils.h"
 #include <cstddef>
 namespace Chronos {
 
@@ -10,12 +12,18 @@ namespace Chronos {
             params[i] = 0;
         }
     }
+
     ParamList::ParamList(){
     }
-    void ParamList::registerParam(const std::string& name,ParamType type,size_t rawDataSize){
-        Param* res = constructParamFromType(name,type,rawDataSize);
+
+    void ParamList::registerParam(const std::string& name,ParamType type,PackInfo packInfo,size_t rawDataSize){
+        Param* res = constructParamFromType(name,type,packInfo,rawDataSize);
         params.push_back(res);
         paramIndex[name] = static_cast<unsigned int>(params.size()-1);
+        if(res->signature().type == SPTEXTURE2D){
+            return;//pack ignore texture
+        }
+        appendPackInfo(name,res->signature().size,packInfo);
     }
 
     bool ParamList::checkParam(const std::string& paramName,const ParamSignature& ps)const{
@@ -34,5 +42,63 @@ namespace Chronos {
     }
     ParamList::~ParamList(){
         destroyParams();
+    }
+
+    RawData ParamList::packDataInSlot(u8 slot){
+        u16 sz = slotAndSize[slot];
+        if((sz % MAX_PACK_SIZE) != 0){//对其 float4
+            sz += MAX_PACK_SIZE - (sz % MAX_PACK_SIZE);
+        }
+        RawData rd(sz);
+        for(auto p : params){
+            if(Slot(p->getPackInfo()) != slot){
+                continue;
+            }
+            void * data = p->asData();
+            size_t size = p->signature().size;
+            u16 offset = offset_data[p->getName()];
+            rd.copyIntoThis(static_cast<u8*>(data),0,offset, size);
+        }
+        return rd;
+    }
+
+    const std::map<u8,u16>& ParamList::getAllSlotAndSize()const{
+        return slotAndSize;
+    }
+
+    void ParamList::appendPackInfo(const std::string& paramName,size_t size,PackInfo packInfo){
+        u8 slot = Slot(packInfo);
+        u16 packOffset = POffset(packInfo);//todo
+        u16 currentSlotSize = slotAndSize[slot];
+        u16 t_size = static_cast<u16>(size);
+        u16 t_offset = currentSlotSize;
+        u16 pack_size =  static_cast<u16>(size);
+
+        if(pack_size >= MAX_PACK_SIZE || ((currentSlotSize%MAX_PACK_SIZE+packOffset)> MAX_PACK_SIZE)){//float4塞不下
+
+            if(pack_size > MAX_PACK_SIZE){
+                pack_size = MAX_PACK_SIZE;
+            }
+            u16 rem = currentSlotSize % pack_size;
+
+            if(rem != 0){
+                t_size +=pack_size - rem;
+                t_offset += pack_size -rem;
+            }
+
+        }
+
+        slotAndSize[slot] = currentSlotSize + t_size;
+        offset_data[paramName] = t_offset;
+    }
+
+    u8 ParamList::getTexturesCount(){
+        u8 count = 0;
+        for(auto p: params){
+            if(p->signature().type == SPTEXTURE2D){
+                count++;
+            }
+        }
+        return count;
     }
 }
