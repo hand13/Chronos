@@ -7,7 +7,7 @@
 #include "Option.h"
 #include "Utils.h"
 #include "Timer.h"
-#include "imgui_control/TestUI.h"
+#include "editor/ChronosEditor.h"
 namespace Chronos {
     class BaseChronosEngine:public ChronosEngine{
         protected:
@@ -15,7 +15,7 @@ namespace Chronos {
         std::unique_ptr<Scene> mainScene;
 
         std::unique_ptr<ChronosWindow> window;
-        std::unique_ptr<TestUI> cui;//tmp
+        std::unique_ptr<ChronosEditor> ced;//tmp
         std::unique_ptr<Renderer> renderer;
 
         unsigned int state = 0;

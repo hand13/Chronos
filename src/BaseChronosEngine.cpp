@@ -5,12 +5,11 @@
 #ifdef _WIN32
 #include "platform/windows/render/d3d11/D3D11Renderer.h"
 #endif
-#include "imgui_control/TestUI.h"
 #include "Log.h"
 namespace Chronos {
 
     BaseChronosEngine::BaseChronosEngine(){
-        enableImgui = false;
+        enableImgui = true;
     }
 
     void BaseChronosEngine::init() {
@@ -25,8 +24,8 @@ namespace Chronos {
 
         
         if(enableImgui){
-            cui = std::make_unique<TestUI>();
-            cui->init(renderer.get());
+            ced= std::make_unique<ChronosEditor>();
+            ced->init(renderer.get());
         }
 
         initStartScene();
@@ -104,8 +103,9 @@ namespace Chronos {
                 window->persent();
             }
             if(enableImgui){
-                cui->displayOffscreen(mainScene->getRenderTargetAsTexture());
-                cui->runInLoop();
+                ced->setScene(mainScene.get());
+                ced->displayOffscreen(mainScene->getRenderTargetAsTexture());
+                ced->runInLoop();
             }
         }
     }

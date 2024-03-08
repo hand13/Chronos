@@ -304,7 +304,7 @@ namespace  Chronos {
     }
 
     WinChronosWindow::~WinChronosWindow() {
-        Log(TEXT("啊我死了"));
+        Log(TEXT("window destructed"));
     }
 
     static WinChronosWindow* GetWindowFromLParam(LPARAM lParam) {
