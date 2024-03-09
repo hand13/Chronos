@@ -1,7 +1,7 @@
 #include "StaticMeshComponent.h"
-#include "Camera.h"
+#include "base/Camera.h"
 #include "TransformComponent.h"
-#include "Utils.h"
+#include "base/Utils.h"
 #include <ChronosEngine.h>
 #include <Scene.h>
 namespace Chronos{

@@ -12,6 +12,10 @@ namespace Chronos {
         UnInstallModuleProc ump;
         DllHandler dllHandler;
     };
+    /**
+     * @brief 注意释放
+     * 
+     */
 
     class ModuleLoader {
         private:
@@ -19,5 +23,6 @@ namespace Chronos {
         public:
         ICModule * installModule(const char * path);
         void uninstallModule(ICModule * module);
+        ~ModuleLoader();
     };
 }

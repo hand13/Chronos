@@ -3,7 +3,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include "Log.h"
+#include "base/Log.h"
 namespace Chronos {
 
     BaseScene::BaseScene():activeCamera(defaultCamera){
@@ -26,6 +26,10 @@ namespace Chronos {
     }
     Texture2D* BaseScene::getRenderTargetAsTexture(){
         return rt->asTexture();
+    }
+
+    void* BaseScene::getRenderTargetTextureHandler(){
+        return rt->asTextureHandler();
     }
 
     void BaseScene::init(){

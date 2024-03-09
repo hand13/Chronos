@@ -1,31 +1,37 @@
 #include "BaseChronosEngine.h"
-#include "Log.h"
-#include "Utils.h"
+#include "base/Log.h"
+#include "base/Utils.h"
 #include <memory>
-#ifdef _WIN32
-#include "platform/windows/render/d3d11/D3D11Renderer.h"
-#endif
-#include "Log.h"
+#include "base/Log.h"
+#include "module/ICModule.h"
+#include "module/IRendererModule.h"
 namespace Chronos {
 
     BaseChronosEngine::BaseChronosEngine(){
         enableImgui = true;
+        rendererModule = nullptr;
     }
 
+    void BaseChronosEngine::setModuleLoader(ModuleLoader * ml){
+        moduleLoader = ml;
+    }
     void BaseChronosEngine::init() {
+        if(moduleLoader == nullptr){
+            Panic("please set a moduleLoader");
+        }
         state = 1;
         option.renderType = 1;
         createRender();
         renderer->init();
 
         createWindow();
-        window->init(renderer.get());
+        window->init(renderer);
         window->getSize(windowSize.width,windowSize.height);
 
         
         if(enableImgui){
             ced= std::make_unique<ChronosEditor>();
-            ced->init(renderer.get());
+            ced->init(renderer);
         }
 
         initStartScene();
@@ -49,7 +55,14 @@ namespace Chronos {
 
     void BaseChronosEngine::createD3D11Render(){
         #ifdef _WIN32
-        renderer = std::make_unique<D3D11Renderer>();
+        ICModule * im =  moduleLoader->installModule("d3d11_renderer.dll");
+        rendererModule = nullptr;
+        if(im &&(rendererModule = dynamic_cast<IRendererModule*>(im))){
+            renderer = rendererModule->getRenderer();
+        }else{
+            Panic("not a renderer");
+        }
+        // renderer = std::make_unique<D3D11Renderer>();
         #endif
         #ifndef _WIN32
         Panic("not support")
@@ -64,7 +77,7 @@ namespace Chronos {
     }
 
     Renderer* BaseChronosEngine::getRenderer(){
-        return renderer.get();
+        return renderer;
     }
     ChronosWindow* BaseChronosEngine::getWindow() {
         return window.get();
@@ -104,7 +117,7 @@ namespace Chronos {
             }
             if(enableImgui){
                 ced->setScene(mainScene.get());
-                ced->displayOffscreen(mainScene->getRenderTargetAsTexture());
+                ced->displayOffscreen(mainScene->getRenderTargetTextureHandler());
                 ced->runInLoop();
             }
         }
@@ -112,12 +125,13 @@ namespace Chronos {
 
     void BaseChronosEngine::render(){
         mainScene->render();
-        window->displayOffscreen(mainScene->getRenderTargetAsTexture());
+        window->displayOffscreen(mainScene->getRenderTargetTextureHandler());
     }
 
     void BaseChronosEngine::update() {
         mainScene->update(timer.delta());
     }
+
 
     BaseChronosEngine::~BaseChronosEngine() {
         Log("Engine destroyed");

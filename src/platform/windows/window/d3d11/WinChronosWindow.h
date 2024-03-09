@@ -46,7 +46,7 @@ namespace Chronos {
         virtual void show() override;
         virtual std::vector<IOEvent> processEvent()override;
         virtual void persent() override;
-        virtual void displayOffscreen(Texture2D * rt)override;
+        virtual void displayOffscreen(void * thandler)override;
         void draw();
         inline ComPtr<ID3D11Device> shareDeivce(){
             return d3d11Device;

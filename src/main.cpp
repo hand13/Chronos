@@ -2,6 +2,7 @@
 #include "BaseScene.h"
 #include <memory>
 #include "TestGameObject.h"
+#include "module/ModuleLoader.h"
 class TestScene:public Chronos::BaseScene{
     public:
         virtual void initScene()override{
@@ -19,9 +20,11 @@ class TestChronosEngine:public Chronos::BaseChronosEngine{
 };
 
 int main() {
+    Chronos::ModuleLoader ml;
 
     TestChronosEngine tc;
     Chronos::MakeChronosGlobal(&tc);
+    tc.setModuleLoader(&ml);
     tc.init();
     tc.begin();
     tc.loop();

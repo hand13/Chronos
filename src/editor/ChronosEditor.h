@@ -25,7 +25,7 @@ namespace Chronos{
         ChronosEditor();
         void setScene(Scene* scene);
         void displayEditorView();
-        virtual void displayOffscreen(Texture2D * rt);
+        virtual void displayOffscreen(void* thandler);
         virtual ~ChronosEditor(){}
     };
 }

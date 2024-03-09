@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseComponent.h"
-#include <Camera.h>
+#include <base/Camera.h>
 namespace Chronos {
     class CameraComponent:public BaseComponent{
         public:

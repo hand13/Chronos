@@ -18,6 +18,10 @@ namespace Chronos{
         return texture.get();
     }
 
+    void * ChronosD3D11RenderTarget::asTextureHandler(){
+        return texture->getSRV();
+    }
+
     void ChronosD3D11RenderTarget::setInnerRTV(ComPtr<ID3D11RenderTargetView> innerRTV){
         _innerRTV = innerRTV;
     }

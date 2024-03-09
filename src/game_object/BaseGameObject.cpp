@@ -1,8 +1,8 @@
 #include "BaseGameObject.h"
-#include <Utils.h>
+#include <base/Utils.h>
 #include <memory>
 #include <component/DefaultRootComponent.h>
-#include <Log.h>
+#include <base/Log.h>
 namespace Chronos {
     BaseGameObject::BaseGameObject(Scene * scene){
         root = nullptr;

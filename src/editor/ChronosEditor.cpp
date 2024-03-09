@@ -1,13 +1,12 @@
 #include "ChronosEditor.h"
 #include "ChronosEngine.h"
 #include "Scene.h"
-#include "Transform.h"
-#include "Utils.h"
+#include "base/Transform.h"
+#include "base/Utils.h"
 #include "component/Component.h"
 #include "component/TransformComponent.h"
 #include "game_object/GameObject.h"
 #include <imgui.h>
-#include <platform/windows/render/d3d11/ChronosD3D11Texture2D.h>
 namespace Chronos{
 
     ChronosEditor::ChronosEditor():ControlUI(){
@@ -153,10 +152,7 @@ namespace Chronos{
         }
     }
 
-    void ChronosEditor::displayOffscreen(Texture2D * rt){
-        ChronosD3D11Texture2D * ct = dynamic_cast<ChronosD3D11Texture2D*>(rt);
-        if(ct != nullptr){
-            srv = ct->getSRV();
-        }
+    void ChronosEditor::displayOffscreen(void * thandler){
+        srv = (ID3D11ShaderResourceView*) thandler;
     }
 }

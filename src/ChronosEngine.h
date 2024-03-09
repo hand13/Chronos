@@ -2,6 +2,8 @@
 #include "render/Renderer.h"
 #include "ChronosWindow.h"
 #include "ResourceLoader.h"
+#include "base/apidef.h"
+#include <module/ModuleLoader.h>
 
 namespace Chronos {
     class ChronosEngine {
@@ -15,7 +17,7 @@ namespace Chronos {
         virtual ResourceLoader * getResourceLoader() = 0;
         virtual void loop() = 0;
         virtual SizeU getWindowSize()const = 0;
-
+        virtual void setModuleLoader(ModuleLoader * ml) = 0;
         protected:
         virtual void render() = 0;
         virtual void update() = 0;
@@ -23,5 +25,5 @@ namespace Chronos {
         public:
     };
     void MakeChronosGlobal(ChronosEngine* chronos);
-    extern ChronosEngine* Engine;
+    CHRONOS_API  ChronosEngine* Engine;
 }

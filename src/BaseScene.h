@@ -40,6 +40,7 @@ namespace Chronos {
 
         virtual RenderTarget* getRenderTarget()override;
         virtual Texture2D* getRenderTargetAsTexture()override;
+        virtual void* getRenderTargetTextureHandler()override;
         virtual void begin()override;
         virtual void render()override;
         virtual void update(unsigned int deltaTime)override;

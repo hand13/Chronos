@@ -2,7 +2,7 @@
 #include "Material.h"
 #include <memory>
 #include "BaseShaderConfig.h"
-#include "Param.h"
+#include "base/Param.h"
 
 namespace Chronos {
     class PBRMaterial:public Material{

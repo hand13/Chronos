@@ -15,9 +15,9 @@
 #include <windef.h>
 #include <winnt.h>
 #include <winuser.h>
-#include "Utils.h"
-#include <Log.h>
-#include <Utils.h>
+#include "base/Utils.h"
+#include <base/Log.h>
+#include <base/Utils.h>
 #include <platform/windows/render/d3d11/D3D11Renderer.h>
 #include <platform/windows/windows_common.h>
 #include <d3d11shader.h>
@@ -82,12 +82,8 @@ namespace  Chronos {
         // SetWindowPos(hWnd, HWND_TOP, 0, 0, width, height, SWP_NOMOVE);
     }
 
-    void WinChronosWindow::displayOffscreen(Texture2D * rt){
-        ChronosD3D11Texture2D* ct = dynamic_cast<ChronosD3D11Texture2D*>(rt);
-        if(ct == nullptr){
-            Panic(L"fatal");
-        }
-        sceneTexture = ct->getSRV();
+    void WinChronosWindow::displayOffscreen(void * thandler){
+        sceneTexture = (ID3D11ShaderResourceView*) thandler;
     }
 
     void WinChronosWindow::draw() {

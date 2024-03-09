@@ -2,7 +2,7 @@
 #include <map>
 #include <memory>
 #include <render/RenderState.h>
-#include "BaseTypes.h"
+#include "base/BaseTypes.h"
 #include "D3D11Renderer.h"
 #include <platform/windows/windows_common.h>
 #include <d3d11.h>

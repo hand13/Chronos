@@ -1,5 +1,5 @@
 #include "BaseComponent.h"
-#include <Log.h>
+#include <base/Log.h>
 namespace Chronos {
         BaseComponent::BaseComponent(GameObject * gameObject):gameObect(gameObject){
             parent = nullptr;

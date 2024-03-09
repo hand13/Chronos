@@ -2,12 +2,14 @@
 #include "ChronosEngine.h"
 #include "Scene.h"
 #include <memory>
+#include "module/IRendererModule.h"
 #include "render/Renderer.h"
 #include "ChronosWindow.h"
 #include "Option.h"
-#include "Utils.h"
-#include "Timer.h"
+#include "base/Utils.h"
+#include "base/Timer.h"
 #include "editor/ChronosEditor.h"
+#include "module/ModuleLoader.h"
 namespace Chronos {
     class BaseChronosEngine:public ChronosEngine{
         protected:
@@ -16,11 +18,13 @@ namespace Chronos {
 
         std::unique_ptr<ChronosWindow> window;
         std::unique_ptr<ChronosEditor> ced;//tmp
-        std::unique_ptr<Renderer> renderer;
+        Renderer* renderer;
 
         unsigned int state = 0;
         Option option;
         ResourceLoader resourceLoader;
+        IRendererModule* rendererModule;
+        ModuleLoader* moduleLoader;
         SizeU windowSize;
         boolean enableImgui;
         public:
@@ -29,6 +33,7 @@ namespace Chronos {
         virtual void begin()override;
         virtual void loop()override;
         virtual void shutdown() override;
+        virtual void setModuleLoader(ModuleLoader * ml)override;
         virtual ResourceLoader* getResourceLoader() override;
 
         virtual Renderer* getRenderer()override;

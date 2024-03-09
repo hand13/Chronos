@@ -1,7 +1,7 @@
 #include "D3D11BaseRenderState.h"
-#include "GenericParam.hpp"
-#include "Param.h"
-#include "Utils.h"
+#include "base/GenericParam.hpp"
+#include "base/Param.h"
+#include "base/Utils.h"
 #include "platform/windows/render/d3d11/ChronosD3D11Texture2D.h"
 #include <cstddef>
 #include <d3d11.h>

@@ -1,5 +1,5 @@
 #include "D3D11Renderer.h"
-#include <Utils.h>
+#include <base/Utils.h>
 #include <cstddef>
 #include <d3d11.h>
 #include <d3dcommon.h>
@@ -14,7 +14,8 @@
 #include "platform/windows/render/d3d11/ChronosD3D11Texture2D.h"
 #include "platform/windows/windows_common.h"
 #include <WICTextureLoader.h>
-#include <StringHelper.h>
+#include <base/StringHelper.h>
+#include <base/Log.h>
 namespace Chronos{
 
     D3D11Renderer::D3D11Renderer() {
@@ -284,5 +285,6 @@ namespace Chronos{
     }
 
     D3D11Renderer::~D3D11Renderer(){
+        Log("d3d11 renderer destructed");
     }
 }

@@ -27,6 +27,7 @@ namespace Chronos{
 
         ID3D11RenderTargetView* getRTV();
         virtual Texture2D* asTexture()override;
+        virtual void * asTextureHandler()override;
 
         ID3D11RenderTargetView* getInnerRTV();
         Texture2D* innerAsTexture();

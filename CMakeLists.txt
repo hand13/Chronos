@@ -17,12 +17,7 @@ find_package(ICU REQUIRED uc)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 set(CMAKE_CXX_STANDARD 20)
-# add_compile_options(-Wall)
 set(THIRD_PARTY_DIR ${PROJECT_SOURCE_DIR}/third_party)
-# set(GLAD_DIR ${THIRD_PARTY_DIR}/glad)
-# set(GLFW_DIR ${THIRD_PARTY_DIR}/glfw)
-# set(STB_DIR ${THIRD_PARTY_DIR}/stb)
-# set(GLM_DIR ${THIRD_PARTY_DIR}/glm)
 set(IMGUI_DIR ${THIRD_PARTY_DIR}/imgui_dx11)
 set(ASSIMP_DIR ${THIRD_PARTY_DIR}/assimp)
 
@@ -32,17 +27,7 @@ add_subdirectory(${IMGUI_DIR})
 include_directories(${IMGUI_DIR})
 
 include_directories(${PHYSX_DIR}/include)
-# add_subdirectory(third_party/glad)
-# add_subdirectory(third_party/glm)
-
-# include_directories(${GLAD_DIR}/include)
-# include_directories(${STB_DIR})
-# include_directories(${GLM_DIR})
 include_directories(${ASSIMP_DIR}/include)
-
-# include_directories(${GLFW_DIR}/include)
-
-# link_directories(${GLFW_DIR}/lib)
 link_directories(${ASSIMP_DIR}/debug/lib)
 
 include_directories(src)
@@ -52,7 +37,7 @@ aux_source_directory("src/platform/windows/window/d3d11" PLATFORM_WINDOW_D3D11_S
 aux_source_directory("src/platform/windows/render/d3d11" PLATFORM_RENDER_D3D11_SRC)
 
 add_library(platform_window STATIC ${PLATFORM_WIN_SRC})
-add_library(d3d11_renderer STATIC ${PLATFORM_RENDER_D3D11_SRC})
+add_library(d3d11_renderer SHARED ${PLATFORM_RENDER_D3D11_SRC})
 add_library(d3d11_window STATIC ${PLATFORM_WINDOW_D3D11_SRC})
 
 aux_source_directory("src/render" RENDER_SRC)
@@ -60,31 +45,31 @@ aux_source_directory("src/editor" EDITOR_SRC)
 aux_source_directory("src/component" COMPONENT_SRC)
 aux_source_directory("src/game_object" GAME_OBJECT_SRC)
 aux_source_directory("src/model" MODEL_SRC)
+aux_source_directory("src/module" MODULE_SRC)
+
+aux_source_directory("src/base" BASE_SRC)
 
 add_library(renderer STATIC ${RENDER_SRC})
 add_library(editor STATIC ${EDITOR_SRC})
 add_library(component STATIC ${COMPONENT_SRC})
 add_library(game_object STATIC ${GAME_OBJECT_SRC})
 add_library(model STATIC ${MODEL_SRC})
+add_library(module STATIC ${MODULE_SRC})
+add_library(base STATIC ${BASE_SRC})
 
-target_link_libraries(d3d11_renderer PRIVATE Microsoft::DirectXTK)
+target_link_libraries(base ICU::uc Poco::Foundation)
+
+
+target_link_libraries(d3d11_renderer PRIVATE base platform_window renderer Microsoft::DirectXTK d3d11 dxgi)
 
 aux_source_directory(src SRC)
 add_executable(Chronos ${SRC})
 
-target_link_libraries(Chronos PRIVATE renderer editor component game_object model d3d11_renderer d3d11_window platform_window)
+target_link_libraries(Chronos PRIVATE base renderer module editor component game_object model d3d11_window platform_window)
 target_link_libraries(Chronos PRIVATE ICU::uc dxgi d3d11 imgui_dx11 Eigen3::Eigen  assimp-vc142-mtd Poco::Foundation fmt::fmt)
 
-add_executable(test test/test.cpp src/Param.cpp src/Utils.cpp src/Log.cpp src/ParamList.cpp src/StringHelper.cpp)
-target_link_libraries(test PRIVATE Poco::Foundation ICU::uc)
-# target_link_libraries(glworld glfw3 glad imgui_dx12 d3d12 dxgi assimp-vc142-mtd)
-
-# file(COPY_FILE ${GLFW_DIR}/lib/glfw3.dll ${CMAKE_BINARY_DIR}/glfw3.dll)
-# file(COPY_FILE ${ASSIMP_DIR}/debug/bin/assimp-vc142-mtd.dll ${CMAKE_BINARY_DIR}/assimp-vc142-mtd.dll)
-
-# add_custom_command(TARGET glworld PRE_BUILD
-#  COMMAND ${CMAKE_COMMAND} -E copy_directory
-#  	${CMAKE_SOURCE_DIR}/shaders $<TARGET_FILE_DIR:glworld>/shaders)
+add_executable(test test/test.cpp)
+target_link_libraries(test PRIVATE  base Poco::Foundation ICU::uc)
 
 set(shader_src_dir "shaders/src")
 add_custom_target(shaders)

@@ -1,12 +1,12 @@
 #pragma once
 #include "render/RenderTarget.h"
 #include "render/Texture2D.h"
-#include "Utils.h"
-#include "Event.h"
+#include "base/Utils.h"
+#include "base/Event.h"
 #include "game_object/GameObject.h"
 #include <map>
 #include <memory>
-#include "Camera.h"
+#include "base/Camera.h"
 #include "component/RenderableComponent.h"
 namespace Chronos {
     typedef std::map<std::string, std::shared_ptr<GameObject>> GameObjectMap;
@@ -16,6 +16,7 @@ namespace Chronos {
         virtual void setActiveCamera(Camera& camera) =0;
         virtual RenderTarget* getRenderTarget() = 0;
         virtual Texture2D* getRenderTargetAsTexture() = 0;
+        virtual void* getRenderTargetTextureHandler() = 0;
         virtual void init() = 0;
         virtual void begin() = 0;
         virtual void render() = 0;

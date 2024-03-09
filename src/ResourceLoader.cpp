@@ -1,10 +1,10 @@
 #include "ResourceLoader.h"
-#include "Utils.h"
+#include "base/Utils.h"
 #include <memory>
 #include <vector>
 #include "ChronosEngine.h"
 #include "render/Texture.h"
-#include "Log.h"
+#include "base/Log.h"
 namespace Chronos {
 
     std::shared_ptr<Shader> ResourceLoader::loadShader(const std::string& path,ShaderType shaderType,bool cached,void * exdata,size_t exdataSize){

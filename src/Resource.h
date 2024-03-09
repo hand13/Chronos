@@ -1,5 +1,5 @@
 #pragma once
-#include "BaseTypes.h"
+#include "base/BaseTypes.h"
 typedef u64 ResId;
 class Resource{
     public:

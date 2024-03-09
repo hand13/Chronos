@@ -13,7 +13,7 @@ namespace Chronos{
         if(hm){
             mi.dllHandler = hm;
             mi.imp = reinterpret_cast<InstallModuleProc>(GetProcAddress(hm,"InstallModule"));
-            mi.ump = reinterpret_cast<UnInstallModuleProc>(GetProcAddress(hm,"UnInstallModule"));
+            mi.ump = reinterpret_cast<UnInstallModuleProc>(GetProcAddress(hm,"UninstallModule"));
             if(mi.imp == nullptr || mi.ump == nullptr){
                 throw std::exception("should not happended");
             }
@@ -35,5 +35,11 @@ namespace Chronos{
         #ifndef WIN32
             throw std::exception("no imp");
         #endif
+    }
+    ModuleLoader::~ModuleLoader(){
+        for(auto iter = mp.begin();iter != mp.end();){
+            uninstallModule(iter->first);
+            iter = mp.erase(iter);
+        }
     }
 }
