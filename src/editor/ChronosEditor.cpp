@@ -1,4 +1,6 @@
 #include "ChronosEditor.h"
+#include "base/Event.h"
+#include "base/Log.h"
 #include "engine/ChronosEngine.h"
 #include "engine/Scene.h"
 #include "base/Transform.h"
@@ -7,6 +9,7 @@
 #include "component/TransformComponent.h"
 #include "game_object/GameObject.h"
 #include <imgui.h>
+#include <vector>
 namespace Chronos{
 
     ChronosEditor::ChronosEditor():ControlUI(){
@@ -154,5 +157,11 @@ namespace Chronos{
 
     void ChronosEditor::displayOffscreen(void * thandler){
         srv = (ID3D11ShaderResourceView*) thandler;
+    }
+    std::vector<IOEvent> ChronosEditor::getEvents(){
+        return std::vector<IOEvent>();
+    }
+    ChronosEditor::~ChronosEditor(){
+        Log("editor destructed");
     }
 }

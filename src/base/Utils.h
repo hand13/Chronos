@@ -11,6 +11,7 @@ struct SizeU{
         width = 0;
         height = 0;
     }
+    SizeU(u32 width,u32 height):width(width),height(height){}
 };
 
 struct Float2{

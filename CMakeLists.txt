@@ -63,11 +63,17 @@ target_link_libraries(base ICU::uc Poco::Foundation)
 
 target_link_libraries(d3d11_renderer PRIVATE base platform_window renderer Microsoft::DirectXTK d3d11 dxgi)
 
-aux_source_directory(src SRC)
-add_executable(Chronos ${SRC})
+aux_source_directory(src GAME_SRC)
+list(REMOVE_ITEM GAME_SRC "src/editor_main.cpp" "src/ChronosEditorStarter.cpp")
+add_executable(ChronosGame ${GAME_SRC})
+target_link_libraries(ChronosGame PRIVATE base engine renderer module component game_object model d3d11_window platform_window)
+target_link_libraries(ChronosGame PRIVATE ICU::uc dxgi d3d11 imgui_dx11 Eigen3::Eigen  assimp-vc142-mtd Poco::Foundation fmt::fmt)
 
-target_link_libraries(Chronos PRIVATE base engine renderer module editor component game_object model d3d11_window platform_window)
-target_link_libraries(Chronos PRIVATE ICU::uc dxgi d3d11 imgui_dx11 Eigen3::Eigen  assimp-vc142-mtd Poco::Foundation fmt::fmt)
+aux_source_directory(src EDITOR_SRC)
+list(REMOVE_ITEM EDITOR_SRC "src/game_main.cpp" "src/ChronosGameStarter.cpp")
+add_executable(ChronosEditor ${EDITOR_SRC})
+target_link_libraries(ChronosEditor PRIVATE base engine renderer module editor component game_object model d3d11_window platform_window)
+target_link_libraries(ChronosEditor PRIVATE ICU::uc dxgi d3d11 imgui_dx11 Eigen3::Eigen  assimp-vc142-mtd Poco::Foundation fmt::fmt)
 
 add_executable(test test/test.cpp)
 target_link_libraries(test PRIVATE  base Poco::Foundation ICU::uc)
@@ -90,7 +96,7 @@ foreach(FILE ${shader_sources})
   get_source_file_property(shadertype ${FILE} ShaderType)
   get_source_file_property(shadermodel ${FILE} ShaderModel)
   add_custom_command(TARGET shaders
-                     COMMAND fxc.exe  /Emain /T ${shadertype}_${shadermodel} $<IF:$<CONFIG:DEBUG>,/Od,/O1> /Zi /Fo $<TARGET_FILE_DIR:Chronos>/resources/shader/d3d11/${FILE_WE}.cso /Fd $<TARGET_FILE_DIR:Chronos>/resources/shader/d3d11/${FILE_WE}.pdb ${FILE}
+                     COMMAND fxc.exe  /Emain /T ${shadertype}_${shadermodel} $<IF:$<CONFIG:DEBUG>,/Od,/O1> /Zi /Fo $<TARGET_FILE_DIR:ChronosGame>/resources/shader/d3d11/${FILE_WE}.cso /Fd $<TARGET_FILE_DIR:ChronosGame>/resources/shader/d3d11/${FILE_WE}.pdb ${FILE}
                      MAIN_DEPENDENCY ${FILE}
                      COMMENT "HLSL ${FILE}"
                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -100,13 +106,13 @@ endforeach(FILE)
 
 # add_dependencies(Chronos shaders) 循环依赖了
 
-add_custom_command(TARGET Chronos PRE_BUILD
+add_custom_command(TARGET ChronosGame PRE_BUILD
  COMMAND ${CMAKE_COMMAND} -E copy_directory
- 	${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:Chronos>/resources)
+ 	${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:ChronosGame>/resources)
 
-add_custom_command(TARGET Chronos PRE_BUILD
+add_custom_command(TARGET ChronosGame PRE_BUILD
  COMMAND ${CMAKE_COMMAND} -E copy
- 	${ASSIMP_DIR}/debug/bin/assimp-vc142-mtd.dll $<TARGET_FILE_DIR:Chronos>/assimp-vc142-mtd.dll)
+ 	${ASSIMP_DIR}/debug/bin/assimp-vc142-mtd.dll $<TARGET_FILE_DIR:ChronosGame>/assimp-vc142-mtd.dll)
 
 option(PHYSX_BUILD_TYPE "The build type of PhysX, i.e., one of {debug, checked, profile, release}" "checked")
 
@@ -144,5 +150,5 @@ foreach(FILE ${PhysX_dll})
   # get_filename_component(FILE_WE ${FILE} NAME_WE)
   add_custom_command(TARGET PX_Test PRE_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-    ${PHYSX_DIR}/bin/win.x86_64.vc143.md/debug/${FILE} $<TARGET_FILE_DIR:Chronos>/${FILE})
+    ${PHYSX_DIR}/bin/win.x86_64.vc143.md/debug/${FILE} $<TARGET_FILE_DIR:ChronosGame>/${FILE})
 endforeach(FILE)

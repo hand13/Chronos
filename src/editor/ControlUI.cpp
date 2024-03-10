@@ -38,6 +38,11 @@ namespace Chronos {
         ::UnregisterClass(wc.lpszClassName, wc.hInstance);
     }
 
+    void ControlUI::show(){
+        ::ShowWindow(hWnd, SW_SHOWDEFAULT);
+        ::UpdateWindow(hWnd);
+    }
+
     void ControlUI::init(Renderer * renderer){
         D3D11Renderer * dr = dynamic_cast<D3D11Renderer*>(renderer);
         if(dr == nullptr){
@@ -50,8 +55,8 @@ namespace Chronos {
         hWnd = ::CreateWindow(wc.lpszClassName, _T("Dear ImGui DirectX11 Example"), WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, NULL, NULL, wc.hInstance,this);
         createSwapChain();
         // Show the window
-        ::ShowWindow(hWnd, SW_SHOWDEFAULT);
-        ::UpdateWindow(hWnd);
+        // ::ShowWindow(hWnd, SW_SHOWDEFAULT);
+        // ::UpdateWindow(hWnd);
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -162,7 +167,11 @@ namespace Chronos {
             cleanResource();
         }
     }
+    bool ControlUI::isStop(){
+        return finished;
+    }
 }
+
 
 
 

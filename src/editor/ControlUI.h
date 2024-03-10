@@ -27,7 +27,9 @@ namespace Chronos {
         void init(Renderer * renderer);
         void runInLoop();
         void quit();
+        void show();
         bool createRTV();
+        bool isStop();
         IDXGISwapChain* getSwapChain(){
             return swapChain.Get();
         }

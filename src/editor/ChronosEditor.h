@@ -1,9 +1,11 @@
 #pragma once
 #include "ControlUI.h"
+#include "base/Event.h"
 #include "component/Component.h"
 #include "game_object/GameObject.h"
 #include <render/Texture2D.h>
 #include <engine/Scene.h>
+#include <vector>
 
 namespace Chronos{
     class ChronosEditor :public ControlUI{
@@ -21,11 +23,12 @@ namespace Chronos{
         void showComponentDetailView();
         void showComponentListView();
         void recursiveShowComponent(Component * c);
+        void displayEditorView();
         public:
         ChronosEditor();
         void setScene(Scene* scene);
-        void displayEditorView();
         virtual void displayOffscreen(void* thandler);
-        virtual ~ChronosEditor(){}
+        std::vector<IOEvent> getEvents();
+        virtual ~ChronosEditor();
     };
 }
