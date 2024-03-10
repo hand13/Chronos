@@ -1,6 +1,6 @@
 #include "ChronosEditor.h"
-#include "ChronosEngine.h"
-#include "Scene.h"
+#include "engine/ChronosEngine.h"
+#include "engine/Scene.h"
 #include "base/Transform.h"
 #include "base/Utils.h"
 #include "component/Component.h"

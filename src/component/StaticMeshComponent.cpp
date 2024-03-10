@@ -2,8 +2,8 @@
 #include "base/Camera.h"
 #include "TransformComponent.h"
 #include "base/Utils.h"
-#include <ChronosEngine.h>
-#include <Scene.h>
+#include <engine/ChronosEngine.h>
+#include <engine/Scene.h>
 namespace Chronos{
     void StaticMeshComponent::init(){
         pm = Engine->getResourceLoader()->loadPolygonModelFromFile("resources/models/box.fbx");

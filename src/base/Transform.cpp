@@ -1,5 +1,4 @@
 #include "Transform.h"
-#include <d3d10.h>
 namespace Chronos {
     Transform::Transform(){
         pos = {0,0,0};
