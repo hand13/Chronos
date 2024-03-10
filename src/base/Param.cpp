@@ -17,7 +17,7 @@ namespace Chronos {
             case RAWDATA:
                 result = new GenericParam<RawData>(name,size,packInfo);
                 break;
-            NOTHING:
+            case NOTHING:
             default:
                 Panic("should not be here");
         }
