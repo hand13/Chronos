@@ -44,7 +44,7 @@ namespace Chronos{
     }
 
     void ChronosEditor::showEditorArea(){
-        SizeU size =  Engine->getWindowSize();
+        SizeU size =  Engine->getSize();
         // Right
         {
             ImGui::BeginGroup();
@@ -107,7 +107,7 @@ namespace Chronos{
     }
 
     void ChronosEditor::showRenderView(){
-        SizeU size =  Engine->getWindowSize();
+        SizeU size =  Engine->getSize();
         ImGui::Image(srv, ImVec2(static_cast<float>(size.width),static_cast<float>(size.height)));
     }
 

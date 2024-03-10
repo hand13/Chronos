@@ -1,138 +1,91 @@
 #include "BaseChronosEngine.h"
+#include "base/Event.h"
 #include "base/Log.h"
 #include "base/Utils.h"
 #include <memory>
 #include "base/Log.h"
-#include "module/ICModule.h"
-#include "module/IRendererModule.h"
+#include "engine/EngineState.h"
+#include "render/Renderer.h"
 namespace Chronos {
 
     BaseChronosEngine::BaseChronosEngine(){
-        enableImgui = true;
-        rendererModule = nullptr;
+        state = WAIT_INIT;
     }
 
     void BaseChronosEngine::setModuleLoader(ModuleLoader * ml){
-        moduleLoader = ml;
     }
-    void BaseChronosEngine::init() {
-        if(moduleLoader == nullptr){
-            Panic("please set a moduleLoader");
-        }
-        state = 1;
+    void BaseChronosEngine::init(Renderer * renderer) {
         option.renderType = 1;
-        createRender();
-        renderer->init();
-
-        createWindow();
-        window->init(renderer);
-        window->getSize(windowSize.width,windowSize.height);
-
-        
-        if(enableImgui){
-            ced= std::make_unique<ChronosEditor>();
-            ced->init(renderer);
-        }
-
+        this->renderer = renderer;
         initStartScene();
+        state = RUNNING;
     }
 
-    void BaseChronosEngine::changeSize(){
-        mainScene->changeSize(windowSize);
+    void BaseChronosEngine::initSize(const SizeU& size){
+        this->size = size;
     }
 
-    void BaseChronosEngine::createWindow(){
-        window = CreateWin();
-    }
-
-    void BaseChronosEngine::createRender(){
-        if(option.renderType == 1){
-            createD3D11Render();
-        }else {
-            Panic("not support");
-        }
-    }
-
-    void BaseChronosEngine::createD3D11Render(){
-        #ifdef _WIN32
-        ICModule * im =  moduleLoader->installModule("d3d11_renderer.dll");
-        rendererModule = nullptr;
-        if(im &&(rendererModule = dynamic_cast<IRendererModule*>(im))){
-            renderer = rendererModule->getRenderer();
-        }else{
-            Panic("not a renderer");
-        }
-        // renderer = std::make_unique<D3D11Renderer>();
-        #endif
-        #ifndef _WIN32
-        Panic("not support")
-        #endif
+    void BaseChronosEngine::changeSize(const SizeU& size){
+        this->size = size;
+        mainScene->changeSize(size);
     }
 
     ResourceLoader* BaseChronosEngine::getResourceLoader(){
         return &resourceLoader;
     }
     void BaseChronosEngine::shutdown() {
-        state = 0;
+        state = STOP;
     }
 
     Renderer* BaseChronosEngine::getRenderer(){
         return renderer;
     }
-    ChronosWindow* BaseChronosEngine::getWindow() {
-        return window.get();
-    }
 
     void BaseChronosEngine::begin() {
-        Log("game start");
-        window->show();
+        Log("engine start");
+        // window->show();
         timer.start();
     }
     
-    SizeU BaseChronosEngine::getWindowSize()const {
-        return windowSize;
+    SizeU BaseChronosEngine::getSize()const {
+        return size;
     }
 
-    void BaseChronosEngine::loop() {
-        while(state == 1){
-
-            auto es = window->processEvent();
-            for(auto & e : es){
+    void BaseChronosEngine::runInLoop() {
+        if(state == RUNNING){
+            for(auto & e : events){
                 if(e.eventType == QUIT){
-                    state = 0;
+                    state = STOP;
                 }else {
                     mainScene->processEvent(e);
                 }
             }
-            if(state){
-                SizeU tmpSize;
-                window->getSize(tmpSize.width, tmpSize.height);
-                if(tmpSize.width != windowSize.width || tmpSize.height != windowSize.height){
-                    windowSize = tmpSize;
-                    changeSize();
-                }
+            events.clear();
+            if(state == RUNNING){
                 update();
                 render();
-                window->persent();
-            }
-            if(enableImgui){
-                ced->setScene(mainScene.get());
-                ced->displayOffscreen(mainScene->getRenderTargetTextureHandler());
-                ced->runInLoop();
             }
         }
     }
 
     void BaseChronosEngine::render(){
         mainScene->render();
-        window->displayOffscreen(mainScene->getRenderTargetTextureHandler());
     }
 
     void BaseChronosEngine::update() {
         mainScene->update(timer.delta());
     }
 
+    EngineState BaseChronosEngine::getState(){
+        return state;
+    }
+    void BaseChronosEngine::pushEvents(std::vector<IOEvent>& es){
+        events.insert(events.end(),es.begin(),es.end());
+    }
 
+    Scene* BaseChronosEngine::getCurrentScene() {
+        return mainScene.get();
+    }
     BaseChronosEngine::~BaseChronosEngine() {
         Log("Engine destroyed");
     }

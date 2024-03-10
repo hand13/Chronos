@@ -39,10 +39,10 @@ namespace Chronos {
     }
     void BaseScene::initRenderState(){
         Renderer * render = Engine->getRenderer();
-        rt = render->createRenderTarget(Chronos::Engine->getWindowSize());
+        rt = render->createRenderTarget(Chronos::Engine->getSize());
         rc.setRenderTarget(rt.get());
 
-        SizeU size = Chronos::Engine->getWindowSize();
+        SizeU size = Chronos::Engine->getSize();
         activeCamera.setWidth(size.width);
         activeCamera.setHeight(size.height);
 
