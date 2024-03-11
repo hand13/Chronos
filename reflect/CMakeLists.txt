@@ -10,4 +10,4 @@ add_custom_command(TARGET reflect PRE_BUILD
 
 add_custom_command(TARGET reflect PRE_BUILD
  COMMAND ${CMAKE_COMMAND} -E copy
- 	${PROJECT_SOURCE_DIR}/tmp.h $<TARGET_FILE_DIR:reflect>/tmp.h)
+ 	${PROJECT_SOURCE_DIR}/MetaPrefix.h $<TARGET_FILE_DIR:reflect>/MetaPrefix.h)

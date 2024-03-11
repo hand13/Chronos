@@ -34,3 +34,10 @@ struct Klass {
     std::vector<Method> methods;
     std::vector<Constructor> contrustors;
 };
+
+std::string toString(const Access& a);
+std::string toString(const MethodParam& a);
+std::string toString(const Method& a);
+std::string toString(const Field& a);
+std::string toString(const Constructor& a);
+std::string toString(const Klass& a);

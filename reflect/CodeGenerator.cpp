@@ -1,5 +1,6 @@
 #include "CodeGenerator.h"
 #include <iostream>
+#include "Klass.h"
 
 void CodeGenerator::generateCodeFromSrc(const std::string &src_path,const std::string& target_dir){
     ParseContext pc;
@@ -11,4 +12,6 @@ void CodeGenerator::generateCodeFromSrc(const std::string &src_path,const std::s
 void CodeGenerator::generateCodeFromKlass(const std::string& target_path,const Klass& klass){
     //todo
     std::cout<<"generated "<<klass.name<<std::endl;
+    std::cout<<toString(klass)<<std::endl;
+
 }

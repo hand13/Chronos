@@ -73,13 +73,15 @@ KlassParser::~KlassParser(){
 }
 
 void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseContext& pc){
-    const char *file_name = "head_for_reflect.h";
-    const char * command_line_args[] = {"-x","c++",0};
+
+    const char *file_name = file_path.c_str();
+    const char * command_line_args[] = {"-x","c++","-DREFLECT_GEN",0};
     CXTranslationUnit unit = clang_parseTranslationUnit(index, 
     file_name,command_line_args, sizeof(command_line_args)/sizeof(*command_line_args) - 1, nullptr, 0, CXTranslationUnit_None);
     if(unit == nullptr){
         throw std::exception("should not happended");
     }
+
     CXCursor cursor = clang_getTranslationUnitCursor(unit);
     pc.file_name = file_name;
     clang_visitChildren(cursor,[](CXCursor c,CXCursor parent,CXClientData clientData){
