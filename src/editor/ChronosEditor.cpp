@@ -151,6 +151,8 @@ namespace Chronos{
             if(tc){
                 Transform& t = tc->transform;
                 ImGui::InputFloat3("position", (float*)&t.pos);
+                ImGui::InputFloat3("scale", (float*)&t.scale);
+                ImGui::InputFloat3("rotation", (float*)&t.rotation);
             }
         }
     }

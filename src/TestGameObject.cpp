@@ -12,11 +12,11 @@ namespace Chronos{
         smc = mc.get();
     }
     void TestGameObject::update(unsigned int delta){
-        // static unsigned int es = 0;
-        // es += delta;
-        // float x = transformComponent->transform.pos.x;
-        // float second = static_cast<float>(es)/1000.f;
-        // x = 4.f*sin(second);
-        // transformComponent->transform.pos.x = x;
+        static unsigned int es = 0;
+        es += delta;
+        float second = static_cast<float>(es)/1000.f;
+        float x = 4.f*sin(second);
+        transformComponent->transform.pos.x = x;
+        transformComponent->transform.rotation.x = second*360.f;
     }
 }

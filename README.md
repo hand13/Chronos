@@ -5,6 +5,8 @@
 - pbr
 - material
 - reflect
+- module
+- log
 - Resource And ResourceLoader
 - editor
 - component
