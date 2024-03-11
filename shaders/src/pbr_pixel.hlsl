@@ -5,9 +5,9 @@ struct PixelShaderInput{
     float3 Normal:NORMAL;
 };
 cbuffer PBRParam: register(b0){
-    float3 albedo;
-    float metallic;
-    float roughness;
+    float3 ialbedo;
+    float imetallic;
+    float iroughness;
     float ao;
 }
 cbuffer LightParam:register(b1){
@@ -17,7 +17,15 @@ cbuffer LightParam:register(b1){
 cbuffer Camera:register(b2){
     float3 camPos;
 };
+
+SamplerState ssp: register(s0);
+
+Texture2D albedoTex : register(t0);
+Texture2D metallicTex :register(t1);
+Texture2D roughnessTex : register(t2);
+
 static const float PI = 3.14159265359;
+
 float DIstributionGGX(float3 N,float3 H,float roughtness);
 float GeometrySchlickGGX(float NdotV,float roughtness);
 float GeometrySmith(float3 N,float3 V,float3 L,float roughness);
@@ -28,6 +36,13 @@ float3 mix(float3 a,float3 b,float value){
 }
 
 float4 main(PixelShaderInput input) :SV_TARGET{
+
+    float3 albedo = pow((float3)albedoTex.Sample(ssp,input.TexCoords),float3(2.2,2.2,2.2)) + ialbedo;
+    // float3 albedo = (float3)albedoTex.Sample(ssp,input.TexCoords) + ialbedo;
+    float metallic = metallicTex.Sample(ssp,input.TexCoords).r + imetallic;
+    float roughness = roughnessTex.Sample(ssp,input.TexCoords).r + iroughness;
+
+
     float3 N = normalize(input.Normal);
     float3 WorldPos = (float3)input.WorldPos;
     float3 V = normalize(camPos - WorldPos);

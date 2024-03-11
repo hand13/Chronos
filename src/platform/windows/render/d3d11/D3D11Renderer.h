@@ -18,6 +18,7 @@ namespace Chronos {
         RenderContext * currentContext;
         ComPtr<ID3D11Buffer> cbuffer;
         ComPtr<ID3D11RasterizerState> rasterizeState;
+        ComPtr<ID3D11SamplerState> samplerState;
         FXAAMan fm;
 
         D3D11_VIEWPORT viewport;
@@ -69,6 +70,8 @@ namespace Chronos {
         virtual std::unique_ptr<RenderTarget> createRenderTarget(const SizeU& size)override;
         void createRenderTargetView(const SizeU& size,ID3D11RenderTargetView** rtv,ID3D11ShaderResourceView ** rsv);
         void createDepthStencilView(const SizeU& size,ID3D11DepthStencilView** dsv);
+        void createSamplerState(ID3D11SamplerState** sampleState);
+        static void printLiveObject(ComPtr<ID3D11Device> device);
         virtual ~D3D11Renderer();
     };
 };

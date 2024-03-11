@@ -51,7 +51,7 @@ namespace Chronos {
         }
         RawData rd(sz);
         for(auto p : params){
-            if(Slot(p->getPackInfo()) != slot){
+            if(Slot(p->getPackInfo()) != slot || p->signature().type == SPTEXTURE2D){
                 continue;
             }
             void * data = p->asData();
@@ -80,15 +80,6 @@ namespace Chronos {
                 t_size += bias;
                 t_offset += bias;
             }
-            // if(pack_size > MAX_PACK_SIZE){
-            //     pack_size = MAX_PACK_SIZE;
-            // }
-            // u16 rem = currentSlotSize % pack_size;
-
-            // if(rem != 0){
-            //     t_size +=pack_size - rem;
-            //     t_offset += pack_size -rem;
-            // }
         }
 
         slotAndSize[slot] = currentSlotSize + t_size;

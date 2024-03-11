@@ -6,7 +6,7 @@
 #include <engine/Scene.h>
 namespace Chronos{
     void StaticMeshComponent::init(){
-        pm = Engine->getResourceLoader()->loadPolygonModelFromFile("resources/models/box.fbx");
+        pm = Engine->getResourceLoader()->loadPolygonModelFromFile("resources/models/test.fbx");
     }
     void StaticMeshComponent::render(Renderer * renderer){
 

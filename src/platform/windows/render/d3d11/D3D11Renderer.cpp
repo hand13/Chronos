@@ -29,6 +29,7 @@ namespace Chronos{
         createCBuffer();
         currentContext = nullptr;
         ZeroMemory(&viewport,sizeof(viewport));
+        createSamplerState(samplerState.GetAddressOf());
     }
     
     void D3D11Renderer::createDevice(){
@@ -106,6 +107,7 @@ namespace Chronos{
         CameraBuffer cameraBuffer = camera->getCameraBuffer();
         deviceContext->UpdateSubresource(cbuffer.Get(), 0, 0, &cameraBuffer,sizeof(cameraBuffer),0);
         deviceContext->VSSetConstantBuffers(0, 1, cbuffer.GetAddressOf());
+        deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf());
     }
 
     void D3D11Renderer::renderObject(RenderableObject * mesh){
@@ -274,6 +276,9 @@ namespace Chronos{
         ComPtr<ID3D11ShaderResourceView> rsv;
         ID3D11Resource * res;
         ThrowIfFailed(DirectX::CreateWICTextureFromFile(device.Get(),wp.c_str(),&res,rsv.GetAddressOf()));
+        if(!rsv){
+            Panic("load texture failed");
+        }
         ID3D11Texture2D * t;
         ThrowIfFailed(res->QueryInterface(&t));
         D3D11_TEXTURE2D_DESC dtd={};
@@ -281,10 +286,58 @@ namespace Chronos{
         result->setSRV(rsv);
         result->width = dtd.Width;
         result->height = dtd.Height;
+        res->Release();
+        t->Release();
         return result;
     }
 
     D3D11Renderer::~D3D11Renderer(){
         Log("d3d11 renderer destructed");
+    }
+
+    void D3D11Renderer::printLiveObject(ComPtr<ID3D11Device> device){
+        ID3D11Debug * debuger;
+        HRESULT hr = device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&debuger));
+        if (SUCCEEDED(hr)) {
+            hr = debuger->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+        }
+        if (debuger!= nullptr){
+            debuger->Release();
+        }
+    }
+
+    void D3D11Renderer::createSamplerState(ID3D11SamplerState** sampleState){
+        D3D11_SAMPLER_DESC samplerDesc;
+        ZeroMemory(&samplerDesc, sizeof(samplerDesc));
+
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+        // The sampler does not use anisotropic filtering, so this parameter is ignored.
+        samplerDesc.MaxAnisotropy = 0;
+
+        // Specify how texture coordinates outside of the range 0..1 are resolved.
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+        // Use no special MIP clamping or bias.
+        samplerDesc.MipLODBias = 0.0f;
+        samplerDesc.MinLOD = 0;
+        samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+        // Don't use a comparison function.
+        samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+
+        // Border address mode is not used, so this parameter is ignored.
+        samplerDesc.BorderColor[0] = 0.0f;
+        samplerDesc.BorderColor[1] = 0.0f;
+        samplerDesc.BorderColor[2] = 0.0f;
+        samplerDesc.BorderColor[3] = 0.0f;
+        ThrowIfFailed(
+            device->CreateSamplerState(
+                &samplerDesc,
+                sampleState
+            )
+        );
     }
 }

@@ -1,8 +1,9 @@
 #include "D3D11BaseRenderState.h"
 #include "base/GenericParam.hpp"
+#include "base/Log.h"
 #include "base/Param.h"
 #include "base/Utils.h"
-#include "platform/windows/render/d3d11/ChronosD3D11Texture2D.h"
+#include "ChronosD3D11Texture2D.h"
 #include <cstddef>
 #include <d3d11.h>
 #include <d3dcommon.h>
@@ -216,10 +217,9 @@ namespace Chronos{
                     Panic("should not happended");
                 }
                 std::shared_ptr<ChronosD3D11Texture2D> sc = std::dynamic_pointer_cast<ChronosD3D11Texture2D>(spt->value);
-                if(sc == nullptr){
-                    Panic("should not happended");
+                if(sc){
+                    textures[tindex] = sc;
                 }
-                textures[tindex] = sc;
                 tindex++;
                 continue;
             }
@@ -237,9 +237,14 @@ namespace Chronos{
         }
         int tslot = 0;
         for(auto t:textures){
-            ID3D11ShaderResourceView *srv = t->getSRV();
-            dc->PSSetShaderResources(tslot, 1, &srv);
-            tslot++;
+            if(t){
+                ID3D11ShaderResourceView *srv = t->getSRV();
+                dc->PSSetShaderResources(tslot, 1, &srv);
+                tslot++;
+            }
         }
+    }
+    D3D11BaseRenderState::~D3D11BaseRenderState(){
+        Log("render state destructed");
     }
 }
