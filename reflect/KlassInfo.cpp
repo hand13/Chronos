@@ -1,7 +1,7 @@
 
-#include "Klass.h"
+#include "KlassInfo.h"
 #include <string>
-std::string toString(const Access& a){
+std::string toString(const AccessInfo& a){
     std::string res;
     switch (a) {
         case PROTECTED:
@@ -16,10 +16,10 @@ std::string toString(const Access& a){
     }
     return res;
 }
-std::string toString(const MethodParam& a){
+std::string toString(const MethodParamInfo& a){
     return a.type + " " + a.name;
 }
-std::string toString(const Method& a){
+std::string toString(const MethodInfo& a){
     std::string ms = toString(a.access) + " " + a.returnType + " " + a.name + "(";
     for(auto m : a.params){
         ms.append(toString(m));
@@ -28,10 +28,10 @@ std::string toString(const Method& a){
     ms.append(");");
     return ms;
 }
-std::string toString(const Field& a){
+std::string toString(const FieldInfo& a){
     return toString(a.access) + " " + a.type + " "+a.name + ";";
 }
-std::string toString(const Constructor& a){
+std::string toString(const ConstructorInfo& a){
     std::string ms = toString(a.access)+" " + a.name + "(";
     for(auto m : a.params){
         ms.append(toString(m));
@@ -40,7 +40,7 @@ std::string toString(const Constructor& a){
     ms.append(");");
     return ms;
 }
-std::string toString(const Klass& a){
+std::string toString(const KlassInfo& a){
     std::string res;
     res = std::string("class ") + a.name + "{\n";
     for(auto c : a.contrustors){

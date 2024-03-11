@@ -3,10 +3,10 @@
 #include <vector>
 #include <stack>
 #include <clang-c/Index.h>
-#include "Klass.h"
+#include "KlassInfo.h"
 struct ParseContext {
     std::string file_name;
-    std::vector<Klass> klasses;
+    std::vector<KlassInfo> klasses;
     std::stack<void*> stack;
     std::stack<CXCursor> cursorStack;
     ParseContext(){}

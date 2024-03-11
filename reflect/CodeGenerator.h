@@ -7,6 +7,6 @@ class CodeGenerator {
     KlassParser parser;
     public:
     void generateCodeFromSrc(const std::string &src_path,const std::string& target_dir);
-    void generateCodeFromKlass(const std::string& target_path,const Klass& klass);
+    void generateCodeFromKlass(const std::string& target_path,const KlassInfo& klass);
 
 };

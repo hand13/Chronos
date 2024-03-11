@@ -13,7 +13,7 @@ template<typename T>
 static void * getTopPointer(std::vector<T>& s){
     return &s[s.size()-1];
 }
-static Access fromCXSpecifierToAccess(CX_CXXAccessSpecifier as){
+static AccessInfo fromCXSpecifierToAccess(CX_CXXAccessSpecifier as){
     switch (as) {
         case CX_CXXPrivate:
         return PRIVATE;
@@ -102,7 +102,7 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
         }
         switch (c.kind) {
             case CXCursor_ClassDecl:{
-                    Klass klass;
+                    KlassInfo klass;
                     klass.name = getCursorName(c);
                     pc->klasses.push_back(klass);
                     pc->stack.push(getTopPointer(pc->klasses));
@@ -113,10 +113,10 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
                 break;
 
             case CXCursor_Constructor:{
-                    Constructor constructor;
+                    ConstructorInfo constructor;
                     constructor.name = getCursorName(c);
                     constructor.access = fromCXSpecifierToAccess(clang_getCXXAccessSpecifier(c));
-                    Klass* klass = (Klass*)pc->stack.top();
+                    KlassInfo* klass = (KlassInfo*)pc->stack.top();
                     klass->contrustors.push_back(constructor);
                     pc->stack.push(getTopPointer(klass->contrustors));
                     pc->cursorStack.push(c);
@@ -125,13 +125,13 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
                 break;
             case CXCursor_FieldDecl:{
 
-                    Field field;
+                    FieldInfo field;
                     field.access = fromCXSpecifierToAccess(clang_getCXXAccessSpecifier(c));
                     field.name = getCursorName(c);
                     CXType type = clang_getCursorType(c);
                     field.type = getTypeName(type);
 
-                    Klass* klass = (Klass*)pc->stack.top();
+                    KlassInfo* klass = (KlassInfo*)pc->stack.top();
                     klass->fileds.push_back(field);
                     pc->stack.push(getTopPointer(klass->fileds));
                     pc->cursorStack.push(c);
@@ -140,14 +140,14 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
                 break;
             case CXCursor_CXXMethod:{
 
-                    Method method;
+                    MethodInfo method;
                     method.name = getCursorName(c);
                     method.access = fromCXSpecifierToAccess(clang_getCXXAccessSpecifier(c));
                     CXType type = clang_getCursorType(c);
                     CXType rt =  clang_getResultType(type);
                     method.returnType = getTypeName(rt);
 
-                    Klass* klass = (Klass*)pc->stack.top();
+                    KlassInfo* klass = (KlassInfo*)pc->stack.top();
                     klass->methods.push_back(method);
                     pc->stack.push(getTopPointer(klass->methods));
                     pc->cursorStack.push(c);
@@ -155,8 +155,8 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
                 result = CXChildVisit_Recurse;
                 break;
             case CXCursor_ParmDecl:{
-                    MethodParam mp;
-                    Method* method = (Method*)pc->stack.top();
+                    MethodParamInfo mp;
+                    MethodInfo* method = (MethodInfo*)pc->stack.top();
                     mp.name = getCursorName(c);
                     CXType type = clang_getCursorType(c);
                     mp.type = getTypeName(type);
