@@ -8,6 +8,8 @@ class RefelctTest{
     int id;
     CField(password)
     std::string password;
+    int& rid;
+    int * pid;
     public:
     RefelctTest();
     CMethod(getNames)

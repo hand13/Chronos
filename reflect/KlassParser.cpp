@@ -4,7 +4,6 @@
 #include <clang-c/Index.h>
 #include <exception>
 #include <iostream>
-#include <ostream>
 #include <stack>
 #include <vector>
 #include "KlassParser.h"
