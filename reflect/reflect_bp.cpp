@@ -1,6 +1,6 @@
 #include "reflect_bp.h"
 #include "head_for_reflect.h"
-#include "Klass.h"
+#include "reflect_api/Klass.h"
 #include <cstddef>
 
 void load_reflect_test(Metaspace* ms){

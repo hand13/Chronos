@@ -6,22 +6,27 @@
 #include <string>
 #include <vector>
 #include "MetaInfoSolver.h"
+#include <filesystem>
 
-void CodeGenerator::generateCodeFromSrc(const std::string &src_path,const std::string& target_dir){
-    ParseContext pc;
-    parser.parseFileIntoParseContext(src_path, pc);
+void CodeGenerator::generateCodeFromSrc(const std::string &src_dir
+    ,const std::vector<std::string>& srcs,const std::string& target_dir){
     std::vector<std::string> fns;
-    for(auto klass : pc.klasses){
-        fns.push_back(
-            generateCodeFromKlass(src_path,target_dir+"/load_"+klass.name+"_generated.cpp",klass));
+    for(auto src:srcs){
+        ParseContext pc;
+        parser.parseFileIntoParseContext(src_dir + "/" + src, pc);
+        for(auto klass : pc.klasses){
+            fns.push_back(
+                generateCodeFromKlass(src,target_dir+"/load_"+klass.name+"_generated.cpp",klass));
+        }
     }
+
     generateAllLoadFun(fns,target_dir+"/" + "load_all.h");
 }
 
 
 void CodeGenerator::generateAllLoadFun(const std::vector<std::string> fns,const std::string & file_name){
     auto out = fmt::output_file(file_name);
-    out.print("#include \"Metaspace.h\"\n");
+    out.print("#include \"reflect_api/Metaspace.h\"\n");
     for(auto fn : fns){
         out.print("extern LoadFn {};\n",fn);
     }
@@ -55,8 +60,8 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
     std::cout<<toString(klass)<<std::endl;
     auto out = fmt::output_file(target_path);
 
-    out.print("#include \"Klass.h\"\n");
-    out.print("#include \"Metaspace.h\"\n");
+    out.print("#include \"reflect_api/Klass.h\"\n");
+    out.print("#include \"reflect_api/Metaspace.h\"\n");
     out.print("#include \"{}\"\n",src_path);
 
     out.print("void load_{}(Metaspace* ms){{\n",klass.name);
@@ -65,6 +70,9 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
 
     for(auto f : klass.fileds){
         if(solver.isField(f)){
+            if(f.access == PRIVATE){
+                continue;
+            }
             MetaInfo& mi = solver.fieldMetaInfos[f.name];
             std::string tmp_name = fmt::format("field_{}",f.name);
 
@@ -93,4 +101,34 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
     out.print("}};");
     out.close();
     return fn_name;
+}
+
+static void listAllHeaderFile(const std::filesystem::path& global_dir_path,const std::filesystem::path&dir_path,std::vector<std::string>& result){
+
+    // std::filesystem::directory_iterator id(dir_path);
+    // for(auto f:id ){
+    //     if(!f.is_directory()){
+
+    //         std::string pstr= f.path().filename().u8string();
+    //         if(pstr.length() > 2&& pstr.compare(pstr.size() - 2,2,".h") == 0){
+    //             std::filesystem::path relPath = f.path().lexically_relative(global_dir_path);
+    //             result.push_back(relPath.u8string());
+    //         }
+
+    //     }else {
+    //         listAllHeaderFile(global_dir_path, f.path(), result);
+    //     }
+    // }
+}
+
+void CodeGenerator::generateCodeFromSrc(const std::string &src_dir
+    ,const std::vector<std::string>* srcs,const std::string& target_dir){
+    if(srcs != nullptr){
+        return generateCodeFromSrc(src_dir,*srcs,target_dir);
+    }
+    std::vector<std::string> ss;
+    listAllHeaderFile("",src_dir,ss);
+    if(ss.size() > 0){
+        return generateCodeFromSrc(src_dir,ss,target_dir);
+    }
 }
