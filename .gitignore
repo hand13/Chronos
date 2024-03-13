@@ -8,4 +8,5 @@ third_party/glm/
 third_party/stb/
 .vscode/
 msvcbuild/
+reflect/generated/
 *.cso

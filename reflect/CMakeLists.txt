@@ -1,5 +1,6 @@
 project(Chs_Reflect)
 find_package(fmt CONFIG REQUIRED)
+include_directories("./")
 aux_source_directory("./" REFLECT_SRC)
 add_executable(reflect ${REFLECT_SRC})
 target_include_directories(reflect PRIVATE "D:/usr/local/LLVM/include")

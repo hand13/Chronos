@@ -130,6 +130,10 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
                     CXType type = clang_getCursorType(c);
                     field.type = getTypeName(type);
 
+                    // CXCursor tmp = clang_getTypeDeclaration(type);
+                    // CXType rt = clang_getTypedefDeclUnderlyingType(tmp);
+                    // field.type = getTypeName(rt);
+
                     KlassInfo* klass = (KlassInfo*)pc->stack.top();
                     klass->fileds.push_back(field);
                     pc->stack.push(getTopPointer(klass->fileds));

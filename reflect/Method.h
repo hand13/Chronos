@@ -7,9 +7,8 @@
 struct Method{
     Access access;
     std::string name;
-    std::string returnType;
     MetaInfo metaInfo;
-    Klass* returnTypeKlass;
+    ValueType returnType;
     std::vector<MethodParam> params;
     bool isVirtual = false;
 

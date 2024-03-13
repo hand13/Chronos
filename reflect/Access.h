@@ -1,6 +1,6 @@
 #pragma once
 enum Access {
-    PUBLIC,
-    PROTECTED,
-    PRIVATE,
+    Public,
+    Protected,
+    Private,
 };

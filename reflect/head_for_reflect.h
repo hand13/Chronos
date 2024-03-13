@@ -1,20 +1,27 @@
 #pragma once
 #include <string>
 #include "MetaPrefix.h"
-class RefelctTest{
+using namespace std;
+typedef int i32;
+class ReflectTest{
     CClass
     private:
-    CField(id)
-    int id;
-    CField(password)
-    std::string password;
-    int& rid;
-    int * pid;
     public:
-    RefelctTest();
+
+    CField(id)
+    i32 id;
+    CField(password)
+    string password;
+
+    public:
+    ReflectTest();
+
+    CMethod(setId)
+    void setId(i32 id);
+
     CMethod(getNames)
-    virtual int getNames(int id,std::string target);
-    CMethod(getJob)
-    virtual int getJob(int id);
-    ~RefelctTest();
+    virtual string getPassword();
+    virtual i32 getId();
+
+    virtual ~ReflectTest();
 };

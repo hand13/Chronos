@@ -2,9 +2,12 @@
 #include <string>
 #include "MetaInfoSolver.h"
 #include <iostream>
-int main(){
+#include <vcruntime_typeinfo.h>
+#include "Metaspace.h"
+#include "reflect_bp.h"
+void test(){
     std::string file_name = "head_for_reflect.h";
-    std::string generate_dir = "generated";
+    std::string generate_dir = "d:/src/my/Chronos/reflect/generated";
     CodeGenerator cg;
     cg.generateCodeFromSrc(file_name, generate_dir);
     std::string gs[]={
@@ -18,5 +21,18 @@ int main(){
             std::cout<<mh.memberType<<mh.markedName<<std::endl;
         }
     }
+
+}
+void test1(){
+    Metaspace ms;
+    ms.load(load_reflect_test);
+    Klass* rek = ms.getKlass("ReflectTest");
+    for(auto f :rek->fields){
+        std::cout<<f.offset<<std::endl;
+    }
+}
+
+int main(){
+    test();
     return 0;
 }

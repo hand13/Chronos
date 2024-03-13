@@ -7,7 +7,6 @@ struct Field {
     public:
     Access access;
     std::string name;
-    std::string typeName;
     MetaInfo metaInfo;
     size_t offset;
     ValueType valueType;
