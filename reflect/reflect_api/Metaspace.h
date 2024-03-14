@@ -4,7 +4,7 @@
 #include <string>
 
 class Metaspace;
-typedef void (*LoadFn)(Metaspace* ms);
+typedef void (LoadFn)(Metaspace* ms);
 class Metaspace{
     private:
     std::map<std::string,Klass*> klasses;

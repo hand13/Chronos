@@ -10,4 +10,19 @@ struct Field {
     MetaInfo metaInfo;
     size_t offset;
     ValueType valueType;
+
+    template<typename T>
+    T getValue(void * obj){
+        return *reinterpret_cast<T*>((reinterpret_cast<unsigned char*>(obj) + offset));
+    }
+
+    template<typename T>
+    T& getRef(void * obj){
+        return *reinterpret_cast<T*>((reinterpret_cast<unsigned char*>(obj) + offset));
+    }
+
+    template<typename T>
+    T* getPointer(void * obj){
+        return reinterpret_cast<T*>((reinterpret_cast<unsigned char*>(obj) + offset));
+    }
 };

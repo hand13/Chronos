@@ -59,10 +59,11 @@ Klass *Metaspace::getKlass(const std::string& name){
 
 void Metaspace::solveLink(){
     for(auto k : klasses){
-        for(auto f : k.second->fields){
-            if(klasses.find(f.valueType.rawName) != klasses.end()){
-                f.valueType.klass = klasses.at(f.valueType.rawName);
-            }
+        for(auto& f : k.second->fields){
+            f.valueType.klass = getKlass(f.valueType.rawName);
+            // if(klasses.find(f.valueType.rawName) != klasses.end()){
+            //     f.valueType.klass = klasses.at(f.valueType.rawName);
+            // }
         }
     }
 }

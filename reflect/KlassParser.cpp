@@ -71,6 +71,25 @@ KlassParser::~KlassParser(){
     clang_disposeIndex(index);
 }
 
+std::string fetchTypename(CXType& type){
+    std::string simpleName = getTypeName(type);
+    std::string typedefName;
+    std::string canonicalName;
+    {
+        CXCursor tmp = clang_getTypeDeclaration(type);
+        CXType rt = clang_getTypedefDeclUnderlyingType(tmp);
+        typedefName = getTypeName(rt);
+    }
+    {
+        CXType ts=  clang_getCanonicalType(type);
+        canonicalName = getTypeName(ts);
+    }
+    if(typedefName != ""){
+        return simpleName;
+    }
+    return canonicalName;
+}
+
 void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseContext& pc){
 
     const char *file_name = file_path.c_str();
@@ -102,7 +121,8 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
         switch (c.kind) {
             case CXCursor_ClassDecl:{
                     KlassInfo klass;
-                    klass.name = getCursorName(c);
+                    CXType type = clang_getCursorType(c);
+                    klass.name = fetchTypename(type);
                     pc->klasses.push_back(klass);
                     pc->stack.push(getTopPointer(pc->klasses));
                     pc->cursorStack.push(c);
@@ -128,12 +148,7 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
                     field.access = fromCXSpecifierToAccess(clang_getCXXAccessSpecifier(c));
                     field.name = getCursorName(c);
                     CXType type = clang_getCursorType(c);
-                    field.type = getTypeName(type);
-
-                    // CXCursor tmp = clang_getTypeDeclaration(type);
-                    // CXType rt = clang_getTypedefDeclUnderlyingType(tmp);
-                    // field.type = getTypeName(rt);
-
+                    field.type = fetchTypename(type);
                     KlassInfo* klass = (KlassInfo*)pc->stack.top();
                     klass->fileds.push_back(field);
                     pc->stack.push(getTopPointer(klass->fileds));
@@ -167,6 +182,10 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
                 }
                 result = CXChildVisit_Continue;//没必要继续向下了
                 break;
+            case CXCursor_Namespace:{
+                result = CXChildVisit_Recurse;
+                break;
+            }
             default:
                 result = CXChildVisit_Continue;
         }

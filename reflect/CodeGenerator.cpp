@@ -8,6 +8,13 @@
 #include "MetaInfoSolver.h"
 #include <filesystem>
 
+static std::string underlineClassName(std::string classname){
+    while(classname.find("::") != std::string::npos){
+        classname = classname.replace(classname.find("::"),2,"_",1);
+    }
+    return classname;
+}
+
 void CodeGenerator::generateCodeFromSrc(const std::string &src_dir
     ,const std::vector<std::string>& srcs,const std::string& target_dir){
     std::vector<std::string> fns;
@@ -16,7 +23,7 @@ void CodeGenerator::generateCodeFromSrc(const std::string &src_dir
         parser.parseFileIntoParseContext(src_dir + "/" + src, pc);
         for(auto klass : pc.klasses){
             fns.push_back(
-                generateCodeFromKlass(src,target_dir+"/load_"+klass.name+"_generated.cpp",klass));
+                generateCodeFromKlass(src,target_dir+"/load_"+underlineClassName(klass.name)+"_generated.cpp",klass));
         }
     }
 
@@ -56,7 +63,7 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
     solver.solve(klass);
     //todo
     std::cout<<"generated "<<klass.name<<std::endl;
-    std::string fn_name = fmt::format("load_{}",klass.name);
+    std::string fn_name = fmt::format("load_{}",underlineClassName(klass.name));
     std::cout<<toString(klass)<<std::endl;
     auto out = fmt::output_file(target_path);
 
@@ -64,7 +71,7 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
     out.print("#include \"reflect_api/Metaspace.h\"\n");
     out.print("#include \"{}\"\n",src_path);
 
-    out.print("void load_{}(Metaspace* ms){{\n",klass.name);
+    out.print("void load_{}(Metaspace* ms){{\n",underlineClassName(klass.name));
 
     out.print("    Klass * klass = new Klass(\"{}\",false,sizeof({}));\n",klass.name,klass.name);
 
