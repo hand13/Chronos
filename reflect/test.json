@@ -1,0 +1,8 @@
+{
+    "src_dir":"test",
+    "srcs":[
+        "a",
+        "b"
+    ],
+    "gen_dir":"target"
+}

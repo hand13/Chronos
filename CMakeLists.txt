@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
 
-add_subdirectory(reflect)
+# add_subdirectory(reflect)
 
 find_package(fmt CONFIG REQUIRED)
 find_package(Poco CONFIG REQUIRED Foundation)
@@ -32,6 +32,7 @@ include_directories(${ASSIMP_DIR}/include)
 link_directories(${ASSIMP_DIR}/debug/lib)
 
 include_directories(src)
+include_directories(reflect)
 
 aux_source_directory("src/platform/windows" PLATFORM_WIN_SRC)
 aux_source_directory("src/platform/windows/window/d3d11" PLATFORM_WINDOW_D3D11_SRC)
