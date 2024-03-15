@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include "reflect_api/MetaPrefix.h"
-using namespace std;
 typedef int i32;
 class ReflectTest{
     CClass
@@ -11,7 +10,7 @@ class ReflectTest{
     CField(id)
     i32 id;
     CField(password)
-    string password;
+    std::string password;
 
     public:
     ReflectTest();
@@ -20,7 +19,7 @@ class ReflectTest{
     void setId(i32 id);
 
     CMethod(getNames)
-    virtual string getPassword();
+    virtual std::string getPassword();
     virtual i32 getId();
 
     virtual ~ReflectTest();

@@ -31,7 +31,7 @@ namespace Chronos {
             sc->getParamList().setParamValue("lightPosition", Float3(0.f,2.f,0.3f));
             sc->getParamList()
             .registerParam("lightColor", ParamType::FLOAT3,MakePackInfo(1, 0));
-            sc->getParamList().setParamValue("lightColor", Float3(1.f,1.f,1.f));
+            sc->getParamList().setParamValue("lightColor", Float3(20.f,20.f,20.f));
 
             sc->getParamList()
             .registerParam("camPos", ParamType::FLOAT3,MakePackInfo(2, 0));

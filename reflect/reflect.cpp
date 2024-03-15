@@ -31,6 +31,7 @@ static bool exists_dir(const fs::path & path){
 static cxxopts::Options buildOptions(){
     cxxopts::Options coptions("Reflect","reflect for Chronos Engine");
     coptions.add_options()
+    ("h,help","print usage")
     ("f,file","reflect file name",cxxopts::value<std::string>()->default_value("reflect.json"))
     ;
     return coptions;
@@ -39,9 +40,15 @@ static cxxopts::Options buildOptions(){
 int main(int argn,const char * args[]){
     auto opts = buildOptions();
     auto result = opts.parse(argn, args);
+
+    if (result.count("help")) {
+      std::cout << opts.help() << std::endl;
+      return 0;
+    }
+
     std::string configfile =  result["file"].as<std::string>();
     if(!exists_file(configfile)){
-        std::cout<<"reflect.json not found ,-f choose a file"<<std::endl;
+        std::cout<<"config file not found ,-f choose a file"<<std::endl;
         return -1;
     }
     fs::path configPath(configfile);

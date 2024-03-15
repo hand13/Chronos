@@ -15,18 +15,54 @@ class Metaspace{
     void loadPreDefinedKlass();
     public:
     Metaspace();
+    /**
+     * @brief todo 直接加载binary
+     * 
+     * @param file_path 
+     */
     void load(const std::string& file_path);
+    /**
+     * @brief 执行fn注册class
+     * 
+     * @param fn 
+     */
     void load(LoadFn fn);
+    /**
+     * @brief 注册class
+     * 
+     * @param klass 
+     */
     void reg(Klass* klass);
+    /**
+     * @brief Get the Klass object from class name
+     * 
+     * @param name 
+     * @return Klass* 
+     */
     Klass *getKlass(const std::string& name);
+    /**
+     * @brief Get the Klass With Type Info Name object
+     * 
+     * @param typeinfoname 
+     * @return Klass* 
+     */
     Klass * getKlassWithTypeInfoName(const std::string& typeinfoname);
-
+    /**
+     * @brief Get the Klass object from type
+     * 
+     * @tparam T 
+     * @return Klass* 
+     */
     template<typename T>
     Klass * getKlass(){
         const std::string typeinfoname = typeid(T).name();
         return getKlassWithTypeInfoName(typeinfoname);
     }
 
+    /**
+     * @brief 解析符号引用
+     * 
+     */
     void solveLink();
 
     inline Klass* charclass(){return getKlass("char");}
