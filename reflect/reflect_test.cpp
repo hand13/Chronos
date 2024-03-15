@@ -1,12 +1,14 @@
+#include <cassert>
 #include <string>
 #include <iostream>
 #include "reflect_api/Field.h"
+#include "reflect_api/Klass.h"
 #include "reflect_api/Metaspace.h"
 #include "generated/load_all.h"
 #include "head_for_reflect.h"
 void test(){
     Metaspace ms;
-    loadAll(&ms);
+    load_all(&ms);
     ms.solveLink();
     Klass * tmp = ms.getKlass("ReflectTest");
     ReflectTest m;
@@ -17,6 +19,13 @@ void test(){
             int tmp = f.getValue<int>(&m);
             std::cout<<tmp<<std::endl;
         }
+    }
+    Klass * ts= ms.getKlass<int>();
+    std::cout<<ts->size<<std::endl;
+    Klass * rk = ms.getKlass<ReflectTest>();
+    assert(rk != nullptr);
+    for(auto f : rk->fields){
+        std::cout<<f.name<<"type "<<f.valueType.rawName<<std::endl;
     }
 }
 namespace Testing {

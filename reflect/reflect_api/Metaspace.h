@@ -2,11 +2,14 @@
 #include "Klass.h"
 #include <map>
 #include <string>
+#include <vcruntime_typeinfo.h>
 
 class Metaspace;
 typedef void (LoadFn)(Metaspace* ms);
 class Metaspace{
     private:
+    static const char * typenameclass;
+    static const char * typenamestruct;
     std::map<std::string,Klass*> klasses;
     void loadPrimitiveKlass();
     void loadPreDefinedKlass();
@@ -16,6 +19,14 @@ class Metaspace{
     void load(LoadFn fn);
     void reg(Klass* klass);
     Klass *getKlass(const std::string& name);
+    Klass * getKlassWithTypeInfoName(const std::string& typeinfoname);
+
+    template<typename T>
+    Klass * getKlass(){
+        const std::string typeinfoname = typeid(T).name();
+        return getKlassWithTypeInfoName(typeinfoname);
+    }
+
     void solveLink();
 
     inline Klass* charclass(){return getKlass("char");}

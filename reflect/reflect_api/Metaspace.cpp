@@ -1,6 +1,9 @@
 #include "Metaspace.h"
 #include "BaseType.h"
 
+const char * Metaspace::typenameclass = "class ";
+const char * Metaspace::typenamestruct =  "struct ";
+
 Metaspace::Metaspace(){
     loadPrimitiveKlass();
     loadPreDefinedKlass();
@@ -55,6 +58,16 @@ Klass *Metaspace::getKlass(const std::string& name){
         return klasses.at(name);
     }
     return nullptr;
+}
+
+Klass * Metaspace::getKlassWithTypeInfoName(const std::string& typeinfoname){
+    std::string typeName = typeinfoname;
+    if(typeinfoname.find(typenameclass) == 0){
+        typeName = typeinfoname.substr(strlen(typenameclass));
+    }else if(typeinfoname.find(typenamestruct) == 0){
+        typeName = typeinfoname.substr(strlen(typenamestruct));
+    }
+    return getKlass(typeName);
 }
 
 void Metaspace::solveLink(){

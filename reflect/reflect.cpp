@@ -6,17 +6,11 @@
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <sstream>
+#include <filesystem>
+#include <cxxopts.hpp>
 using json = nlohmann::json;
-void reflect(){
-    std::string file_name = "d:/src/my/Chronos/reflect";
-    std::string generate_dir = "d:/src/my/Chronos/reflect/generated";
-    CodeGenerator cg;
-    std::vector<std::string> files ={"head_for_reflect.h","tmp_test.h"};
-    cg.generateCodeFromSrc(file_name,files, generate_dir);
-
-}
-
-std::string readFileToString(const std::string file_path){
+namespace fs = std::filesystem;
+static std::string readFileToString(const std::string file_path){
     std::ifstream is(file_path);
     std::ostringstream os;
     char tmp;
@@ -26,11 +20,56 @@ std::string readFileToString(const std::string file_path){
     return os.str();
 }
 
+static bool exists_file(const fs::path & path){
+    fs::file_status fstatus = fs::status(path);
+    return fs::exists(fstatus) && fs::is_regular_file(fstatus);
+}
+static bool exists_dir(const fs::path & path){
+    fs::file_status fstatus = fs::status(path);
+    return fs::exists(fstatus) && fs::is_directory(fstatus);
+}
+static cxxopts::Options buildOptions(){
+    cxxopts::Options coptions("Reflect","reflect for Chronos Engine");
+    coptions.add_options()
+    ("f,file","reflect file name",cxxopts::value<std::string>()->default_value("reflect.json"))
+    ;
+    return coptions;
+}
+
 int main(int argn,const char * args[]){
-    std::string str = readFileToString("d:/src/my/Chronos/reflect/test.json");
-    json m;
-    m = json::parse(str);
-    std::cout<<m["src_dir"]<<std::endl;
-    reflect();
+    auto opts = buildOptions();
+    auto result = opts.parse(argn, args);
+    std::string configfile =  result["file"].as<std::string>();
+    if(!exists_file(configfile)){
+        std::cout<<"reflect.json not found ,-f choose a file"<<std::endl;
+        return -1;
+    }
+    fs::path configPath(configfile);
+    std::string str = readFileToString("reflect.json");
+    json jconfig;
+    jconfig = json::parse(str);
+    std::string src_dir = jconfig["src_dir"];
+    std::vector<std::string> srcs = jconfig["srcs"];
+    std::string gen_dir = jconfig["gen_dir"];
+    std::string load_fn_name = jconfig["load_fn_name"];
+
+    if(!exists_dir(src_dir)){
+        std::cerr<<"src_dir not found"<<std::endl;
+        return -1;
+    }
+    if(!exists_dir(gen_dir)){
+        std::cerr<<"gen_dir not found"<<std::endl;
+        return -1;
+    }
+    for(auto str:srcs){
+        std::string tmp = src_dir + "/" + str;
+        if(!exists_file(tmp)){
+            std::cerr<<str<<" not found"<<std::endl;
+            break;
+        }
+    }
+
+    CodeGenerator cg;
+    cg.generateCodeFromSrc(src_dir,srcs,gen_dir,load_fn_name);
     return 0;
 }
