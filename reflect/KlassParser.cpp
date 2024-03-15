@@ -7,9 +7,10 @@
 #include <stack>
 #include <vector>
 #include "KlassParser.h"
+#include "KlassInfo.h"
 
 template<typename T>
-static void * getTopPointer(std::vector<T>& s){
+static T * getTopPointer(std::vector<T>& s){
     return &s[s.size()-1];
 }
 static AccessInfo fromCXSpecifierToAccess(CX_CXXAccessSpecifier as){
@@ -119,6 +120,17 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
             }
         }
         switch (c.kind) {
+            case CXCursor_StructDecl:{
+                    result = CXChildVisit_Recurse;
+                    KlassInfo klass;
+                    CXType type = clang_getCursorType(c);
+                    klass.name = fetchTypename(type);
+                    pc->klasses.push_back(klass);
+                    pc->stack.push(getTopPointer(pc->klasses));
+                    pc->cursorStack.push(c);
+                }
+                result = CXChildVisit_Recurse;
+                break;
             case CXCursor_ClassDecl:{
                     KlassInfo klass;
                     CXType type = clang_getCursorType(c);
@@ -135,7 +147,10 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
                     ConstructorInfo constructor;
                     constructor.name = getCursorName(c);
                     constructor.access = fromCXSpecifierToAccess(clang_getCXXAccessSpecifier(c));
-                    KlassInfo* klass = (KlassInfo*)pc->stack.top();
+                    KlassInfo* klass = dynamic_cast<KlassInfo*>(pc->stack.top());
+                    if(klass == nullptr){
+                        throw std::exception("should not happended");
+                    }
                     klass->contrustors.push_back(constructor);
                     pc->stack.push(getTopPointer(klass->contrustors));
                     pc->cursorStack.push(c);
@@ -149,7 +164,10 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
                     field.name = getCursorName(c);
                     CXType type = clang_getCursorType(c);
                     field.type = fetchTypename(type);
-                    KlassInfo* klass = (KlassInfo*)pc->stack.top();
+                    KlassInfo* klass = dynamic_cast<KlassInfo*>(pc->stack.top());
+                    if(klass == nullptr){
+                        throw std::exception("should not happended");
+                    }
                     klass->fileds.push_back(field);
                     pc->stack.push(getTopPointer(klass->fileds));
                     pc->cursorStack.push(c);
@@ -165,7 +183,10 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
                     CXType rt =  clang_getResultType(type);
                     method.returnType = getTypeName(rt);
 
-                    KlassInfo* klass = (KlassInfo*)pc->stack.top();
+                    KlassInfo* klass = dynamic_cast<KlassInfo*>(pc->stack.top());
+                    if(klass == nullptr){
+                        throw std::exception("should not happended");
+                    }
                     klass->methods.push_back(method);
                     pc->stack.push(getTopPointer(klass->methods));
                     pc->cursorStack.push(c);
@@ -174,11 +195,21 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
                 break;
             case CXCursor_ParmDecl:{
                     MethodParamInfo mp;
-                    MethodInfo* method = (MethodInfo*)pc->stack.top();
+                    MethodInfo* method = dynamic_cast<MethodInfo*>(pc->stack.top());
+                    ConstructorInfo * constructor = dynamic_cast<ConstructorInfo*>(pc->stack.top());
+                    if(method == nullptr && constructor == nullptr){
+                        throw std::exception("should not happended");
+                    }
+
                     mp.name = getCursorName(c);
                     CXType type = clang_getCursorType(c);
                     mp.type = getTypeName(type);
-                    method->params.push_back(mp);
+
+                    if(method != nullptr){
+                        method->params.push_back(mp);
+                    }else {
+                        constructor->params.push_back(mp);
+                    }
                 }
                 result = CXChildVisit_Continue;//没必要继续向下了
                 break;

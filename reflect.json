@@ -1,0 +1,8 @@
+{
+    "src_dir":"src",
+    "srcs":[
+        "base/Utils.h"
+    ],
+    "gen_dir":"generated",
+    "load_fn_name":"load_all"
+}

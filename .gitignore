@@ -9,4 +9,5 @@ third_party/stb/
 .vscode/
 msvcbuild/
 reflect/generated/
+generated/
 *.cso

@@ -7,7 +7,7 @@
 struct ParseContext {
     std::string file_name;
     std::vector<KlassInfo> klasses;
-    std::stack<void*> stack;
+    std::stack<Info*> stack;
     std::stack<CXCursor> cursorStack;
     ParseContext(){}
 };

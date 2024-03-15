@@ -66,8 +66,8 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
     std::cout<<toString(klass)<<std::endl;
     auto out = fmt::output_file(target_path);
 
-    out.print("#include \"reflect_api/Klass.h\"\n");
-    out.print("#include \"reflect_api/Metaspace.h\"\n");
+    out.print("#include <reflect_api/Klass.h>\n");
+    out.print("#include <reflect_api/Metaspace.h>\n");
     out.print("#include \"{}\"\n",src_path);
 
     out.print("void load_{}(Metaspace* ms){{\n",underlineClassName(klass.name));
