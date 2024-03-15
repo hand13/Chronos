@@ -3,7 +3,6 @@
 #include "clang-c/CXString.h"
 #include <clang-c/Index.h>
 #include <exception>
-#include <iostream>
 #include <stack>
 #include <vector>
 #include "KlassParser.h"
@@ -91,12 +90,30 @@ std::string fetchTypename(CXType& type){
     return canonicalName;
 }
 
-void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseContext& pc){
+void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseContext& pc,const std::vector<std::string>& include_dirs){
 
     const char *file_name = file_path.c_str();
-    const char * command_line_args[] = {"-x","c++","-DREFLECT_GEN",0};
+    const char * command_line_args[] = {"-x","c++","-DREFLECT_GEN"};
+    std::vector<const char*> commands(include_dirs.size() + sizeof(command_line_args)/sizeof(char*));
+    // commands.reserve(include_dirs.size() + sizeof(command_line_args)/sizeof(char*));
+
+    std::vector<std::string> inc_commands;
+    for(auto ind : include_dirs){
+        inc_commands.push_back("-I"+ind);
+    }
+    int offset = 0;
+    for(auto c : command_line_args){
+        commands[offset] = c;
+        offset++;
+    }
+    for(auto& s : inc_commands){
+        commands[offset] = s.c_str();
+        offset++;
+    }
+    // tmp.push_back(nullptr);
+
     CXTranslationUnit unit = clang_parseTranslationUnit(index, 
-    file_name,command_line_args, sizeof(command_line_args)/sizeof(*command_line_args) - 1, nullptr, 0, CXTranslationUnit_None);
+    file_name,commands.data(),static_cast<int>(commands.size()), nullptr, 0, CXTranslationUnit_None);
     if(unit == nullptr){
         throw std::exception("should not happended");
     }

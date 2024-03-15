@@ -16,6 +16,6 @@ class KlassParser {
     CXIndex index;
     public:
     KlassParser();
-    void parseFileIntoParseContext(const std::string& file_path,ParseContext& pc);
+    void parseFileIntoParseContext(const std::string& file_path,ParseContext& pc,const std::vector<std::string>& include_dirs);
     ~KlassParser();
 };

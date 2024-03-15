@@ -15,11 +15,12 @@ static std::string underlineClassName(std::string classname){
 }
 
 void CodeGenerator::generateCodeFromSrc(const std::string &src_dir
-    ,const std::vector<std::string>& srcs,const std::string& target_dir,const std::string& load_fn_name){
+    ,const std::vector<std::string>& srcs,const std::string& target_dir
+    ,const std::string& load_fn_name,const std::vector<std::string>& include_dirs){
     std::vector<std::string> fns;
     for(auto src:srcs){
         ParseContext pc;
-        parser.parseFileIntoParseContext(src_dir + "/" + src, pc);
+        parser.parseFileIntoParseContext(src_dir + "/" + src, pc,include_dirs);
         for(auto klass : pc.klasses){
             fns.push_back(
                 generateCodeFromKlass(src,target_dir+"/load_"+underlineClassName(klass.name)+"_generated.cpp",klass));

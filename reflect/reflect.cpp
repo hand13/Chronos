@@ -59,6 +59,7 @@ int main(int argn,const char * args[]){
     std::vector<std::string> srcs = jconfig["srcs"];
     std::string gen_dir = jconfig["gen_dir"];
     std::string load_fn_name = jconfig["load_fn_name"];
+    std::vector<std::string> include_dirs = jconfig["include_dirs"];
 
     if(!exists_dir(src_dir)){
         std::cerr<<"src_dir not found"<<std::endl;
@@ -77,6 +78,6 @@ int main(int argn,const char * args[]){
     }
 
     CodeGenerator cg;
-    cg.generateCodeFromSrc(src_dir,srcs,gen_dir,load_fn_name);
+    cg.generateCodeFromSrc(src_dir,srcs,gen_dir,load_fn_name,include_dirs);
     return 0;
 }

@@ -1,7 +1,12 @@
 {
     "src_dir":"src",
     "srcs":[
-        "base/Utils.h"
+        "base/Utils.h",
+        "base/Transform.h",
+        "component/TransformComponent.h"
+    ],
+    "include_dirs":[
+        "src"
     ],
     "gen_dir":"generated",
     "load_fn_name":"load_all"

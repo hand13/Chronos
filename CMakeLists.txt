@@ -32,7 +32,9 @@ include_directories(${ASSIMP_DIR}/include)
 link_directories(${ASSIMP_DIR}/debug/lib)
 
 include_directories(src)
+
 include_directories(reflect)
+include_directories(generated)
 
 aux_source_directory("src/platform/windows" PLATFORM_WIN_SRC)
 aux_source_directory("src/platform/windows/window/d3d11" PLATFORM_WINDOW_D3D11_SRC)
@@ -51,6 +53,9 @@ aux_source_directory("src/module" MODULE_SRC)
 aux_source_directory("src/engine" ENGINE_SRC)
 aux_source_directory("src/base" BASE_SRC)
 
+aux_source_directory("generated" GENERATED_SRC)
+aux_source_directory("reflect/reflect_api" REFLECT_API_SRC)
+
 add_library(renderer STATIC ${RENDER_SRC})
 add_library(editor STATIC ${EDITOR_SRC})
 add_library(component STATIC ${COMPONENT_SRC})
@@ -59,6 +64,9 @@ add_library(model STATIC ${MODEL_SRC})
 add_library(module STATIC ${MODULE_SRC})
 add_library(base STATIC ${BASE_SRC})
 add_library(engine STATIC ${ENGINE_SRC})
+
+add_library(generated STATIC ${GENERATED_SRC})
+add_library(reflect_api STATIC ${REFLECT_API_SRC})
 
 target_link_libraries(base ICU::uc Poco::Foundation)
 
@@ -74,7 +82,7 @@ target_link_libraries(ChronosGame PRIVATE ICU::uc dxgi d3d11 imgui_dx11 Eigen3::
 aux_source_directory(src EDITOR_SRC)
 list(REMOVE_ITEM EDITOR_SRC "src/game_main.cpp" "src/ChronosGameStarter.cpp")
 add_executable(ChronosEditor ${EDITOR_SRC})
-target_link_libraries(ChronosEditor PRIVATE base engine renderer module editor component game_object model d3d11_window platform_window)
+target_link_libraries(ChronosEditor PRIVATE base reflect_api generated engine renderer module editor component game_object model d3d11_window platform_window)
 target_link_libraries(ChronosEditor PRIVATE ICU::uc dxgi d3d11 imgui_dx11 Eigen3::Eigen  assimp-vc142-mtd Poco::Foundation fmt::fmt)
 
 add_executable(test test/test.cpp)
