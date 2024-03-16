@@ -48,4 +48,19 @@ class Klass {
      */
     MetaInfo metaInfo;
     Klass(const std::string& name,bool isPrimitiveType,size_t size):name(name),isPrimitiveType(isPrimitiveType),size(size){}
+
+    template<typename T>
+    T getValue(void * obj)const{
+        return *reinterpret_cast<T*>((reinterpret_cast<unsigned char*>(obj)));
+    }
+
+    template<typename T>
+    T& getRef(void * obj)const{
+        return *reinterpret_cast<T*>((reinterpret_cast<unsigned char*>(obj)));
+    }
+
+    template<typename T>
+    T* getPointer(void * obj)const{
+        return reinterpret_cast<T*>((reinterpret_cast<unsigned char*>(obj)));
+    }
 };

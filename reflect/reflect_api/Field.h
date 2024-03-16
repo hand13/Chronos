@@ -36,17 +36,17 @@ struct Field {
     ValueType valueType;
 
     template<typename T>
-    T getValue(void * obj){
+    T getValue(void * obj)const{
         return *reinterpret_cast<T*>((reinterpret_cast<unsigned char*>(obj) + offset));
     }
 
     template<typename T>
-    T& getRef(void * obj){
+    T& getRef(void * obj)const{
         return *reinterpret_cast<T*>((reinterpret_cast<unsigned char*>(obj) + offset));
     }
 
     template<typename T>
-    T* getPointer(void * obj){
+    T* getPointer(void * obj)const{
         return reinterpret_cast<T*>((reinterpret_cast<unsigned char*>(obj) + offset));
     }
 };

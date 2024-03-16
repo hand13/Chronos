@@ -3,13 +3,14 @@
 #include "base/Log.h"
 #include "engine/ChronosEngine.h"
 #include "engine/Scene.h"
-#include "base/Transform.h"
 #include "base/Utils.h"
 #include "component/Component.h"
-#include "component/TransformComponent.h"
 #include "game_object/GameObject.h"
+#include "reflect_api/Field.h"
+#include "reflect_api/Klass.h"
 #include <imgui.h>
 #include <vector>
+#include <load_all.h>
 namespace Chronos{
 
     ChronosEditor::ChronosEditor():ControlUI(){
@@ -17,6 +18,10 @@ namespace Chronos{
         currentScene = nullptr;
         selectedObject = nullptr;
         selectedComponent = nullptr;
+
+        load_all(&metaspace);
+        metaspace.solveLink();
+
     }
 
     void ChronosEditor::setScene(Scene*s){
@@ -147,12 +152,10 @@ namespace Chronos{
 
     void ChronosEditor::showComponentDetailView(){
         if(selectedComponent){
-            TransformComponent* tc = dynamic_cast<TransformComponent*>(selectedComponent);
-            if(tc){
-                Transform& t = tc->transform;
-                ImGui::InputFloat3("position", (float*)&t.pos);
-                ImGui::InputFloat3("scale", (float*)&t.scale);
-                ImGui::InputFloat3("rotation", (float*)&t.rotation);
+            const std::string typeinfoname = typeid(*selectedComponent).name();
+            Klass * klass = metaspace.getKlass(selectedComponent);
+            if(klass){
+                showObject(selectedComponent,klass,selectedComponent->getName().c_str());
             }
         }
     }
@@ -165,5 +168,85 @@ namespace Chronos{
     }
     ChronosEditor::~ChronosEditor(){
         Log("editor destructed");
+    }
+
+    void ChronosEditor::showbool(bool& b,boolean editable){
+
+    }
+
+    void ChronosEditor::showi8(i8& i,boolean eidtable){
+
+    }
+    void ChronosEditor::showi16(i16& i,boolean eidtable){
+
+    }
+    void ChronosEditor::showi32(i32& i,boolean editable){
+
+    }
+    void ChronosEditor::showi64(i64& i,boolean editable){
+
+    }
+
+    void ChronosEditor::showu8(u8& i,boolean eidtable){
+
+    }
+    void ChronosEditor::showu16(u16& i,boolean eidtable){
+
+    }
+    void ChronosEditor::showu32(u32& i,boolean editable){
+    }
+
+    void ChronosEditor::showu64(u64& i,boolean editable){
+
+    }
+
+    void ChronosEditor::showf32(f32& f,boolean editable){
+
+    }
+    void ChronosEditor::showf64(f64& f,boolean editable){
+
+    }
+
+    void ChronosEditor::showFloat2(Float2& f2,boolean editable,const char * name){
+
+    }
+    void ChronosEditor::showFloat3(Float3& f3,boolean editable,const char * name){
+        ImGui::InputFloat3(name, (float*)&f3);
+    }
+
+    void ChronosEditor::showPrimaryObject(void * object,const Klass * klass,const char * name){
+        if(klass == metaspace.i32class() || klass == metaspace.intclass()){
+            showi32(klass->getRef<int>(object), true);
+            return;
+        }
+    }
+
+    bool ChronosEditor::showSpecialObject(void * object,const Klass* klass,const char * name){
+        if(klass == metaspace.getKlass<Float2>()){
+            showFloat2(klass->getRef<Float2>(object),true,name);
+            return true;
+        }
+        if(klass == metaspace.getKlass<Float3>()){
+            showFloat3(klass->getRef<Float3>(object),true,name);
+            return true;
+        }
+        return false;
+    }
+
+    void ChronosEditor::showObject(void * object,const Klass * klass,const char * name){
+        if(klass->isPrimitiveType){
+            showPrimaryObject(object,klass,name);
+            return;
+        }
+        for(const Field& f: klass->fields){
+            if(f.valueType.klass != nullptr){
+
+                if(showSpecialObject(f.getPointer<void>(object),f.valueType.klass,f.name.c_str())){
+                    continue;
+                }
+
+                showObject(f.getPointer<void>(object),f.valueType.klass,f.name.c_str());
+            }
+        }
     }
 }
