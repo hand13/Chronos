@@ -1,6 +1,6 @@
 #include <cassert>
-#include <string>
 #include <iostream>
+#include "reflect_api/CallParam.h"
 #include "reflect_api/Field.h"
 #include "reflect_api/Klass.h"
 #include "reflect_api/Metaspace.h"
@@ -16,8 +16,8 @@ void test(){
     for(auto f : tmp->fields){
         std::cout<<f.valueType.rawName<<std::endl;
         if(f.valueType.klass == ms.intclass() || f.valueType.klass == ms.i32class()){
-            int tmp = f.getValue<int>(&m);
-            std::cout<<tmp<<std::endl;
+            int wc= f.getValue<int>(&m);
+            std::cout<<wc<<std::endl;
         }
     }
     Klass * ts= ms.getKlass<int>();
@@ -27,6 +27,9 @@ void test(){
     for(auto f : rk->fields){
         std::cout<<f.name<<"type "<<f.valueType.rawName<<std::endl;
     }
+    CallParams cps;
+    ReflectTest * md = tmp->constructors[0].newInstance<ReflectTest>(cps);
+    std::cout<<"password "<<md->getPassword()<<"id "<<md->getId()<<std::endl;
 }
 namespace Testing {
     class Parent {

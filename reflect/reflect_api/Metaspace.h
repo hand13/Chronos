@@ -64,6 +64,11 @@ class Metaspace{
         const std::string typeinfoname = typeid(*obj).name();
         return getKlassWithTypeInfoName(typeinfoname);
     }
+
+    template<>
+    Klass * getKlass(const char* obj){
+        return getKlass(std::string(obj));
+    }
     /**
      * @brief 解析符号引用
      * 

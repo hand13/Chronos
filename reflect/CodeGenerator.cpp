@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "MetaInfoSolver.h"
+#include "BaseType.h"
 
 static std::string underlineClassName(std::string classname){
     while(classname.find("::") != std::string::npos){
@@ -58,6 +59,36 @@ static std::string accessInfoToAccessString(AccessInfo ai){
     }
 }
 
+static bool isPointer(const std::string& typeName){
+    return typeName.size() > 1 && typeName.at(typeName.length() -1 ) == '*';
+}
+
+
+static bool isRef(const std::string& typeName){
+    return typeName.size() > 1 && typeName.at(typeName.length()-1) == '&';
+}
+
+static bool isRightRef(const std::string& typeName){
+    if(isRef(typeName) && typeName.length() > 2){
+        return typeName.at(typeName.length()-2) == '&';
+    }
+    return false;
+}
+
+static bool isLeftRef(const std::string& typeName){
+    if(isRef(typeName) && !isRightRef(typeName)){
+        return true;
+    }
+    return false;
+}
+
+static std::string removeRef(std::string typeName){
+    if(isRef(typeName)){
+        return typeName.substr(0,typeName.find("&"));
+    }
+    return typeName;
+}
+
 std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,const std::string& target_path,const KlassInfo& klass){
     MetaInfoSolver solver;
     solver.solve(klass);
@@ -71,13 +102,45 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
     out.print("#include <reflect_api/Metaspace.h>\n");
     out.print("#include \"{}\"\n",src_path);
 
+    std::vector<std::string> constructorFuns;
+    std::vector<std::string> methodFuncs;
+
+    for(u32 i = 0;i <klass.contrustors.size();i++){
+        const ConstructorInfo& cinfo = klass.contrustors[i];
+        if(cinfo.access == PRIVATE || cinfo.access == PROTECTED){
+            constructorFuns.push_back("");//placeholder
+            continue;
+        }
+        std::string constructorFunName = fmt::format("{}_constructor_{}",underlineClassName(klass.name),i);
+        constructorFuns.push_back(constructorFunName);
+        out.print("static void * {}(CallParams& cps){{\n",constructorFunName);
+        out.print("    return new {}(",klass.name);
+        for(u32 j = 0;j < cinfo.params.size();j++){
+
+            if(isLeftRef(cinfo.params[j].type)){
+                out.print("*({}*)cps[{}].param",removeRef(cinfo.params[j].type),j);
+            }else if(isRightRef(cinfo.params[j].type)){
+                out.print("std::move(*({}*)cps[{}].param)",removeRef(cinfo.params[j].type),j);
+            }else{
+                out.print("*({}*)cps[{}].param",cinfo.params[j].type,j);
+            }
+            if(j != cinfo.params.size() -1){
+                out.print(",");
+            }
+        }
+            out.print(");\n");
+        out.print("}}\n");
+    }
+    
+
+
     out.print("void load_{}(Metaspace* ms){{\n",underlineClassName(klass.name));
 
     out.print("    Klass * klass = new Klass(\"{}\",false,sizeof({}));\n",klass.name,klass.name);
 
-    for(auto f : klass.fileds){
+    for(auto& f : klass.fileds){
         if(solver.isField(f)){
-            if(f.access == PRIVATE){
+            if(f.access == PRIVATE || f.access == PROTECTED){
                 continue;
             }
             MetaInfo& mi = solver.fieldMetaInfos[f.name];
@@ -96,6 +159,40 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
             out.print("    klass->fields.push_back({});\n",tmp_name);
         }
     }
+    for(u32 i = 0;i < klass.contrustors.size();i++){
+        const ConstructorInfo& cinfo = klass.contrustors[i];
+        if(cinfo.access == PRIVATE || cinfo.access == PROTECTED){
+            continue;
+        }
+        std::string constructorFunName = constructorFuns[i];
+        std::string tmpname = fmt::format("constructor_{}",i);
+        out.print("    Constructor {};\n",tmpname);
+        out.print("    {}.access = {};\n",tmpname,accessInfoToAccessString(cinfo.access));
+        out.print("    {}.metaInfo.marked = {};\n",tmpname,"true");//todo
+
+        for(const MethodParamInfo& mpi : cinfo.params){
+            std::string tmpparamname = fmt::format("param_{}_{}",mpi.name,i);
+            out.print("    MethodParam {};\n",tmpparamname);
+            out.print("    {}.name = \"{}\";\n",tmpparamname,mpi.name);
+
+            if(isRightRef(mpi.type)){
+                out.print("    {}.type.type = {};\n",tmpparamname,"RightRef");//todo
+            }else if(isLeftRef(mpi.type)){
+                out.print("    {}.type.type = {};\n",tmpparamname,"Ref");//todo
+            }else if(isPointer(mpi.type)){
+                out.print("    {}.type.type = {};\n",tmpparamname,"Pointer");//todo
+            } else {
+                out.print("    {}.type.type = {};\n",tmpparamname,"Value");//todo
+            }
+            out.print("    {}.type.rawName = \"{}\";\n",tmpparamname,mpi.type);//todo
+            out.print("    {}.type.trueName= \"{}\";\n",tmpparamname,"");//todo
+            out.print("    {}.type.klass= {};\n",tmpparamname,"nullptr");//todo
+            out.print("    {}.params.push_back({});\n",tmpname,tmpparamname);
+        }
+        out.print("    {}.setFunCall({});\n",tmpname,constructorFunName);
+        out.print("    klass->constructors.push_back({});\n",tmpname);
+    }
+
     out.print("    ms->reg({});\n","klass");
     // for(auto m : klass.methods){
     //     out.print("    Method method;\n");

@@ -220,7 +220,7 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
 
                     mp.name = getCursorName(c);
                     CXType type = clang_getCursorType(c);
-                    mp.type = getTypeName(type);
+                    mp.type = fetchTypename(type);
 
                     if(method != nullptr){
                         method->params.push_back(mp);

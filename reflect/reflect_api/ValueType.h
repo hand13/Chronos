@@ -8,7 +8,8 @@ class Klass;
 enum ValueTypeEnum {
     Value,//值
     Ref,//引用
-    Pointer//指针
+    Pointer,//指针
+    RightRef,
 };
 
 struct ValueType {
