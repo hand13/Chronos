@@ -1,11 +1,13 @@
 #pragma once
 #include "RenderContext.h"
-#include "RenderableObject.h"
-#include "BaseRenderableObject.h"
 #include <memory>
 #include <string>
 #include "Shader.h"
 #include "Types.h"
+#include "Material.h"
+#include "VertexData.h"
+#include "VertexProc.h"
+#include "RenderConstantData.h"
 #include <base/Utils.h>
 
 namespace Chronos {
@@ -14,8 +16,7 @@ namespace Chronos {
         virtual void setRenderContext(RenderContext * rct) = 0;
         virtual void beginRender()=0;
         virtual void endRender() = 0;
-        virtual void renderObject(RenderableObject* robj) = 0;
-        virtual void renderBaseRenderableObject(BaseRenderableObject * robj) = 0;
+        virtual void render(VertexData& vertexData,VertexProc & vertexProc,Material& material,const RenderConstantData& rcd) = 0;
         virtual void init() = 0;
 
         virtual std::shared_ptr<Shader> loadShader(const std::string& path,ShaderType shaderType,void * exdata,size_t exdataSize) = 0;

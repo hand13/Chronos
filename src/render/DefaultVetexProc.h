@@ -2,6 +2,8 @@
 #include "VertexProc.h"
 #include <memory>
 #include "BaseShaderConfig.h"
+#include "base/Utils.h"
+#include "render/ShaderConfig.h"
 namespace Chronos {
     class DefaultVertexProc:public VertexProc{
         private:
@@ -9,9 +11,10 @@ namespace Chronos {
         public:
         DefaultVertexProc(){
             sc = std::make_unique<BaseShaderConfig>("default_vert",VERTEX_SHADER);
-            sc->getParamList().registerParam("model_matrix",ParamType::MATRIX4F,MakePackInfo(1,0));
+            sc->registerConstantDataDef(ConstantDataDef("model_matrix",CDT_ConstantBuffer
+                ,sizeof(Matrix4f),1));
         }
-        virtual ShaderConfig * getShaderConfig(){
+        virtual ShaderConfig * getShaderConfig()override{
             return sc.get();
         }
         virtual ~DefaultVertexProc(){};

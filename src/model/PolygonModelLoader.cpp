@@ -1,4 +1,5 @@
 #include "PolygonModelLoader.h"
+#include "render/VertexData.h"
 #include <assimp/material.h>
 #include <assimp/mesh.h>
 #include <assimp/Importer.hpp>
@@ -8,8 +9,6 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include <render/PBRMaterial.h>
-#include <render/PBRVertexProc.h>
 namespace Chronos {
 
     PolygonModelLoader::PolygonModelLoader(){
@@ -89,12 +88,10 @@ namespace Chronos {
                 indices.push_back(face.mIndices[j]);
             }
         }
-        std::shared_ptr<BaseRenderableObject> bro = std::make_shared<BaseRenderableObject>();
+        std::shared_ptr<VertexData> bro = std::make_shared<VertexData>();
         bro->setAttributeSet(as);
         bro->setIndices(std::move(indices));
         bro->setVertices(std::move(data));
-        bro->setMaterial(std::make_unique<PBRMaterial>());
-        bro->setVertexProc(std::make_unique<PBRVertexProc>());
         target->getMeshes().push_back(bro);
 
         // if(mesh->mMaterialIndex >= 0) {

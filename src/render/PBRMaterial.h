@@ -2,49 +2,47 @@
 #include "Material.h"
 #include <memory>
 #include "BaseShaderConfig.h"
-#include "base/Param.h"
+#include <base/Utils.h>
+#include "render/ShaderConfig.h"
 #include <engine/ChronosEngine.h>
 
 namespace Chronos {
+
+
     class PBRMaterial:public Material{
         private:
         std::unique_ptr<ShaderConfig> sc;
         public:
+        struct PBRMaterialAttr{
+            Float3 albedo;
+            float metallic;
+            float roughness;
+            float ao;
+        };
+
+        struct PBRMaterialLight{
+            Float3 lightPosition;
+            float pl0;
+            Float3 lightColor;
+        };
+
+        struct PBRMaterialCamera{
+            Float3 cameraPos;
+        };
         PBRMaterial(){
             sc = std::make_unique<BaseShaderConfig>("pbr_pixel",PIXEL_SHADER);
-
-            sc->getParamList()
-            .registerParam("albedo", ParamType::FLOAT3,MakePackInfo(0, 0));
-            sc->getParamList().setParamValue("albedo",Float3(0.f,0.f,0.f));
-            sc->getParamList()
-            .registerParam("metallic", ParamType::FLOAT,MakePackInfo(0, 0));
-            sc->getParamList().setParamValue("metallic", 0.f);
-            sc->getParamList()
-            .registerParam("roughness", ParamType::FLOAT,MakePackInfo(0, 0));
-            sc->getParamList().setParamValue("roughness", 0.0f);
-            sc->getParamList()
-            .registerParam("ao", ParamType::FLOAT,MakePackInfo(0, 0));
-            sc->getParamList().setParamValue("ao", 0.1f);
-
-            sc->getParamList()
-            .registerParam("lightPosition", ParamType::FLOAT3,MakePackInfo(1, 0));
-            sc->getParamList().setParamValue("lightPosition", Float3(0.f,2.f,0.3f));
-            sc->getParamList()
-            .registerParam("lightColor", ParamType::FLOAT3,MakePackInfo(1, 0));
-            sc->getParamList().setParamValue("lightColor", Float3(20.f,20.f,20.f));
-
-            sc->getParamList()
-            .registerParam("camPos", ParamType::FLOAT3,MakePackInfo(2, 0));
-
-            sc->getParamList().registerParam("albedoTex", ParamType::SPTEXTURE2D);
-            sc->getParamList().setParamValue("albedoTex", 
-                Engine->getResourceLoader()->loadTexture2D("resources/textures/test_albedo.png", TextureParameter{}));
-            sc->getParamList().registerParam("metallicTex", ParamType::SPTEXTURE2D);
-            sc->getParamList().setParamValue("metallicTex", 
-                Engine->getResourceLoader()->loadTexture2D("resources/textures/test_metallic.png", TextureParameter{}));
-            sc->getParamList().registerParam("roughnessTex", ParamType::SPTEXTURE2D);
-            sc->getParamList().setParamValue("roughnessTex", 
-                Engine->getResourceLoader()->loadTexture2D("resources/textures/test_roughness.png", TextureParameter{}));
+            sc->registerConstantDataDef(ConstantDataDef("attr",CDT_ConstantBuffer
+            ,sizeof(PBRMaterialAttr),0));
+            sc->registerConstantDataDef(ConstantDataDef("light",CDT_ConstantBuffer
+            ,sizeof(PBRMaterialLight),1));
+            sc->registerConstantDataDef(ConstantDataDef("camera",CDT_ConstantBuffer
+            ,sizeof(PBRMaterialCamera),2));
+            sc->registerConstantDataDef(ConstantDataDef("albedo_texture",CDT_Texture2D
+            ,0,0));
+            sc->registerConstantDataDef(ConstantDataDef("metallic_texture",CDT_Texture2D
+            ,0,1));
+            sc->registerConstantDataDef(ConstantDataDef("roughness_texture",CDT_Texture2D
+            ,0,2));
 
         }
         virtual ShaderConfig * getShaderConfig(){

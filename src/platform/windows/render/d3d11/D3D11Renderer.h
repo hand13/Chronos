@@ -1,13 +1,14 @@
 #pragma once
 #include <d3d11.h>
-#include <rpcndr.h>
+#include <memory>
 #include <wrl/client.h>
 #include <render/Renderer.h>
 #include <render/RenderContext.h>
-#include <render/BaseRenderableObject.h>
 #include <platform/windows/windows_common.h>
 #include "ChronosD3D11RenderTarget.h"
 #include "FXAAMan.h"
+#include <render/RenderState.h>
+#include <render/RenderStateHolder.h>
 using Microsoft::WRL::ComPtr;
 namespace Chronos {
     class D3D11Renderer:public Renderer{
@@ -27,6 +28,8 @@ namespace Chronos {
 
         void createCBuffer();
         void createDevice();
+
+        void createOrUpdateRenderState(RenderStateHolder& rsh,std::unique_ptr<RenderState>&& rs);
 
         public:
         D3D11Renderer();
@@ -56,9 +59,7 @@ namespace Chronos {
         }
         virtual void setRenderContext(RenderContext * rct)override;
 
-        virtual void renderObject(RenderableObject * robj)override;
-        virtual void renderBaseRenderableObject(BaseRenderableObject * robj)override;
-
+        virtual void render(VertexData& vertexData,VertexProc & vertexProc,Material& material,const RenderConstantData& rcd)override;
         /**
         * @brief 
         * depth from 0 to 1
@@ -66,12 +67,18 @@ namespace Chronos {
         * @return D3D11_VIEWPORT 
         */
 
-        static D3D11_VIEWPORT genViewport(const Camera& cmamea);
+        ComPtr<ID3D11Buffer> createConstantBuffer(size_t size);
         virtual std::unique_ptr<RenderTarget> createRenderTarget(const SizeU& size)override;
         void createRenderTargetView(const SizeU& size,ID3D11RenderTargetView** rtv,ID3D11ShaderResourceView ** rsv);
         void createDepthStencilView(const SizeU& size,ID3D11DepthStencilView** dsv);
         void createSamplerState(ID3D11SamplerState** sampleState);
+
+        static D3D11_VIEWPORT genViewport(const Camera& cmamea);
         static void printLiveObject(ComPtr<ID3D11Device> device);
+        static std::vector<D3D11_INPUT_ELEMENT_DESC> genInputElementDescFromAttrSet(Geometry::AttributeSet* as);
+        static u16 span16(u16 size);
+
         virtual ~D3D11Renderer();
+
     };
 };

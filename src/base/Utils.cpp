@@ -81,6 +81,9 @@ void RawData::clean(){
 u8 * RawData::getData(){
     return data;
 }
+const u8* RawData::getConstantData()const{
+    return data;
+}
 size_t RawData::getSize()const{
     return size;
 }

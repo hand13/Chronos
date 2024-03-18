@@ -1,4 +1,6 @@
 #include "BaseShaderConfig.h"
+#include "render/ShaderConfig.h"
+#include <vector>
 
 namespace Chronos{
 
@@ -9,12 +11,15 @@ namespace Chronos{
         return shaderName;
     }
 
-    ParamList& BaseShaderConfig::getParamList(){
-        return pl;
+    const std::vector<ConstantDataDef>& BaseShaderConfig::getConstantDataDef() const {
+        return constantDataDef;
     }
 
     ShaderType BaseShaderConfig::getShaderType()const {
         return shaderType;
+    }
+    void BaseShaderConfig::registerConstantDataDef(const ConstantDataDef& cdd){
+        constantDataDef.push_back(cdd);
     }
     BaseShaderConfig::~BaseShaderConfig(){
     }

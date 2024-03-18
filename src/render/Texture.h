@@ -9,5 +9,4 @@ namespace Chronos {
         public:
         virtual ~Texture(){}
     };
-
 }

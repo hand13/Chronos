@@ -61,6 +61,7 @@ class RawData{
     RawData(RawData&& other);
     void operator=(const RawData& other);
     u8 * getData();
+    const u8* getConstantData()const;
     size_t getSize()const;
     void copyIntoThis(const u8* from,size_t from_start,size_t this_start,size_t size);
     ~RawData();

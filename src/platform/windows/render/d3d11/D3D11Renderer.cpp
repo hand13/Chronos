@@ -10,12 +10,17 @@
 #include <utility>
 #include <wrl/client.h>
 #include "ChronosD3D11RenderTarget.h"
-#include "D3D11BaseRenderState.h"
-#include "platform/windows/render/d3d11/ChronosD3D11Texture2D.h"
+#include "ChronosD3D11Texture2D.h"
+#include "D3D11VertexDataRenderState.h"
+#include "D3D11VertexProcRenderState.h"
+#include "platform/windows/render/d3d11/D3D11MaterialRenderState.h"
 #include "platform/windows/windows_common.h"
+#include "render/RenderState.h"
 #include <WICTextureLoader.h>
 #include <base/StringHelper.h>
 #include <base/Log.h>
+#include "ChronosPixelShader.h"
+#include "ChronosVertexShader.h"
 namespace Chronos{
 
     D3D11Renderer::D3D11Renderer() {
@@ -110,21 +115,44 @@ namespace Chronos{
         deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf());
     }
 
-    void D3D11Renderer::renderObject(RenderableObject * mesh){
+
+
+    void D3D11Renderer::createOrUpdateRenderState(RenderStateHolder& rsh,std::unique_ptr<RenderState>&& rs){
+        RenderState * irs = rsh.getRenderstate();
+        if(irs == nullptr){
+            rsh.setRenderState(std::move(rs));
+            irs = rsh.getRenderstate();
+            irs->setDirty(true);
+        }
+        if(irs->isDirty()){
+            irs->update();
+        }
     }
 
-    void D3D11Renderer::renderBaseRenderableObject(BaseRenderableObject* robj){
+    void D3D11Renderer::render(VertexData& vertexData,VertexProc & vertexProc,Material& material,const RenderConstantData& rcd){
+        /**
+         * @brief todo
+         * 
+         */
+        if(vertexData.getRenderstate() == nullptr){
+            createOrUpdateRenderState(vertexData, std::make_unique<D3D11VertexDataRenderState>(this,&vertexData));
+        }
+        if(vertexProc.getRenderstate() == nullptr){
+            createOrUpdateRenderState(vertexProc, std::make_unique<D3D11VertexProcRenderState>(this,&vertexProc,vertexData.getAttributeSet()));
+        }
+        if(material.getRenderstate() == nullptr){
+            createOrUpdateRenderState(material, std::make_unique<D3D11MaterialRenderState>(this,&material));
+        }
 
-        if(robj->getRenderState() == nullptr){
-            robj->initRenderState(std::make_unique<D3D11BaseRenderState>(this,robj));
-            robj->setDirty(true);
+        vertexData.getRenderstate()->applyWith(rcd);
+        vertexProc.getRenderstate()->applyWith(rcd);
+        material.getRenderstate()->applyWith(rcd);
+
+        if(vertexData.useIndices()){
+            deviceContext->DrawIndexed(static_cast<UINT>(vertexData.getIndices().size()), 0,0);
+        }else{
+            deviceContext->Draw(static_cast<UINT>(vertexData.getVerticesCount()),0);
         }
-        if(robj->getRenderState()->isDirty()){
-            robj->getRenderState()->update();
-        }
-        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        RenderState* rs = robj->getRenderState();
-        rs->apply();
 
     }
 
@@ -339,5 +367,45 @@ namespace Chronos{
                 sampleState
             )
         );
+    }
+    std::vector<D3D11_INPUT_ELEMENT_DESC> D3D11Renderer::genInputElementDescFromAttrSet(Geometry::AttributeSet* as){
+        std::vector<D3D11_INPUT_ELEMENT_DESC> result;
+        for(const Geometry::Attribute& attr:as->getAttributes()){
+            const char* semantic = nullptr;
+            DXGI_FORMAT format = DXGI_FORMAT_R32G32B32_FLOAT;
+            if(attr.name == "pos"){
+                semantic = "POSITION";
+                format = DXGI_FORMAT_R32G32B32_FLOAT;
+            }else if(attr.name == "uv"){
+                semantic = "TEXCOORD";
+                format = DXGI_FORMAT_R32G32_FLOAT;
+            }else if(attr.name == "normal"){
+                semantic = "NORMAL";
+                format = DXGI_FORMAT_R32G32B32_FLOAT;
+            }
+            UINT offset = static_cast<UINT>(as->getAttributeOffset(attr.name));
+            D3D11_INPUT_ELEMENT_DESC desc = 
+            {semantic,0,format,0,offset,D3D11_INPUT_PER_VERTEX_DATA,0};
+            result.push_back(desc);
+        }
+
+        return result;
+    }
+    ComPtr<ID3D11Buffer> D3D11Renderer::createConstantBuffer(size_t size){
+        ComPtr<ID3D11Buffer> result;
+        D3D11_BUFFER_DESC bdesc;
+        ZeroMemory(&bdesc,sizeof(bdesc));
+        bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bdesc.Usage = D3D11_USAGE_DEFAULT;
+        bdesc.ByteWidth = static_cast<UINT>(size);
+        ThrowIfFailed(device->CreateBuffer(&bdesc, nullptr,result.GetAddressOf()));
+        return result;
+    }
+
+    u16 D3D11Renderer::span16(u16 size){
+        if((size % MAX_PACK_SIZE) == 0){
+            return size;
+        }
+        return MAX_PACK_SIZE + size - (size % MAX_PACK_SIZE);
     }
 }

@@ -1,9 +1,9 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include <render/BaseRenderableObject.h>
+#include <render/VertexData.h>
 namespace Chronos{
-    typedef std::vector<std::shared_ptr<BaseRenderableObject>> Meshes;
+    typedef std::vector<std::shared_ptr<VertexData>> Meshes;
     class PolygonModel {
         private:
         Meshes meshes;
