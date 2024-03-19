@@ -1,8 +1,8 @@
 #pragma once
 #include <base/Utils.h>
-#include <map>
+#include <unordered_map>
 #include <memory>
-#include "Texture2D.h"
+#include <string>
 #include "Texture2D.h"
 #include "ShaderConfig.h"
 namespace Chronos {
@@ -15,14 +15,29 @@ namespace Chronos {
         std::shared_ptr<Texture2D> texture;
         u8 slot;
     };
-    typedef std::map<std::string,SlotAndRawData> RawDataMap;
-    typedef std::map<std::string,SlotAndTexture> Texture2DMap;
+    typedef std::unordered_map<std::string,SlotAndRawData> RawDataMap;
+    typedef std::unordered_map<std::string,SlotAndTexture> Texture2DMap;
     class RenderConstantData{
         private:
         RawDataMap vertexProcDataMap;
         RawDataMap materialDataMap;
         Texture2DMap textureMap;
         public:
+
+        template<typename T>
+        void setVertexProcData(const std::string& name,const T& value){
+            vertexProcDataMap.at(name).rawData->copyIntoThis((const u8*)&value,0, 0,sizeof(T));
+        }
+        
+        template<typename T>
+        void setMaterialData(const std::string& name,const T& value){
+            materialDataMap.at(name).rawData->copyIntoThis((const u8*)&value,0, 0,sizeof(T));
+        }
+
+        void setTexture(const std::string& name,std::shared_ptr<Texture2D> texture){
+            textureMap.at(name).texture = texture;
+        }
+
         RenderConstantData(const ShaderConfig& vsc,const ShaderConfig& msc);
         inline const RawDataMap& getVertexProcDataMap()const{
             return vertexProcDataMap;

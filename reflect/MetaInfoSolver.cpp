@@ -33,9 +33,9 @@ MetaInfoHelper MetaInfoSolver::solveFieldName(const std::string& fieldname){
 void MetaInfoSolver::solve(const KlassInfo& ki){
 
     for(auto f : ki.fileds){
-        MetaInfoHelper mh = solveFieldName(f.name);
+        MetaInfoHelper mh = solveFieldName(f->name);
         if(mh.isMacro){
-            macros.insert(f.name);
+            macros.insert(f->name);
             switch (mh.memberType) {
                 case CLASS:
                 classMetaInfo = mh.metaInfo;
@@ -58,21 +58,21 @@ void MetaInfoSolver::solve(const KlassInfo& ki){
 
     MetaInfo mi;mi.marked = false;
     for(auto c : ki.contrustors){
-        if(constructorGenMarked.find(c.name) ==constructorGenMarked.end()){
-            constructorMetaInfos[c.name] = mi;
+        if(constructorGenMarked.find(c->name) ==constructorGenMarked.end()){
+            constructorMetaInfos[c->name] = mi;
         }
     }
     for(auto f : ki.fileds){
-        if(macros.find(f.name) != macros.end()){
+        if(macros.find(f->name) != macros.end()){
             continue;
         }
-        if(fieldsGenMarked.find(f.name) ==fieldsGenMarked.end()){
-            fieldMetaInfos[f.name] = mi;
+        if(fieldsGenMarked.find(f->name) ==fieldsGenMarked.end()){
+            fieldMetaInfos[f->name] = mi;
         }
     }
     for(auto m : ki.methods){
-        if(methodGenMarked.find(m.name) == methodGenMarked.end()){
-            methodMetaInfos[m.name] = mi;
+        if(methodGenMarked.find(m->name) == methodGenMarked.end()){
+            methodMetaInfos[m->name] = mi;
         }
     }
 }

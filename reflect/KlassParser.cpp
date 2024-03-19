@@ -3,14 +3,15 @@
 #include "clang-c/CXString.h"
 #include <clang-c/Index.h>
 #include <exception>
+#include <memory>
 #include <stack>
 #include <vector>
 #include "KlassParser.h"
 #include "KlassInfo.h"
 
 template<typename T>
-static T * getTopPointer(std::vector<T>& s){
-    return &s[s.size()-1];
+static T  getTopPointer(std::vector<T>& s){
+    return s[s.size()-1];
 }
 static AccessInfo fromCXSpecifierToAccess(CX_CXXAccessSpecifier as){
     switch (as) {
@@ -129,31 +130,33 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
 
         // printCursorInfo(c);
         CXChildVisitResult result = CXChildVisit_Continue;//略过
-        if(pc->stack.size() != 0 && pc->cursorStack.size() != 0){
+        while(pc->stack.size() != 0 && pc->cursorStack.size() != 0){
             CXCursor&m = pc->cursorStack.top();
             if(m.xdata != parent.xdata || m.kind != parent.kind){
                 pc->cursorStack.pop();
                 pc->stack.pop();
+            }else {
+                break;
             }
         }
         switch (c.kind) {
             case CXCursor_StructDecl:{
                     result = CXChildVisit_Recurse;
-                    KlassInfo klass;
+                    auto klass = std::make_shared<KlassInfo>();
                     CXType type = clang_getCursorType(c);
-                    klass.name = fetchTypename(type);
+                    klass->name = fetchTypename(type);
                     pc->klasses.push_back(klass);
-                    pc->stack.push(getTopPointer(pc->klasses));
+                    pc->stack.push(getTopPointer(pc->klasses).get());
                     pc->cursorStack.push(c);
                 }
                 result = CXChildVisit_Recurse;
                 break;
             case CXCursor_ClassDecl:{
-                    KlassInfo klass;
+                    auto klass = std::make_shared<KlassInfo>();
                     CXType type = clang_getCursorType(c);
-                    klass.name = fetchTypename(type);
+                    klass->name = fetchTypename(type);
                     pc->klasses.push_back(klass);
-                    pc->stack.push(getTopPointer(pc->klasses));
+                    pc->stack.push(getTopPointer(pc->klasses).get());
                     pc->cursorStack.push(c);
 
                 }
@@ -161,66 +164,71 @@ void KlassParser::parseFileIntoParseContext(const std::string& file_path,ParseCo
                 break;
 
             case CXCursor_Constructor:{
-                    ConstructorInfo constructor;
-                    constructor.name = getCursorName(c);
-                    constructor.access = fromCXSpecifierToAccess(clang_getCXXAccessSpecifier(c));
+
+                    CXCursor&tmp = pc->cursorStack.top();
+
+                    if(tmp.xdata != parent.xdata || tmp.kind != parent.kind){
+                        int a = 12;
+                    }
+                    auto constructor = std::make_shared<ConstructorInfo>();
+                    constructor->name = getCursorName(c);
+                    constructor->access = fromCXSpecifierToAccess(clang_getCXXAccessSpecifier(c));
                     KlassInfo* klass = dynamic_cast<KlassInfo*>(pc->stack.top());
                     if(klass == nullptr){
                         throw std::exception("should not happended");
                     }
                     klass->contrustors.push_back(constructor);
-                    pc->stack.push(getTopPointer(klass->contrustors));
+                    pc->stack.push(getTopPointer(klass->contrustors).get());
                     pc->cursorStack.push(c);
                 }
                 result = CXChildVisit_Recurse;
                 break;
             case CXCursor_FieldDecl:{
-
-                    FieldInfo field;
-                    field.access = fromCXSpecifierToAccess(clang_getCXXAccessSpecifier(c));
-                    field.name = getCursorName(c);
+                    auto field = std::make_shared<FieldInfo>();
+                    field->access = fromCXSpecifierToAccess(clang_getCXXAccessSpecifier(c));
+                    field->name = getCursorName(c);
                     CXType type = clang_getCursorType(c);
-                    field.type = fetchTypename(type);
+                    field->type = fetchTypename(type);
                     KlassInfo* klass = dynamic_cast<KlassInfo*>(pc->stack.top());
                     if(klass == nullptr){
                         throw std::exception("should not happended");
                     }
                     klass->fileds.push_back(field);
-                    pc->stack.push(getTopPointer(klass->fileds));
+                    pc->stack.push(getTopPointer(klass->fileds).get());
                     pc->cursorStack.push(c);
                 }
                 result = CXChildVisit_Recurse;
                 break;
             case CXCursor_CXXMethod:{
 
-                    MethodInfo method;
-                    method.name = getCursorName(c);
-                    method.access = fromCXSpecifierToAccess(clang_getCXXAccessSpecifier(c));
+                    auto method = std::make_shared<MethodInfo>();
+                    method->name = getCursorName(c);
+                    method->access = fromCXSpecifierToAccess(clang_getCXXAccessSpecifier(c));
                     CXType type = clang_getCursorType(c);
                     CXType rt =  clang_getResultType(type);
-                    method.returnType = getTypeName(rt);
+                    method->returnType = getTypeName(rt);
 
                     KlassInfo* klass = dynamic_cast<KlassInfo*>(pc->stack.top());
                     if(klass == nullptr){
                         throw std::exception("should not happended");
                     }
                     klass->methods.push_back(method);
-                    pc->stack.push(getTopPointer(klass->methods));
+                    pc->stack.push(getTopPointer(klass->methods).get());
                     pc->cursorStack.push(c);
                 }
                 result = CXChildVisit_Recurse;
                 break;
             case CXCursor_ParmDecl:{
-                    MethodParamInfo mp;
+                    auto mp = std::make_shared<MethodParamInfo>();
                     MethodInfo* method = dynamic_cast<MethodInfo*>(pc->stack.top());
                     ConstructorInfo * constructor = dynamic_cast<ConstructorInfo*>(pc->stack.top());
                     if(method == nullptr && constructor == nullptr){
                         throw std::exception("should not happended");
                     }
 
-                    mp.name = getCursorName(c);
+                    mp->name = getCursorName(c);
                     CXType type = clang_getCursorType(c);
-                    mp.type = fetchTypename(type);
+                    mp->type = fetchTypename(type);
 
                     if(method != nullptr){
                         method->params.push_back(mp);

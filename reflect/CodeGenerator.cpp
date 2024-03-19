@@ -24,7 +24,7 @@ void CodeGenerator::generateCodeFromSrc(const std::string &src_dir
         parser.parseFileIntoParseContext(src_dir + "/" + src, pc,include_dirs);
         for(auto klass : pc.klasses){
             fns.push_back(
-                generateCodeFromKlass(src,target_dir+"/load_"+underlineClassName(klass.name)+"_generated.cpp",klass));
+                generateCodeFromKlass(src,target_dir+"/load_"+underlineClassName(klass->name)+"_generated.cpp",*klass));
         }
     }
 
@@ -106,7 +106,7 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
     std::vector<std::string> methodFuncs;
 
     for(u32 i = 0;i <klass.contrustors.size();i++){
-        const ConstructorInfo& cinfo = klass.contrustors[i];
+        const ConstructorInfo& cinfo = *klass.contrustors[i];
         if(cinfo.access == PRIVATE || cinfo.access == PROTECTED){
             constructorFuns.push_back("");//placeholder
             continue;
@@ -117,12 +117,12 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
         out.print("    return new {}(",klass.name);
         for(u32 j = 0;j < cinfo.params.size();j++){
 
-            if(isLeftRef(cinfo.params[j].type)){
-                out.print("*({}*)cps[{}].param",removeRef(cinfo.params[j].type),j);
-            }else if(isRightRef(cinfo.params[j].type)){
-                out.print("std::move(*({}*)cps[{}].param)",removeRef(cinfo.params[j].type),j);
+            if(isLeftRef(cinfo.params[j]->type)){
+                out.print("*({}*)cps[{}].param",removeRef(cinfo.params[j]->type),j);
+            }else if(isRightRef(cinfo.params[j]->type)){
+                out.print("std::move(*({}*)cps[{}].param)",removeRef(cinfo.params[j]->type),j);
             }else{
-                out.print("*({}*)cps[{}].param",cinfo.params[j].type,j);
+                out.print("*({}*)cps[{}].param",cinfo.params[j]->type,j);
             }
             if(j != cinfo.params.size() -1){
                 out.print(",");
@@ -138,7 +138,8 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
 
     out.print("    Klass * klass = new Klass(\"{}\",false,sizeof({}));\n",klass.name,klass.name);
 
-    for(auto& f : klass.fileds){
+    for(auto& pf : klass.fileds){
+        const FieldInfo& f = *pf;
         if(solver.isField(f)){
             if(f.access == PRIVATE || f.access == PROTECTED){
                 continue;
@@ -160,7 +161,7 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
         }
     }
     for(u32 i = 0;i < klass.contrustors.size();i++){
-        const ConstructorInfo& cinfo = klass.contrustors[i];
+        const ConstructorInfo& cinfo = *klass.contrustors[i];
         if(cinfo.access == PRIVATE || cinfo.access == PROTECTED){
             continue;
         }
@@ -170,7 +171,8 @@ std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,con
         out.print("    {}.access = {};\n",tmpname,accessInfoToAccessString(cinfo.access));
         out.print("    {}.metaInfo.marked = {};\n",tmpname,"true");//todo
 
-        for(const MethodParamInfo& mpi : cinfo.params){
+        for(auto& pmpi : cinfo.params){
+            const MethodParamInfo & mpi = * pmpi;
             std::string tmpparamname = fmt::format("param_{}_{}",mpi.name,i);
             out.print("    MethodParam {};\n",tmpparamname);
             out.print("    {}.name = \"{}\";\n",tmpparamname,mpi.name);

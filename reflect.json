@@ -3,7 +3,9 @@
     "srcs":[
         "base/Utils.h",
         "base/Transform.h",
-        "component/TransformComponent.h"
+        "component/TransformComponent.h",
+        "render/PBRMaterial.h",
+        "component/StaticMeshComponent.h"
     ],
     "include_dirs":[
         "src"

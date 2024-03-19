@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include <string>
 #include <vector>
 enum AccessInfo {
@@ -26,22 +27,22 @@ struct FieldInfo :public Info{
 struct ConstructorInfo:public Info{
     AccessInfo access;
     std::string name;
-    std::vector<MethodParamInfo> params;
+    std::vector<std::shared_ptr<MethodParamInfo>> params;
     virtual ~ConstructorInfo(){}
 };
 struct MethodInfo:public Info{
     AccessInfo access;
     std::string name;
     std::string returnType;
-    std::vector<MethodParamInfo> params;
+    std::vector<std::shared_ptr<MethodParamInfo>> params;
     bool isVirtual = false;
     virtual ~MethodInfo(){}
 };
 struct KlassInfo :public Info{
     std::string name;
-    std::vector<FieldInfo> fileds;
-    std::vector<MethodInfo> methods;
-    std::vector<ConstructorInfo> contrustors;
+    std::vector<std::shared_ptr<FieldInfo>> fileds;
+    std::vector<std::shared_ptr<::MethodInfo>> methods;
+    std::vector<std::shared_ptr<ConstructorInfo>> contrustors;
     virtual ~KlassInfo(){}
 };
 

@@ -52,17 +52,12 @@ namespace Chronos{
         return tc->transform;
     }
     void StaticMeshComponent::feedRCDToPBRState(){
-        rcd->getVertexProcDataMap().at("consData").rawData
-            ->copyIntoThis((const u8*)&pbrVState, 0,0, sizeof(pbrVState));
-        rcd->getMaterialDataMap().at("attr").rawData
-        ->copyIntoThis((const u8*)&pbrState.attr, 0, 0, sizeof(pbrState.attr));
-        rcd->getMaterialDataMap().at("camera").rawData
-        ->copyIntoThis((const u8*)&pbrState.camera, 0, 0, sizeof(pbrState.camera));
-        rcd->getMaterialDataMap().at("light").rawData
-        ->copyIntoThis((const u8*)&pbrState.light, 0, 0, sizeof(pbrState.light));
-
-        rcd->getTextureMap().at("albedo_texture").texture = albedoTexture;
-        rcd->getTextureMap().at("metallic_texture").texture = metallicTexture;
-        rcd->getTextureMap().at("roughness_texture").texture = roughnessTexture;
+        rcd->setVertexProcData("consData", pbrVState);
+        rcd->setMaterialData("attr", pbrState.attr);
+        rcd->setMaterialData("camera", pbrState.camera);
+        rcd->setMaterialData("light", pbrState.light);
+        rcd->setTexture("albedo_texture",albedoTexture);
+        rcd->setTexture("metallic_texture",metallicTexture);
+        rcd->setTexture("roughness_texture",roughnessTexture);
     }
 }

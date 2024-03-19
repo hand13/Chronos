@@ -22,7 +22,7 @@ std::string toString(const MethodParamInfo& a){
 std::string toString(const MethodInfo& a){
     std::string ms = toString(a.access) + " " + a.returnType + " " + a.name + "(";
     for(auto m : a.params){
-        ms.append(toString(m));
+        ms.append(toString(*m));
         ms.append(",");
     }
     ms.append(");");
@@ -34,7 +34,7 @@ std::string toString(const FieldInfo& a){
 std::string toString(const ConstructorInfo& a){
     std::string ms = toString(a.access)+" " + a.name + "(";
     for(auto m : a.params){
-        ms.append(toString(m));
+        ms.append(toString(*m));
         ms.append(",");
     }
     ms.append(");");
@@ -44,15 +44,15 @@ std::string toString(const KlassInfo& a){
     std::string res;
     res = std::string("class ") + a.name + "{\n";
     for(auto c : a.contrustors){
-        res.append(toString(c));
+        res.append(toString(*c));
         res.append("\n");
     }
     for(auto f : a.fileds){
-        res.append(toString(f));
+        res.append(toString(*f));
         res.append("\n");
     }
     for(auto m : a.methods){
-        res.append(toString(m));
+        res.append(toString(*m));
         res.append("\n");
     }
     res.append("\n}");

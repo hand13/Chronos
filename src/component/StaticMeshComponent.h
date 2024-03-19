@@ -11,11 +11,6 @@
 #include <render/RenderConstantData.h>
 namespace Chronos{
     class StaticMeshComponent:public RenderableComponent{
-        struct PBRState {
-            PBRMaterial::PBRMaterialAttr attr;
-            PBRMaterial::PBRMaterialLight light;
-            PBRMaterial::PBRMaterialCamera camera;
-        };
         private:
 
         std::shared_ptr<PolygonModel> pm;
@@ -26,10 +21,15 @@ namespace Chronos{
         std::shared_ptr<Texture2D> roughnessTexture;
         std::shared_ptr<Texture2D> metallicTexture;
 
-        PBRState pbrState;
         PBRVertexProc::PBRVertexConsData pbrVState;
 
         public:
+        struct PBRState {
+            PBRMaterial::PBRMaterialAttr attr;
+            PBRMaterial::PBRMaterialLight light;
+            PBRMaterial::PBRMaterialCamera camera;
+        };
+        PBRState pbrState;
         virtual void init() override;
         StaticMeshComponent(GameObject* gameObject):RenderableComponent(gameObject){}
         void feedRCDToPBRState();

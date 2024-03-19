@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include <string>
 #include <vector>
 #include <stack>
@@ -6,7 +7,7 @@
 #include "KlassInfo.h"
 struct ParseContext {
     std::string file_name;
-    std::vector<KlassInfo> klasses;
+    std::vector<std::shared_ptr<KlassInfo>> klasses;
     std::stack<Info*> stack;
     std::stack<CXCursor> cursorStack;
     ParseContext(){}
