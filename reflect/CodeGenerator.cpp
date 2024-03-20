@@ -15,20 +15,28 @@ static std::string underlineClassName(std::string classname){
     return classname;
 }
 
-void CodeGenerator::generateCodeFromSrc(const std::string &src_dir
+GenMap CodeGenerator::generateCodeFromSrc(const std::string &src_dir
     ,const std::vector<std::string>& srcs,const std::string& target_dir
     ,const std::string& load_fn_name,const std::vector<std::string>& include_dirs){
+
+    std::map<std::string,std::vector<std::string>> result;
     std::vector<std::string> fns;
+
     for(auto src:srcs){
+
         ParseContext pc;
         parser.parseFileIntoParseContext(src_dir + "/" + src, pc,include_dirs);
         for(auto klass : pc.klasses){
+            const std::string file_name = target_dir+"/load_"+underlineClassName(klass->name)+"_generated.cpp";
             fns.push_back(
-                generateCodeFromKlass(src,target_dir+"/load_"+underlineClassName(klass->name)+"_generated.cpp",*klass));
+                generateCodeFromKlass(src,file_name,*klass));
+
+            result[src].push_back(file_name);
         }
     }
-
     generateAllLoadFun(fns,target_dir+"/" + load_fn_name + ".h",load_fn_name);
+
+    return result;
 }
 
 
@@ -90,6 +98,7 @@ static std::string removeRef(std::string typeName){
 }
 
 std::string CodeGenerator::generateCodeFromKlass(const std::string& src_path,const std::string& target_path,const KlassInfo& klass){
+
     MetaInfoSolver solver;
     solver.solve(klass);
     //todo
