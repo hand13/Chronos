@@ -1,6 +1,6 @@
 #pragma once
 #include "Klass.h"
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vcruntime_typeinfo.h>
 
@@ -10,7 +10,7 @@ class Metaspace{
     private:
     static const char * typenameclass;
     static const char * typenamestruct;
-    std::map<std::string,Klass*> klasses;
+    std::unordered_map<std::string,Klass*> klasses;
     void loadPrimitiveKlass();
     void loadPreDefinedKlass();
     public:
@@ -75,6 +75,7 @@ class Metaspace{
      */
     void solveLink();
 
+    inline Klass * boolclass(){return getKlass("bool");}
     inline Klass* charclass(){return getKlass("char");}
     inline Klass* shortclass(){return getKlass("short");}
     inline Klass* intclass(){return getKlass("int");}
