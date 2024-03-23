@@ -22,7 +22,7 @@ namespace Chronos {
 
         struct PBRMaterialLight{
             Float3 lightPosition;
-            float pl0;
+            float _pad;
             Float3 lightColor;
         };
 

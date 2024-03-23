@@ -50,9 +50,9 @@ namespace Chronos {
         }
         device = dr->shareDevice();
         deviceContext = dr->shareDeviceCOntext();
-        wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("ImGui Example"), NULL };
+        wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("Chronos Editor"), NULL };
         ::RegisterClassEx(&wc);
-        hWnd = ::CreateWindow(wc.lpszClassName, _T("Dear ImGui DirectX11 Example"), WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, NULL, NULL, wc.hInstance,this);
+        hWnd = ::CreateWindow(wc.lpszClassName, _T("Chronos Editor"), WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, NULL, NULL, wc.hInstance,this);
         createSwapChain();
         // Show the window
         // ::ShowWindow(hWnd, SW_SHOWDEFAULT);
