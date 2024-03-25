@@ -1,7 +1,8 @@
 {
     "src_dir":".",
     "srcs":[
-        "head_for_reflect.h"
+        "head_for_reflect.h",
+        "head_for_reflect1.h"
     ],
     "gen_dir":"generated",
     "load_fn_name":"load_all",

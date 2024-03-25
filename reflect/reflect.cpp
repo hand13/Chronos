@@ -53,17 +53,21 @@ static long long getFileLastWriteTime(const fs::path& file){
     long long last_time = fs::last_write_time(file).time_since_epoch().count();
     return last_time;
 }
+/**
+ * @brief {
+ * @return std::vector<std::string> 
+ */
 
 static std::vector<std::string> filterWithTileStampAndCleanUnsedFiles(const std::string& src_dir
         ,const std::vector<std::string>& srcs,const json& jcache){
-    std::vector<std::string> result;
-    std::vector<std::string> unsed_files;
+    std::vector<std::string> result;//改动与新增的文件
+    std::vector<std::string> unsed_files;//不再需要的文件
     for(auto & src:srcs){
         fs::path src_path(src_dir + "/" + src);
         if(!exists_file(src_path)){
             throw std::exception("no such file");
         }
-        if(!jcache[src].is_null()){
+        if(jcache.find(src) != jcache.end()){
             long long last_write_time = getFileLastWriteTime(src_path);
             long long time_in_cache = jcache[src]["time"];
             if(last_write_time > time_in_cache){
@@ -75,7 +79,7 @@ static std::vector<std::string> filterWithTileStampAndCleanUnsedFiles(const std:
     }
 
     for(auto & res :result){
-        if(!jcache[res].is_null()){
+        if(jcache.find(res) !=jcache.end()){
             std::vector<std::string> gen_files = jcache[res]["gen_files"];
             for(auto& tmp:gen_files){
                 unsed_files.push_back(tmp);
@@ -108,7 +112,72 @@ static std::vector<std::string> filterWithTileStampAndCleanUnsedFiles(const std:
     return result;
 }
 
-static void genCache(json * json,const GenMap& gm){
+/**
+ * @brief 
+    "generated_srcs":[
+        "src_name"
+        "src_name1"
+    ],
+    "src_name":{
+        "time":32432432,
+        "gen_files":[
+            "tmp0.cpp","tmp1.cpp"
+        ],
+        generated_fns:[
+            "load_xxx","load_xxx1"
+        ]
+        },
+    "src_name1":{
+        "time":32432432,
+        "gen_files":[
+            "tmp0.cpp","tmp1.cpp"
+        ],
+        generated_fns:[
+            "load_xxx","load_xxx1"
+        ]
+        },
+    }
+ * 
+ * @param json 
+ * @param gm 
+ */
+static std::pair<json,std::vector<std::string>> genJson(json * old_cache,const std::string& src_dir
+    ,const std::vector<std::string>& srcs,const GenMap& gm){
+    std::pair<json,std::vector<std::string>> res;
+
+    json result;
+    std::vector<std::string> fns;
+    for(auto & src: srcs){
+        if(gm.find(src) != gm.end()){
+            result["generated_srcs"].push_back(src);
+            const std::vector<GenDetail>& genMap = gm.at(src);
+            result[src]["time"] = getFileLastWriteTime(src_dir + "/" + src);
+            for(auto & gd :genMap){
+                result[src]["generated_fns"].push_back(gd.load_fn);
+                result[src]["gen_files"].push_back(gd.gen_file_name);
+                fns.push_back(gd.load_fn);
+            }
+        }else if(old_cache != nullptr && old_cache->find(src) != old_cache->end()) {
+            result["generated_srcs"].push_back(src);
+            json& tmp_cache = *old_cache;
+            result[src] = tmp_cache[src];
+            std::vector<std::string> tmp_fns = tmp_cache[src]["generated_fns"];
+            for(auto & tmp_fn : tmp_fns){
+                fns.push_back(tmp_fn);
+            }
+        }else{
+            throw std::exception("should not happended");
+        }
+    }
+    res.first = result;
+    res.second = fns;
+    return res;
+}
+
+static void saveJsonFile(const json& j,const std::string& file_name){
+    std::ofstream os(file_name);
+    std::string jstr = j.dump(4);
+    os.write(jstr.c_str(),jstr.length());
 }
 
 
@@ -160,16 +229,25 @@ int main(int argn,const char * args[]){
 
     CodeGenerator cg;
 
-    std::string cache_file = gen_dir + "/" + ".cache";
+    std::string cache_file = gen_dir + "/" + ".cache.json";
     GenMap genMap;
+    std::pair<json,std::vector<std::string>> gen_json_fns;
+    if(srcs.size() == 0){
+        std::cout<<"nothing to do"<<std::endl;
+    }
     if(exists_file(cache_file)){
         json jcache = json::parse(readFileToString(cache_file));
         std::vector<std::string> srcs_need = filterWithTileStampAndCleanUnsedFiles(src_dir, srcs, jcache);
-        genMap =  cg.generateCodeFromSrc(src_dir,srcs_need,gen_dir,load_fn_name,include_dirs);
+        if(srcs_need.size() == 0){
+            std::cout<<"nothing update"<<std::endl;
+        }
+        genMap =  cg.generateCodeFromSrc(src_dir,srcs_need,gen_dir,include_dirs);
+        gen_json_fns =  genJson(&jcache,src_dir,srcs,genMap);
     }else {
-        genMap = cg.generateCodeFromSrc(src_dir,srcs,gen_dir,load_fn_name,include_dirs);
+        genMap = cg.generateCodeFromSrc(src_dir,srcs,gen_dir,include_dirs);
+        gen_json_fns =  genJson(nullptr,src_dir,srcs,genMap);
     }
-    genCache(&jconfig,genMap);
-
+    cg.generateAllLoadFun(gen_json_fns.second,gen_dir + "/" + load_fn_name + ".h", load_fn_name);
+    saveJsonFile(gen_json_fns.first, cache_file);
     return 0;
 }

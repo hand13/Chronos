@@ -16,10 +16,9 @@ static std::string underlineClassName(std::string classname){
 }
 
 GenMap CodeGenerator::generateCodeFromSrc(const std::string &src_dir
-    ,const std::vector<std::string>& srcs,const std::string& target_dir
-    ,const std::string& load_fn_name,const std::vector<std::string>& include_dirs){
+    ,const std::vector<std::string>& srcs,const std::string& target_dir,const std::vector<std::string>& include_dirs){
 
-    std::map<std::string,std::vector<std::string>> result;
+    GenMap result;
     std::vector<std::string> fns;
 
     for(auto src:srcs){
@@ -28,14 +27,12 @@ GenMap CodeGenerator::generateCodeFromSrc(const std::string &src_dir
         parser.parseFileIntoParseContext(src_dir + "/" + src, pc,include_dirs);
         for(auto klass : pc.klasses){
             const std::string file_name = target_dir+"/load_"+underlineClassName(klass->name)+"_generated.cpp";
-            fns.push_back(
-                generateCodeFromKlass(src,file_name,*klass));
-
-            result[src].push_back(file_name);
+            std::string load_fn_name = generateCodeFromKlass(src,file_name,*klass);
+            fns.push_back(load_fn_name);
+            GenDetail gd(file_name,load_fn_name);
+            result[src].push_back(gd);
         }
     }
-    generateAllLoadFun(fns,target_dir+"/" + load_fn_name + ".h",load_fn_name);
-
     return result;
 }
 

@@ -1,4 +1,5 @@
 #include <cassert>
+#include <fstream>
 #include <iostream>
 #include "reflect_api/CallParam.h"
 #include "reflect_api/Field.h"
@@ -6,6 +7,8 @@
 #include "reflect_api/Metaspace.h"
 #include "generated/load_all.h"
 #include "head_for_reflect.h"
+#include <nlohmann/json.hpp>
+using namespace nlohmann;
 void test(){
     Metaspace ms;
     load_all(&ms);
@@ -46,14 +49,17 @@ namespace Testing {
     };
 }
 
+void test1(){
+    json ex3 = {{"test",true},{"pi",4.34}};
+    ex3["md"] = {1,2,3,4};
+    std::string tmp = ex3.dump();
+    std::ofstream os("test.json");
+    os.write(tmp.c_str(), tmp.size());
+}
+
 int main(){
 
-    test();
-    Testing::Parent * m =new Testing::Child;
-    std::cout<<typeid(*m).name()<<std::endl;
-
-    Testing::Parent * md =new Testing::Md;
-    std::cout<<typeid(*md).name()<<std::endl;
-
+    // test();
+    test1();
     return 0;
 }

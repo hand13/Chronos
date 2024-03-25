@@ -2,6 +2,9 @@
 #include <string>
 #include "reflect_api/MetaPrefix.h"
 typedef int i32;
+struct Test2{
+    int wc;
+};
 class ReflectTest{
     CClass
     private:

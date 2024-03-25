@@ -38,5 +38,5 @@ target_compile_features(reflect_test PRIVATE cxx_std_17)
 target_include_directories(reflect_test PRIVATE "D:/usr/local/LLVM/include")
 
 target_link_directories(reflect_test PRIVATE "D:/usr/local/LLVM/lib")
-target_link_libraries(reflect_test PRIVATE libclang fmt::fmt)
+target_link_libraries(reflect_test PRIVATE libclang fmt::fmt nlohmann_json::nlohmann_json)
 target_link_libraries(reflect_test PRIVATE load_fn)
