@@ -14,6 +14,7 @@ namespace Chronos {
         Camera defaultCamera;
         Camera& activeCamera;
         unsigned int objectCounts;
+        SceneState state;
 
         int lastMouseX;
         int lastMouseY;
@@ -42,6 +43,9 @@ namespace Chronos {
         virtual Texture2D* getRenderTargetAsTexture()override;
         virtual void* getRenderTargetTextureHandler()override;
         virtual void begin()override;
+        virtual void pause()override;
+        virtual void resume()override;
+        virtual SceneState getState()const override;
         virtual void render()override;
         virtual void update(unsigned int deltaTime)override;
         virtual void processEvent(const IOEvent& event)override;

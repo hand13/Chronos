@@ -116,6 +116,15 @@ namespace Chronos{
 
     void ChronosEditor::showRenderView(){
         SizeU size =  Engine->getSize();
+        if(currentScene->getState() == SC_RUNNING){
+            if(ImGui::Button("pause")){
+                currentScene->pause();
+            }
+        }else if(currentScene->getState() == SC_PAUSED){
+            if(ImGui::Button("resume")){
+                currentScene->resume();
+            }
+        }
         ImGui::Image(srv, ImVec2(static_cast<float>(size.width),static_cast<float>(size.height)));
     }
 

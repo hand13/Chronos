@@ -1,9 +1,11 @@
 #include "BaseScene.h"
 #include "ChronosEngine.h"
+#include <cassert>
 #include <memory>
 #include <utility>
 #include <vector>
 #include "base/Log.h"
+#include "engine/Scene.h"
 namespace Chronos {
 
     BaseScene::BaseScene():activeCamera(defaultCamera){
@@ -12,6 +14,7 @@ namespace Chronos {
         lButtonPressed = false;
         shouldInitMousePos = true;
         objectCounts = 0;
+        state = SC_UNINITED;
     }
 
     Camera& BaseScene::getActiveCamera(){
@@ -35,6 +38,7 @@ namespace Chronos {
     void BaseScene::init(){
         initRenderState();
         initScene();
+        state = SC_READY;
 
     }
     void BaseScene::initRenderState(){
@@ -63,6 +67,7 @@ namespace Chronos {
         for(auto obj:gameObjectMap){
             obj.second->beginPlay();//todo
         }
+        state = SC_RUNNING;
 
     }
     void BaseScene::render(){
@@ -128,9 +133,10 @@ namespace Chronos {
 
     void BaseScene::update(unsigned int deltaTime){
         solveAllComponents();
-
-        for(auto obj:gameObjectMap){
-            obj.second->update(deltaTime);
+        if(state == SC_RUNNING){
+            for(auto obj:gameObjectMap){
+                obj.second->update(deltaTime);
+            }
         }
 
     }
@@ -184,6 +190,19 @@ namespace Chronos {
 
     void BaseScene::cleanRenderableComponent(){
         rcs.clear();
+    }
+
+    void BaseScene::pause(){
+        state = SC_PAUSED;
+    }
+
+    void BaseScene::resume(){
+        assert(state == SC_PAUSED);
+        state = SC_RUNNING;
+    }
+
+    SceneState BaseScene::getState()const {
+        return state;
     }
 
     BaseScene::~BaseScene(){

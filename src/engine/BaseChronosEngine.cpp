@@ -45,6 +45,7 @@ namespace Chronos {
         Log("engine start");
         // window->show();
         timer.start();
+        mainScene->begin();
     }
     
     SizeU BaseChronosEngine::getSize()const {

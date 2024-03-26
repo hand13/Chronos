@@ -10,6 +10,13 @@
 #include "component/RenderableComponent.h"
 namespace Chronos {
     typedef std::map<std::string, std::shared_ptr<GameObject>> GameObjectMap;
+    enum SceneState {
+        SC_UNINITED,
+        SC_READY,
+        SC_RUNNING,
+        SC_PAUSED,
+    };
+
     class Scene {
         public:
         virtual Camera& getActiveCamera() = 0;
@@ -20,6 +27,9 @@ namespace Chronos {
         virtual void init() = 0;
         virtual void begin() = 0;
         virtual void render() = 0;
+        virtual void pause() = 0;
+        virtual void resume() = 0;
+        virtual SceneState getState()const = 0;
         /**
          * @brief 
          * 
