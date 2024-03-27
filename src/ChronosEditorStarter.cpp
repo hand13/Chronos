@@ -1,12 +1,14 @@
 #include "ChronosEditorStarter.h"
 #include "base/Utils.h"
 #include "editor/ChronosEditor.h"
+
 namespace Chronos{
     ChronosEditorStarter::ChronosEditorStarter(){
         engine = nullptr;
         renderer = nullptr;
         editor = nullptr;
     }
+
 
     void ChronosEditorStarter::show(){
         editor->show();

@@ -21,7 +21,7 @@ namespace Chronos{
 
         load_all(&metaspace);
         metaspace.solveLink();
-
+        logger = Logger::get("editor");
     }
 
     void ChronosEditor::setScene(Scene*s){
@@ -189,7 +189,7 @@ namespace Chronos{
         return res;
     }
     ChronosEditor::~ChronosEditor(){
-        Log("editor destructed");
+        logger.info("editor destructed");
     }
 
     void ChronosEditor::showbool(bool& b,boolean editable,const char * label){

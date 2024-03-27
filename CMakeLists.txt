@@ -16,6 +16,8 @@ find_package(directxtk CONFIG REQUIRED)
 find_package(ICU REQUIRED uc)
 
 include_directories(${EIGEN3_INCLUDE_DIR})
+# message(${POCO_INCLUDE_DIRS})
+# include_directories(${POCO_INCLUDE_DIR})
 
 set(CMAKE_CXX_STANDARD 20)
 set(THIRD_PARTY_DIR ${PROJECT_SOURCE_DIR}/third_party)
@@ -70,7 +72,11 @@ add_library(reflect_api STATIC ${REFLECT_API_SRC})
 
 target_link_libraries(base ICU::uc Poco::Foundation)
 
-
+target_link_libraries(component base)
+target_link_libraries(editor base)
+target_link_libraries(game_object base)
+target_link_libraries(engine base)
+target_link_libraries(d3d11_window base)
 target_link_libraries(d3d11_renderer PRIVATE base platform_window renderer Microsoft::DirectXTK d3d11 dxgi)
 
 aux_source_directory(src GAME_SRC)

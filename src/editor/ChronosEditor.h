@@ -1,9 +1,10 @@
 #pragma once
 #include "ControlUI.h"
-#include "base/Event.h"
-#include "base/Utils.h"
+#include <base/Event.h>
+#include <base/Log.h>
+#include <base/Utils.h>
 #include <component/Component.h>
-#include "game_object/GameObject.h"
+#include <game_object/GameObject.h>
 #include <reflect_api/Field.h>
 #include <reflect_api/Klass.h>
 #include <render/Texture2D.h>
@@ -16,6 +17,7 @@ namespace Chronos{
     class ChronosEditor :public ControlUI{
         private:
         EventBridge eventBridge;
+        Logger logger;
         protected:
         Metaspace metaspace;//todo,only for editor
         virtual void showWindow()override;

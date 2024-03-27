@@ -6,6 +6,7 @@
 #include "module/IRendererModule.h"
 #include "module/ModuleLoader.h"
 #include "render/Renderer.h"
+#include <base/Log.h>
 class TestScene:public Chronos::BaseScene{
     public:
         virtual void initScene()override{
@@ -23,6 +24,9 @@ class TestChronosEngine:public Chronos::BaseChronosEngine{
 };
 
 int main() {
+
+    Chronos::LoggerConfig lc;
+    lc.initLogger();
 
     Chronos::ModuleLoader ml;
 

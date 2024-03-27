@@ -1,6 +1,5 @@
 #include "Utils.h"
-#include <cstdio>
-#include <cstring>
+#include <stdio.h>
 #include <exception>
 #include <iterator>
 #include <string>
@@ -29,7 +28,8 @@ std::vector<u8> readDataFromFile(const char * fileName){
         Panic(L"未知文件");
     }
     std::vector<u8> result;
-    FILE* file = std::fopen(fileName,"rb");
+    FILE* file = nullptr;
+    fopen_s(&file,fileName,"rb");
     if(file == nullptr){
         Panic(L"fatal");
     }
