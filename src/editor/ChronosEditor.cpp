@@ -51,6 +51,10 @@ namespace Chronos{
         showEditorArea();
     }
 
+    void ChronosEditor::processMsg(const MSG & msg){
+        eventBridge.pushMSG(msg);
+    }
+
     void ChronosEditor::showEditorArea(){
         SizeU size =  Engine->getSize();
         // Right
@@ -125,7 +129,14 @@ namespace Chronos{
                 currentScene->resume();
             }
         }
+        auto startPoint = ImGui::GetCursorScreenPos();
         ImGui::Image(srv, ImVec2(static_cast<float>(size.width),static_cast<float>(size.height)));
+        // // ImGui::SameLine();
+        // // tmp = ImGui::GetCursorScreenPos();
+        u32 startX = static_cast<u32>(startPoint.x);
+        u32 startY = static_cast<u32>(startPoint.y);
+        RectU rect(startX,startY,startX + size.width ,startY + size.height);
+        eventBridge.setRect(rect);
     }
 
     void ChronosEditor::showGameObjectDetailView(){
@@ -173,7 +184,9 @@ namespace Chronos{
         srv = (ID3D11ShaderResourceView*) thandler;
     }
     std::vector<IOEvent> ChronosEditor::getEvents(){
-        return std::vector<IOEvent>();
+        std::vector<IOEvent> res = eventBridge.getEvents();
+        eventBridge.clean();
+        return res;
     }
     ChronosEditor::~ChronosEditor(){
         Log("editor destructed");

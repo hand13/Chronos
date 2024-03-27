@@ -22,6 +22,7 @@ namespace Chronos {
         protected:
         virtual void showWindow() = 0;
         virtual void cleanResource();
+        virtual void processMsg(const MSG& msg) = 0;
         public:
         ControlUI();
         void init(Renderer * renderer);

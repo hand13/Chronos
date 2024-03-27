@@ -14,6 +14,15 @@ struct SizeU{
     SizeU(u32 width,u32 height):width(width),height(height){}
 };
 
+struct RectU{
+    u32 left;
+    u32 top;
+    u32 right;
+    u32 bottom;
+    RectU():left(0),top(0),right(0),bottom(0){}
+    RectU(u32 left,u32 top,u32 right,u32 bottom):left(left),top(top),right(right),bottom(bottom){}
+};
+
 struct Float2{
     float x;
     float y;

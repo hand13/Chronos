@@ -10,9 +10,12 @@
 #include <engine/Scene.h>
 #include <vector>
 #include <reflect_api/Metaspace.h>
+#include "EventBridge.h"
 
 namespace Chronos{
     class ChronosEditor :public ControlUI{
+        private:
+        EventBridge eventBridge;
         protected:
         Metaspace metaspace;//todo,only for editor
         virtual void showWindow()override;
@@ -38,6 +41,7 @@ namespace Chronos{
         virtual ~ChronosEditor();
 
         protected:
+        virtual void processMsg(const MSG & msg)override;
 
 
         void showbool(bool& b,boolean editable,const char * label);

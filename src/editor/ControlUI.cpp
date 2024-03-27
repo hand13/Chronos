@@ -89,6 +89,7 @@ namespace Chronos {
         while (::PeekMessage(&msg, hWnd, 0U, 0U, PM_REMOVE)) {
             ::TranslateMessage(&msg);
             ::DispatchMessage(&msg);
+            processMsg(msg);
         }
 
         if(resizeHeight != 0 && resizeWidth != 0){
