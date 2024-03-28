@@ -7,7 +7,6 @@
 
 #include "Constants.h"
 
-
 namespace Chronos {
 
 Camera::Camera() {
@@ -63,18 +62,31 @@ Eigen::Matrix4f Camera::calcViewMatrix() const {
     Eigen::Vector3f yAxis = zAxis.cross(xAxis).normalized();
 
     Eigen::Matrix3f tmp;
-    tmp << xAxis.x(), yAxis.x(), zAxis.x(), xAxis.y(), yAxis.y(), zAxis.y(),
-        xAxis.z(), yAxis.z(), zAxis.z();
-
+    // clang-format off
+    tmp << 
+    xAxis.x(), yAxis.x(), zAxis.x(),
+    xAxis.y(), yAxis.y(), zAxis.y(),
+    xAxis.z(), yAxis.z(), zAxis.z();
+    // clang-format on 
     Eigen::Matrix3f it = tmp.transpose();  // 幺正矩阵,转置与逆相同
 
     Eigen::Matrix4f result;  // 列主序矩阵
-    result << 1.f, 0, 0, -pos.x(), 0, 1.f, 0, -pos.y(), 0, 0, 1.f, -pos.z(), 0,
-        0, 0, 1.f;
+    // clang-format off
+    result << 
+    1.f, 0, 0, -pos.x(), 
+    0, 1.f, 0, -pos.y(), 
+    0, 0, 1.f, -pos.z(), 
+    0, 0, 0, 1.f;
+    // clang-format on 
     Eigen::Matrix4f angleMatrix;
 
-    angleMatrix << it(0, 0), it(0, 1), it(0, 2), 0, it(1, 0), it(1, 1),
-        it(1, 2), 0, it(2, 0), it(2, 1), it(2, 2), 0, 0, 0, 0, 1.f;
+    // clang-format off
+    angleMatrix << 
+    it(0, 0), it(0, 1), it(0, 2), 0,
+    it(1, 0), it(1, 1), it(1, 2), 0,
+    it(2, 0), it(2, 1), it(2, 2), 0,
+    0, 0, 0, 1.f;
+    // clang-format on 
 
     return angleMatrix * result;
 }
@@ -91,8 +103,14 @@ Eigen::Matrix4f Camera::calcProjectionMatrix() const {
     float a = farPanel / (farPanel - nearPanel);
     float b = (farPanel * nearPanel) / (nearPanel - farPanel);
     Eigen::Matrix4f resut;
-    resut << 2.f * nearPanel / w, 0, 0, 0, 0, 2.f * nearPanel / h, 0, 0, 0, 0,
-        a, b, 0, 0, 1.f, 0;
+    // clang-format off
+    resut << 
+    2.f * nearPanel / w, 0, 0, 0, 
+    0, 2.f * nearPanel / h, 0, 0, 
+    0, 0, a, b, 
+    0, 0, 1.f, 0;
+
+    // clang-format on 
     return resut;
     // return Eigen::Matrix4f::Identity();
 }
