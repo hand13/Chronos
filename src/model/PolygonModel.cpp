@@ -1,6 +1,4 @@
 #include "PolygonModel.h"
 namespace Chronos {
-    Meshes& PolygonModel::getMeshes(){
-        return meshes;
-    }
-}
+Meshes& PolygonModel::getMeshes() { return meshes; }
+}  // namespace Chronos

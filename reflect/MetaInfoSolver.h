@@ -2,17 +2,14 @@
 #include <map>
 #include <set>
 #include <string>
-#include "reflect_api/MetaInfo.h"
+
 #include "KlassInfo.h"
+#include "reflect_api/MetaInfo.h"
 
-enum MemberType {
-    CLASS,
-    CONSTRUCTOR,
-    FIELD,
-    METHOD
-};
 
-struct MetaInfoHelper{
+enum MemberType { CLASS, CONSTRUCTOR, FIELD, METHOD };
+
+struct MetaInfoHelper {
     bool isMacro;
     MemberType memberType;
     std::string markedName;
@@ -20,12 +17,13 @@ struct MetaInfoHelper{
 };
 
 class MetaInfoSolver {
-    private:
+   private:
     std::set<std::string> macros;
     std::set<std::string> constructorGenMarked;
     std::set<std::string> fieldsGenMarked;
     std::set<std::string> methodGenMarked;
-    public:
+
+   public:
     MetaInfo classMetaInfo;
     std::map<std::string, MetaInfo> constructorMetaInfos;
     std::map<std::string, MetaInfo> fieldMetaInfos;

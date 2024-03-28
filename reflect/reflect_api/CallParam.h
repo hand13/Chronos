@@ -2,10 +2,10 @@
 #include <vector>
 
 class Klass;
-struct CallParam{
-    void * param;
-    Klass * klass;
+struct CallParam {
+    void* param;
+    Klass* klass;
 };
 typedef std::vector<CallParam> CallParams;
-typedef void * (*FunCall)(CallParams& params);
-typedef void * (*MethodCall)(void * thiz,CallParams& params);
+typedef void* (*FunCall)(CallParams& params);
+typedef void* (*MethodCall)(void* thiz, CallParams& params);

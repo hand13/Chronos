@@ -1,7 +1,7 @@
 #pragma once
 namespace Chronos {
-    class Shader {
-        public:
-        virtual ~Shader(){}
-    };
-}
+class Shader {
+   public:
+    virtual ~Shader() {}
+};
+}  // namespace Chronos

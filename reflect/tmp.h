@@ -1,2 +1,2 @@
 #pragma once
-class Tmp{};
+class Tmp {};

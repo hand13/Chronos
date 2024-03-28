@@ -1,10 +1,13 @@
 #include "reflect_bp.h"
-#include "head_for_reflect.h"
-#include "reflect_api/Klass.h"
+
 #include <cstddef>
 
-void load_reflect_test(Metaspace* ms){
-    Klass *ks = new Klass("ReflectTest",false,sizeof(ReflectTest));
+#include "head_for_reflect.h"
+#include "reflect_api/Klass.h"
+
+
+void load_reflect_test(Metaspace* ms) {
+    Klass* ks = new Klass("ReflectTest", false, sizeof(ReflectTest));
     Field idField;
     idField.access = Public;
     idField.name = "id";

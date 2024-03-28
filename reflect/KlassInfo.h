@@ -8,42 +8,42 @@ enum AccessInfo {
     PRIVATE,
 };
 
-struct Info{
-    virtual ~Info(){}
+struct Info {
+    virtual ~Info() {}
 };
 
-struct MethodParamInfo:public Info {
+struct MethodParamInfo : public Info {
     std::string name;
     std::string type;
-    virtual ~MethodParamInfo(){}
+    virtual ~MethodParamInfo() {}
 };
-struct FieldInfo :public Info{
-    public:
+struct FieldInfo : public Info {
+   public:
     AccessInfo access;
     std::string name;
     std::string type;
-    virtual ~FieldInfo(){}
+    virtual ~FieldInfo() {}
 };
-struct ConstructorInfo:public Info{
+struct ConstructorInfo : public Info {
     AccessInfo access;
     std::string name;
     std::vector<std::shared_ptr<MethodParamInfo>> params;
-    virtual ~ConstructorInfo(){}
+    virtual ~ConstructorInfo() {}
 };
-struct MethodInfo:public Info{
+struct MethodInfo : public Info {
     AccessInfo access;
     std::string name;
     std::string returnType;
     std::vector<std::shared_ptr<MethodParamInfo>> params;
     bool isVirtual = false;
-    virtual ~MethodInfo(){}
+    virtual ~MethodInfo() {}
 };
-struct KlassInfo :public Info{
+struct KlassInfo : public Info {
     std::string name;
     std::vector<std::shared_ptr<FieldInfo>> fileds;
     std::vector<std::shared_ptr<::MethodInfo>> methods;
     std::vector<std::shared_ptr<ConstructorInfo>> contrustors;
-    virtual ~KlassInfo(){}
+    virtual ~KlassInfo() {}
 };
 
 std::string toString(const AccessInfo& a);

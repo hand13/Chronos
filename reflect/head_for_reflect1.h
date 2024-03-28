@@ -1,6 +1,6 @@
 #pragma once
 class Tmp2 {
-    public:
+   public:
     int number;
     int name;
 };
